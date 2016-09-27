@@ -4,10 +4,12 @@
 # Custom Variables
 logs=/var/log/
 projects=/var/www/vhosts/
+PATH=$PATH:/root/scripts/
 
 # Custom Aliases / Commands
-alias plesk-nginx-reload='bash /root/scripts/plesk-nginx-reload.sh'
-alias php7='/opt/plesk/php/7.0/bin/php -c "/opt/plesk/php/7.0/etc/php.ini"'
+alias plesk-nginx-reload='bash ~/bin/plesk-nginx-reload.sh'
+alias find_str='bash ~/bin/find_str.sh'
 alias php56='/opt/plesk/php/5.6/bin/php -c "/opt/plesk/php/5.6/etc/php.ini"'
+alias php7='/opt/plesk/php/7.0/bin/php -c "/opt/plesk/php/7.0/etc/php.ini"'
 
 ### BASH_PROFILE_DEFAULT ###
