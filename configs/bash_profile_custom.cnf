@@ -1,0 +1,13 @@
+### BASH_PROFILE_CUSTOM ###
+# (DON'T CHANGE THE COMMENT ABOVE OR THE DEPLOYMENT WILL BREAK)
+
+# Custom Variables
+logs=/var/log/
+projects=/var/www/vhosts/
+
+# Custom Aliases / Commands
+alias plesk-nginx-reload='bash /root/scripts/plesk-nginx-reload.sh'
+alias php7='/opt/plesk/php/7.0/bin/php -c "/opt/plesk/php/7.0/etc/php.ini"'
+alias php56='/opt/plesk/php/5.6/bin/php -c "/opt/plesk/php/5.6/etc/php.ini"'
+
+### BASH_PROFILE_CUSTOM ###

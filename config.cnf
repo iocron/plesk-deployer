@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# USER CONFIGS (your configuration)
+LINUX_PACKAGES="htop git nano"		# Install additional Linux Packages
+PLESK_FIREWALL=1			# Configure Plesk Firewall
+PLESK_FAIL2BAN=1			# Configure Fail2Ban
+BASH_PROFILE_DEFAULT=1			# Bash Profile Extend, bash_profile_default.cnf (GroundStack)
+BASH_PROFILE_CUSTOM=1			# Bash Profile Extend, bash_profile_custom.cnf (Your custom config)
+
+# GLOBAL CONFIGS
+SCRIPT=$BASH_SOURCE
+SCRIPTPATH=`dirname $BASH_SOURCE`
+NOW=$(date +"%Y-%m-%d")
+NOW_EXT=$(date +"%Y-%m-%d-%M%S")
+DISTRO=$(python -mplatform)
+ERROR_LOG=$SCRIPTPATH/logs/error.log
+
+# COLOR CODES
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+UNDERLINE=$(tput smul)
+NORMAL=$(tput sgr0)
+
+# More Colors: http://stackoverflow.com/questions/4332478/read-the-current-text-color-in-a-xterm/4332530#4332530

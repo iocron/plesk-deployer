@@ -1,0 +1,10 @@
+### enable gzip compression
+gzip on;
+gzip_buffers 4 32k;
+gzip_comp_level 9;
+gzip_min_length 10;
+gzip_disable "MSIE [1-6]\.(?!.*SV1)";
+gzip_proxied any;
+gzip_types   text/plain text/css application/x-javascript application/javascript text/xml application/xml application/xml+rss text/javascript image/x-icon image/bmp image/svg+xml image/jpeg image/png;
+gzip_vary on;
+### end gzip configuration
