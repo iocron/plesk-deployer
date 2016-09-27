@@ -33,10 +33,15 @@ if (( $BASH_PROFILE_DEFAULT == 1 || $BASH_PROFILE_CUSTOM == 1 )); then
 	fi
 	
 	if (( $BASH_PROFILE_DEFAULT == 1 )); then cat $CONFIGS_DEFAULT/bash_profile.cnf >> ~/.bash_profile; fi
-	if (( $BASH_PROFILE_CUSTOM == 1 )); then cat $CONFIGS_CUSTOM/bash_profile.cnf >> ~/.bash_profile; fi
+	if (( $BASH_PROFILE_CUSTOM == 1 )); then 
+		if (( -f $CONFIGS_CUSTOM/bash_profile.cnf )); then
+			cat $CONFIGS_CUSTOM/bash_profile.cnf >> ~/.bash_profile;
+		else
+			printf "${MSG_WARNING} File $CONFIGS_CUSTOM/bash_profile.cnf doesn't exist, skip..${MSG_NORMAL}" >> $ERROR_LOG;
+		fi
+	fi
 	
 	source ~/.bash_profile
-	
 	printf "${MSG_DONE} The bash profiles have been successfully applied / added to ~/.bash_profile.${MSG_NORMAL}";
 else
 	printf "${MSG_INFO} No Bash Profile Configuration in your config.cnf selected, skip..${MSG_NORMAL}";
@@ -58,16 +63,16 @@ fi
 if (( $LINUX_INSTALL_PCKGS == 1 )); then
 	printf "${MSG_DONE} Installed the additional linux packages $LINUX_PACKAGES (please see the install process above to check if everything has been installed successfully).${MSG_NORMAL}";
 else
-	printf "${MSG_INFO} No Linux Packages Selected.${MSG_NORMAL}"
+	printf "${MSG_INFO} No Linux Packages Selected.${MSG_NORMAL}";
 fi
 
 printf "\n###############################\n#     Additional Nginx Conf's     #\n###############################\n";
 if (( $NGINX_GZIP == 1 )); then
 	rm -f /etc/nginx/conf.d/gzip.conf
 	cp $CONFIGS_DEFAULT/nginx_gzip.cnf /etc/nginx/conf.d/gzip.conf
-	printf "${MSG_DONE} Copied ${SCRIPTPATH}/configs/default/nginx_gzip.cnf to /etc/nginx/conf.d/gzip.conf${MSG_NORMAL}"
+	printf "${MSG_DONE} Copied ${SCRIPTPATH}/configs/default/nginx_gzip.cnf to /etc/nginx/conf.d/gzip.conf${MSG_NORMAL}";
 else
-	printf "${MSG_INFO} Skipped nginx gzip configuration..${MSG_NORMAL}"
+	printf "${MSG_INFO} Skipped nginx gzip configuration..${MSG_NORMAL}";
 fi
 
 printf "\n###############################\n#      Import Custom Scripts      #\n###############################\n";
