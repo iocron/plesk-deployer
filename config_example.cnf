@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # DEPLOYMENT CONFIGS (your configuration)
-LINUX_PACKAGES="htop git nano"
+LINUX_PACKAGES="htop nano"
 PLESK_FIREWALL=1
 PLESK_FAIL2BAN=1
 BASH_PROFILE_DEFAULT=1

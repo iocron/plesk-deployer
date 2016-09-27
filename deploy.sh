@@ -4,11 +4,11 @@
 set -eu
 IFS=$'\n\t'
 
-### Setups Variables ###
-if (( -f `dirname $BASH_SOURCE`/config.cnf )); then 
-	source `dirname $BASH_SOURCE`/config.cnf;
+### Setup Variables ###
+if (( -f $(dirname $BASH_SOURCE) )); then 
+	source $(dirname $BASH_SOURCE);
 else
-	printf "$(date +"%Y-%m-%d-%M%S") [ERROR]: Please make sure a configuration file (config.cnf) is set." >> `dirname $BASH_SOURCE`/logs/error.log; exit 1;
+	printf "$(date +"%Y-%m-%d-%M%S") [ERROR]: Please make sure a configuration file (config.cnf) is set." >> $(dirname $BASH_SOURCE)/logs/error.log; exit 1;
 fi
 
 ### Check Requirements ###
