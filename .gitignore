@@ -13,8 +13,8 @@ logs/*
 
 # Configs
 config.cnf
-configs_custom/*
-!configs_custom/*_example*
+configs/custom/*
+!configs/custom/*_example*
 
 # Never exclude .gitkeep files
 !.gitkeep

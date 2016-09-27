@@ -1,16 +1,19 @@
 #!/bin/bash
 
-# USER CONFIGS (your configuration)
-LINUX_PACKAGES="htop git nano"		# Install additional Linux Packages
-PLESK_FIREWALL=1			# Configure Plesk Firewall
-PLESK_FAIL2BAN=1			# Configure Fail2Ban
-BASH_PROFILE_DEFAULT=1			# Bash Profile Extend, bash_profile_default.cnf (GroundStack)
-BASH_PROFILE_CUSTOM=1			# Bash Profile Extend, bash_profile_custom.cnf (Your custom config)
-NGINX_GZIP=1					# Set up Nginx Gzip Configuration
+# DEPLOYMENT CONFIGS (your configuration)
+LINUX_PACKAGES="htop git nano"
+PLESK_FIREWALL=1
+PLESK_FAIL2BAN=1
+BASH_PROFILE_DEFAULT=1
+BASH_PROFILE_CUSTOM=1
+NGINX_GZIP=1
 
 # GLOBAL CONFIGS
 SCRIPT=$BASH_SOURCE
 SCRIPTPATH=`dirname $BASH_SOURCE`
+CONFIGS=$SCRIPTPATH/configs
+CONFIGS_DEFAULT=$CONFIGS/default
+CONFIGS_CUSTOM=$CONFIGS/custom
 NOW=$(date +"%Y-%m-%d")
 NOW_EXT=$(date +"%Y-%m-%d-%M%S")
 DISTRO=$(python -mplatform)
@@ -23,4 +26,9 @@ YELLOW=$(tput setaf 3)
 UNDERLINE=$(tput smul)
 NORMAL=$(tput sgr0)
 
-# More Colors: http://stackoverflow.com/questions/4332478/read-the-current-text-color-in-a-xterm/4332530#4332530
+# SYSTEM MESSAGES
+MSG_ERROR="${RED}$(date +"%Y-%m-%d-%M%S") [ERROR]:"
+MSG_WARNING="${YELLOW}$(date +"%Y-%m-%d-%M%S") [WARNING]:"
+MSG_INFO="${UNDERLINE}[INFO]:"
+MSG_DONE="${GREEN}[FINISHED]:"
+MSG_NORMAL="${NORMAL}"
