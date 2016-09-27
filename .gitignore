@@ -11,7 +11,8 @@ Thumbs.db
 # Logs
 logs/*
 
-# Custom Configs
+# Configs
+config.cnf
 configs_custom/*
 !configs_custom/*_example*
 

@@ -6,6 +6,7 @@ PLESK_FIREWALL=1			# Configure Plesk Firewall
 PLESK_FAIL2BAN=1			# Configure Fail2Ban
 BASH_PROFILE_DEFAULT=1			# Bash Profile Extend, bash_profile_default.cnf (GroundStack)
 BASH_PROFILE_CUSTOM=1			# Bash Profile Extend, bash_profile_custom.cnf (Your custom config)
+NGINX_GZIP=1					# Set up Nginx Gzip Configuration
 
 # GLOBAL CONFIGS
 SCRIPT=$BASH_SOURCE
