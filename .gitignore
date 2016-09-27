@@ -14,3 +14,6 @@ logs/*
 # Custom Configs
 configs_custom/*
 !configs_custom/*_example*
+
+# Never exclude .gitkeep files
+!.gitkeep
