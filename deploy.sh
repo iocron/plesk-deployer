@@ -64,9 +64,9 @@ else
 fi
 
 printf "\n###############################\n#     Additional Nginx Conf's     #\n###############################\n";
-if [[ $NGINX_GZIP == 1 ]]; then
-	getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
-	
+getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
+
+if [[ $NGINX_GZIP == 1 ]]; then	
 	rm -f /etc/nginx/conf.d/gzip.conf
 	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf
 	syslogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
@@ -74,12 +74,18 @@ else
 	syslogger "INFO" "Skipped nginx gzip configuration..";
 fi
 
-printf "\n###############################\n#      Import Custom Scripts      #\n###############################\n";
+printf "\n###############################\n# Import Default / Custom Scripts #\n###############################\n";
 if [[ ! -d ~/bin ]]; then mkdir ~/bin; fi
-if [[ $SCRIPTS_DEFAULT == 1 ]]; then /bin/cp -f $SCRIPTPATH/scripts/default/* ~/bin; fi
-if [[ $SCRIPTS_CUSTOM == 1 ]]; then /bin/cp -f $SCRIPTPATH/scripts/custom/* ~/bin; fi
-chmod 700 ~/bin/*
-syslogger "DONE" "All custom scripts have been copied to ~/bin you can call a script with yourscript.sh from anywhere.";
+
+if [[ $SCRIPTS_DEFAULT == 1 || $SCRIPTS_CUSTOM == 1 ]]; then
+	if [[ $SCRIPTS_DEFAULT == 1 ]]; then /bin/cp -f $SCRIPTPATH/scripts/default/* ~/bin; fi
+	if [[ $SCRIPTS_CUSTOM == 1 ]]; then /bin/cp -f $SCRIPTPATH/scripts/custom/* ~/bin; fi
+	
+	chmod 700 ~/bin/*
+	syslogger "DONE" "All configured scripts have been copied to ~/bin, you can call a script with yourscript.sh from anywhere.";
+else
+	syslogger "INFO" "Skipped Import of Scripts (scripts/)..";
+fi
 
 printf "\n###############################\n#       Deployment Finished       #\n###############################\n";
 syslogger "DONE" "The plesk deployer has finished your deployment.";
