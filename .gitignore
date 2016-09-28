@@ -8,13 +8,21 @@ ehthumbs.db
 Thumbs.db
 /.metadata/
 
+# Never exclude .gitkeep files
+!.gitkeep
+
 # Logs
 logs/*
 
 # Configs
-config.cnf
+/config.cnf
+/config_*.cnf
 configs/custom/*
 !configs/custom/*_example*
 
-# Never exclude .gitkeep files
-!.gitkeep
+# Scripts
+scripts/custom/*
+!scripts/custom/*_example*
+
+# Test Files
+test.sh
