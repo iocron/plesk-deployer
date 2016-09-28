@@ -9,7 +9,7 @@ TMP_BF=$(dirname $BASH_SOURCE);
 if [[ -f $TMP_BF/config.cnf ]]; then
 	source $TMP_BF/config.cnf;
 else
-	printf "$(date +"%Y-%m-%d-%M%S") [ERROR]: Please make sure a configuration file (config.cnf) is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
+	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure a configuration file (config.cnf) is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
 fi
 
 ### Include Library ###
