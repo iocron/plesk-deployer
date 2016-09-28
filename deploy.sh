@@ -2,7 +2,6 @@
 
 ### Bash Strict Mode ###
 set -eu
-IFS=$'\n\t'
 
 ### Include Global Config ###
 TMP_BF=$(dirname "$BASH_SOURCE");
