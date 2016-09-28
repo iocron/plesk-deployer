@@ -1,4 +1,4 @@
-### getConfig Function ###
+### getConfig() ###
 function getConfig(){
 	if [[ -n "$1" ]]; then
 		if [[ $CONFIGS_CUSTOM == 1 && -f $CONFIGS_PATH_CUSTOM/$1 ]]; then
@@ -15,6 +15,7 @@ function getConfig(){
 	fi
 }
 
+### syslogger() ###
 function syslogger(){
 	if [[ ! ${2+x} ]]; then
 		printf "${RED}${MSG_ERROR} syslogger() Parameters missing. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Parameters missing.\n" >> $ERROR_LOG; exit 1;
@@ -29,10 +30,12 @@ function syslogger(){
 	esac
 }
 
+### currentTime() ###
 function currentTime(){
 	printf $(date +"$TIME_FORMAT");
 }
 
+### currentTimeFile() ###
 function currentTimeFile(){
 	printf $(date +"$TIME_FORMAT_FILE");
 }
