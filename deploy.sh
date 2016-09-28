@@ -5,7 +5,7 @@ set -eu
 IFS=$'\n\t'
 
 ### Include Global Config ###
-TMP_BF=$(dirname $BASH_SOURCE);
+TMP_BF=$(dirname "$BASH_SOURCE");
 if [[ -f $TMP_BF/config.cnf ]]; then
 	source $TMP_BF/config.cnf;
 else
