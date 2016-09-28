@@ -63,6 +63,7 @@ fi
 
 printf "\n###################################\n#     Additional Nginx Conf's     #\n###################################\n";
 getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
+echo;
 
 if [[ $NGINX_GZIP == 1 ]]; then	
 	rm -f /etc/nginx/conf.d/gzip.conf
@@ -76,8 +77,13 @@ printf "\n###################################\n# Import Default / Custom Scripts
 if [[ ! -d ~/bin ]]; then mkdir ~/bin; fi
 
 if [[ $SCRIPTS_DEFAULT == 1 || $SCRIPTS_CUSTOM == 1 ]]; then
-	if [[ $SCRIPTS_DEFAULT == 1 ]]; then /bin/cp -f $SCRIPTPATH/scripts/default/* ~/bin; fi
-	if [[ $SCRIPTS_CUSTOM == 1 ]]; then /bin/cp -f $SCRIPTPATH/scripts/custom/* ~/bin; fi
+	if [[ $SCRIPTS_DEFAULT == 1 ]]; then
+		find "$SCRIPTPATH/scripts/default/*" -type f -exec /bin/cp -f {} ~/bin \;
+	fi
+	
+	if [[ $SCRIPTS_CUSTOM == 1 ]]; then
+		find "$SCRIPTPATH/scripts/custom/*" -type f -exec /bin/cp -f {} ~/bin \;
+	fi
 	
 	chmod 700 ~/bin/*
 	syslogger "DONE" "All configured scripts have been copied to ~/bin, you can call a script with yourscript.sh from anywhere.";
