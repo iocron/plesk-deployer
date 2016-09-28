@@ -15,9 +15,17 @@ function getConfig(){
 
 function syslogger(){
 	case "$1" in
-		"ERROR") printf "${MSG_ERROR} $2 ${MSG_NORMAL}\n" | tee -a $ERROR_LOG; exit 1;;
-		"WARNING") printf "${MSG_WARNING} $2 ${MSG_NORMAL}\n" | tee -a $ERROR_LOG;;
-		"INFO") printf "${MSG_INFO} $2 ${MSG_NORMAL}\n";;
-		"DONE") printf "${MSG_DONE} $2 ${MSG_NORMAL}\n";;
+		"ERROR") printf "${RED}${MSG_ERROR} $2 ${MSG_NORMAL}\n"; printf "$(currentTime) [ERROR]: $2 \n" >> $ERROR_LOG; exit 1;;
+		"WARNING") printf "${YELLOW}${MSG_WARNING} $2 ${MSG_NORMAL}\n"; printf "$(currentTime) [WARNING]: $2 \n" >> $ERROR_LOG;;
+		"INFO") printf "${UNDERLINE}${MSG_INFO} $2 ${MSG_NORMAL}\n";;
+		"DONE") printf "${GREEN}${MSG_DONE} $2 ${MSG_NORMAL}\n";;
 	esac
+}
+
+function currentTime(){
+	printf $(date +"$TIME_FORMAT");
+}
+
+function currentTimeFile(){
+	printf $(date +"$TIME_FORMAT_FILE");
 }
