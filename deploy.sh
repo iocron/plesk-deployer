@@ -20,23 +20,23 @@ if [[ $EUID != 0 ]]; then
 fi
 
 if ! hash plesk 2>/dev/null; then
-	syslogger "ERROR" "Plesk is not installed on your System."; 
+	syslogger "ERROR" "Plesk is not installed on your System.";
 fi
 
 printf "\n##################################\n#     Deployment in Progress     #\n##################################\n";
 printf "Init..\n";
 
 printf "\n###################################\n#    Custom Bash Profiles Init    #\n###################################\n";
+if [[ -f ~/.bash_profile ]]; then
+	sed -i -e '/### BASH_PROFILE_DEFAULT ###/,/### BASH_PROFILE_DEFAULT ###/d' ~/.bash_profile
+	sed -i -e '/### BASH_PROFILE_CUSTOM ###/,/### BASH_PROFILE_CUSTOM ###/d' ~/.bash_profile
+else
+	syslogger "WARNING" "File ~/.bash_profile wasn't found on your system. A new ~/.bash_profile will be created from your config (as long as CONFIGS_DEFAULT or CONFIGS_CUSTOM is set).";
+fi
+
 if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
-	if [[ -f ~/.bash_profile ]]; then
-		sed -i -e '/### BASH_PROFILE_DEFAULT ###/,/### BASH_PROFILE_DEFAULT ###/d' ~/.bash_profile
-		sed -i -e '/### BASH_PROFILE_CUSTOM ###/,/### BASH_PROFILE_CUSTOM ###/d' ~/.bash_profile
-	else
-		syslogger "WARNING" "File ~/.bash_profile wasn't found on your system. A new ~/.bash_profile will be created from your config.";
-	fi
-	
 	cat $(getConfig bash_profile.cnf) >> ~/.bash_profile;
-	
+
 	syslogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
 	syslogger "INFO" "No Bash Profile Configuration in your config.cnf selected, skip..";
@@ -44,7 +44,7 @@ fi
 
 printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#DISTRO}" > 0 && $DISTRO != 0 ]]; then
-	if [[ $DISTRO =~ "Ubuntu" || $DISTRO =~ "Debian" ]]; then 
+	if [[ $DISTRO =~ "Ubuntu" || $DISTRO =~ "Debian" ]]; then
 		apt-get -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
 	elif [[ $DISTRO =~ "centos" ]]; then
@@ -65,7 +65,7 @@ printf "\n###################################\n#     Additional Nginx Conf's    
 getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
 echo;
 
-if [[ $NGINX_GZIP == 1 ]]; then	
+if [[ $NGINX_GZIP == 1 ]]; then
 	rm -f /etc/nginx/conf.d/gzip.conf
 	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf
 	syslogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
@@ -78,13 +78,13 @@ if [[ ! -d ~/bin ]]; then mkdir ~/bin; fi
 
 if [[ $SCRIPTS_DEFAULT == 1 || $SCRIPTS_CUSTOM == 1 ]]; then
 	if [[ $SCRIPTS_DEFAULT == 1 ]]; then
-		find "$SCRIPTPATH/scripts/default/*" -type f -exec /bin/cp -f {} ~/bin \;
+		find "$SCRIPTPATH/scripts/default/" -type f -exec /bin/cp -f {} ~/bin \;
 	fi
-	
+
 	if [[ $SCRIPTS_CUSTOM == 1 ]]; then
-		find "$SCRIPTPATH/scripts/custom/*" -type f -exec /bin/cp -f {} ~/bin \;
+		find "$SCRIPTPATH/scripts/custom/" -type f -exec /bin/cp -f {} ~/bin \;
 	fi
-	
+
 	chmod 700 ~/bin/*
 	syslogger "DONE" "All configured scripts have been copied to ~/bin, you can call a script with yourscript.sh from anywhere.";
 else
