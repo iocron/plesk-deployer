@@ -24,5 +24,8 @@ configs/custom/*
 scripts/custom/*
 !scripts/custom/*_example*
 
+# IDE Specific Files
+.ftpconfig
+
 # Test Files
 test.sh
