@@ -37,7 +37,7 @@ if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
 	fi
 	
 	cat $(getConfig bash_profile.cnf) >> ~/.bash_profile;
-	source ~/.bash_profile
+	su -c "source ~/.bash_profile";
 	
 	syslogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
