@@ -1,3 +1,9 @@
+#!/bin/bash
+
+### Bash Strict Mode ###
+set -eu
+IFS=$'\n\t'
+
 ### getConfig() ###
 function getConfig(){
 	if [[ -n "$1" ]]; then
