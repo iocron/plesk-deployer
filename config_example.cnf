@@ -1,20 +1,25 @@
+# DEPLOYMENT - GLOBAL CONFIGS
+CONFIGS_DEFAULT=1  # Define if default CONFIGS (configs/default) should be deployed
+CONFIGS_CUSTOM=1   # Define if custom CONFIGS (configs/custom) should be deployed
+SCRIPTS_DEFAULT=1  # Define if default SCRIPTS (scripts/default) should be deployed
+SCRIPTS_CUSTOM=1   # Define if custom SCRIPTS (scripts/custom) should be deployed
+
 # DEPLOYMENT - GENERAL CONFIGS
 LINUX_PACKAGES="htop nano"
 NGINX_GZIP=1
+
+# DEPLOYMENT - PLESK
 PLESK_FIREWALL=1
 PLESK_FAIL2BAN=1
+PLESK_FAIL2BAN_BAN_PERIOD=1800
+PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800
+PLESK_FAIL2BAN_BAN_MAX_ENTRIES=3
 PLESK_BRANDING_CSS=1
 PLESK_EXTENSIONS_DEPLOYMENT=1
 PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
 
-# DEPLOYMENT - GLOBAL CONFIGS
-CONFIGS_DEFAULT=1  # Define if default configs (configs/default) should be deployed or not
-CONFIGS_CUSTOM=1   # Define if custom configs (configs/custom) should be deployed or not
-SCRIPTS_DEFAULT=1  # Define if default scripts (scripts/default) should be deployed or not
-SCRIPTS_CUSTOM=1   # Define if custom scripts (scripts/custom) should be deployed or not
-
-# SYSTEM - CONFIGS
+# SYSTEM - CONFIGS (DO NOT CHANGE OR WITH CAUTION ONLY!)
 SCRIPT=$BASH_SOURCE
 SCRIPTPATH=$(dirname $(realpath $SCRIPT))
 LIB_PATH=$SCRIPTPATH/lib
@@ -26,14 +31,14 @@ TIME_FORMAT_FILE="%Y-%m-%d-%M%S"
 DISTRO=$(python -mplatform)
 ERROR_LOG=$SCRIPTPATH/logs/error.log
 
-# SYSTEM - COLOR CODES
+# SYSTEM - COLOR CODES (DO NOT CHANGE OR WITH CAUTION ONLY!)
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 UNDERLINE=$(tput smul)
 COLOR_RESET=$(tput sgr0)
 
-# SYSTEM - MESSAGES
+# SYSTEM - MESSAGES (DO NOT CHANGE OR WITH CAUTION ONLY!)
 MSG_TYPES="ERROR, WARNING, INFO, DONE"
 MSG_ERROR="[ERROR]:"
 MSG_WARNING="[WARNING]:"

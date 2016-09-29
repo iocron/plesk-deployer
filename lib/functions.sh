@@ -31,11 +31,11 @@ function syslogger(){
 	fi
 
 	case "$1" in
-		"ERROR") printf "${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: $2 \n" >> $ERROR_LOG; exit 1;;
-		"WARNING") printf "${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [WARNING]: $2 \n" >> $ERROR_LOG;;
-		"INFO") printf "${UNDERLINE}${MSG_INFO} $2 ${MSG_RESET}\n";;
-		"DONE") printf "${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
-		*) printf "${RED}${MSG_ERROR} syslogger() Wrong parameter <type> given. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Wrong type given. \n" >> $ERROR_LOG; exit 1;;
+		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: $2 \n" >> $ERROR_LOG; exit 1;;
+		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [WARNING]: $2 \n" >> $ERROR_LOG;;
+		"INFO") printf "\n${UNDERLINE}${MSG_INFO} $2 ${MSG_RESET}\n";;
+		"DONE") printf "\n${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
+		*) printf "\n${RED}${MSG_ERROR} syslogger() Wrong parameter <type> given. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Wrong type given. \n" >> $ERROR_LOG; exit 1;;
 	esac
 }
 

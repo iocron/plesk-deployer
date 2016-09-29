@@ -94,6 +94,7 @@ fi
 
 printf "\n###################################\n#     Install Plesk Extensions    #\n###################################\n";
 printf "Initializing Plesk Extensions Deployment..\n";
+
 if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; then
   for ext in "${PLESK_EXTENSIONS[@]}"
   do
@@ -106,8 +107,35 @@ if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; the
   done
 	syslogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
 else
-  syslogger "INFO" "No Extension Deployment specified or deactivated (Please keep in mind that the Deployment isn't able to remove extensions), skip..";
+  syslogger "INFO" "No Extension Deployment specified or is deactivated (Please keep in mind that the Deployment isn't able to remove extensions), skip..";
 fi
+
+printf "\n###################################\n#     Configure Plesk Fail2Ban    #\n###################################\n";
+printf "Initializing Plesk Fail2Ban Deployment..\n";
+
+if [[ $PLESK_FAIL2BAN == 1 ]]; then
+  printf "Activating Fail2Ban:\n";
+	plesk bin ip_ban --enable; echo;
+  printf "Applying Ban Settings:\n";
+  plesk bin ip_ban --update -ban_period $PLESK_FAIL2BAN_BAN_PERIOD -ban_time_window $PLESK_FAIL2BAN_BAN_TIME_WINDOW -max_retries $PLESK_FAIL2BAN_BAN_MAX_ENTRIES; echo;
+  printf "Applying Jails:\n";
+  printf "plesk-apache.. ";        plesk bin ip_ban --enable-jails plesk-apache; echo;
+  printf "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot; echo;
+  printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap; echo;
+  printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde; echo;
+  #printf "plesk-modsecurity.. ";   plesk bin ip_ban --enable-jails plesk-modsecurity; echo; # Only possible if ModSecurity is activated
+  printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel; echo;
+  printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix; echo;
+  printf "plesk-proftpd.. ";       plesk bin ip_ban --enable-jails plesk-proftpd; echo;
+  printf "plesk-wordpress.. ";     plesk bin ip_ban --enable-jails plesk-wordpress; echo;
+  printf "recidive.. ";            plesk bin ip_ban --enable-jails recidive; echo;
+  printf "ssh.. ";                 plesk bin ip_ban --enable-jails ssh; echo;
+else
+  printf "Deactivating Fail2Ban:\n";
+  plesk bin ip_ban --disable
+fi
+
+syslogger "DONE" "Finished Deployment of Plesk Fail2Ban.";
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
 syslogger "DONE" "The Plesk Deployer has finished your deployment.";
