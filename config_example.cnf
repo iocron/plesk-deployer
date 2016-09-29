@@ -1,13 +1,18 @@
-# DEPLOYMENT - CONFIGS (your configuration)
-CONFIGS_DEFAULT=1
-CONFIGS_CUSTOM=1
+# DEPLOYMENT - GENERAL CONFIGS
 LINUX_PACKAGES="htop nano"
+NGINX_GZIP=1
 PLESK_FIREWALL=1
 PLESK_FAIL2BAN=1
-PLESK_CSS=1
-NGINX_GZIP=1
-SCRIPTS_DEFAULT=1
-SCRIPTS_CUSTOM=1
+PLESK_BRANDING_CSS=1
+PLESK_EXTENSIONS_DEPLOYMENT=1
+PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
+PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
+
+# DEPLOYMENT - GLOBAL CONFIGS
+CONFIGS_DEFAULT=1  # Define if default configs (configs/default) should be deployed or not
+CONFIGS_CUSTOM=1   # Define if custom configs (configs/custom) should be deployed or not
+SCRIPTS_DEFAULT=1  # Define if default scripts (scripts/default) should be deployed or not
+SCRIPTS_CUSTOM=1   # Define if custom scripts (scripts/custom) should be deployed or not
 
 # SYSTEM - CONFIGS
 SCRIPT=$BASH_SOURCE

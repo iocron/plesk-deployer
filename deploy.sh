@@ -1,7 +1,7 @@
 #!/bin/bash
 
-### Bash Strict Mode ###
-set -eu
+### Bash Exit if a command exits with a non-zero status ###
+set -e
 
 ### Include Global Config ###
 TMP_BF=$(dirname "$BASH_SOURCE");
@@ -30,6 +30,7 @@ printf "\n###################################\n#    Custom Bash Profiles Init   
 if [[ -f ~/.bash_profile ]]; then
 	sed -i -e '/### BASH_PROFILE_DEFAULT ###/,/### BASH_PROFILE_DEFAULT ###/d' ~/.bash_profile
 	sed -i -e '/### BASH_PROFILE_CUSTOM ###/,/### BASH_PROFILE_CUSTOM ###/d' ~/.bash_profile
+	syslogger "INFO" "Old bash_profile Deployments have been removed (if any available).";
 else
 	syslogger "WARNING" "File ~/.bash_profile wasn't found on your system. A new ~/.bash_profile will be created from your config (as long as CONFIGS_DEFAULT or CONFIGS_CUSTOM is set).";
 fi
@@ -91,5 +92,22 @@ else
 	syslogger "INFO" "Skipped Import of Scripts (scripts/)..";
 fi
 
+printf "\n###################################\n#     Install Plesk Extensions    #\n###################################\n";
+printf "Initializing Plesk Extensions Deployment..\n";
+if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; then
+  for ext in "${PLESK_EXTENSIONS[@]}"
+  do
+    printf "Deployment of ${ext}:\n";
+    if [[ $ext =~ ".zip" ]]; then
+      plesk bin extension --upgrade $ext; echo;
+    elif [[ $ext =~ "http://" || $ext =~ "https://" ]]; then
+      plesk bin extension --upgrade-url $ext; echo;
+    fi
+  done
+	syslogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
+else
+  syslogger "INFO" "No Extension Deployment specified or deactivated (Please keep in mind that the Deployment isn't able to remove extensions), skip..";
+fi
+
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
-syslogger "DONE" "The plesk deployer has finished your deployment.";
+syslogger "DONE" "The Plesk Deployer has finished your deployment.";
