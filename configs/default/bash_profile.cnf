@@ -4,7 +4,7 @@
 # Custom Variables
 logs=/var/log/
 projects=/var/www/vhosts/
-PATH=$PATH:/root/scripts/
+PATH=$PATH:~/bin
 
 # Custom Aliases / Commands
 alias plesk-nginx-reload='bash ~/bin/plesk-nginx-reload.sh'
