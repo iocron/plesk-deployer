@@ -27,5 +27,9 @@ scripts/custom/*
 # IDE Specific Files
 .ftpconfig
 
+# Downloads
+/downloads/*
+!/downloads/.gitkeep
+
 # Test Files
 test.sh
