@@ -108,6 +108,9 @@ else
   syslogger "INFO" "No Extension Deployment specified or is deactivated (Please keep in mind that the Deployment isn't able to remove extensions), skip..";
 fi
 
+printf "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
+
+
 printf "\n###################################\n#          Plesk Firewall         #\n###################################\n";
 
 
