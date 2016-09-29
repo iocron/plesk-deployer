@@ -24,7 +24,7 @@ if ! hash plesk 2>/dev/null; then
 fi
 
 printf "\n##################################\n#     Deployment in Progress     #\n##################################\n";
-printf "Init..\n";
+printf "Deployment Init..\n";
 
 printf "\n###################################\n#    Custom Bash Profiles Init    #\n###################################\n";
 if [[ -f ~/.bash_profile ]]; then
@@ -93,8 +93,6 @@ else
 fi
 
 printf "\n###################################\n#     Install Plesk Extensions    #\n###################################\n";
-printf "Initializing Plesk Extensions Deployment..\n";
-
 if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; then
   for ext in "${PLESK_EXTENSIONS[@]}"
   do
@@ -110,9 +108,12 @@ else
   syslogger "INFO" "No Extension Deployment specified or is deactivated (Please keep in mind that the Deployment isn't able to remove extensions), skip..";
 fi
 
-printf "\n###################################\n#     Configure Plesk Fail2Ban    #\n###################################\n";
-printf "Initializing Plesk Fail2Ban Deployment..\n";
+printf "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
+echo;
 
+
+
+printf "\n###################################\n#     Configure Plesk Fail2Ban    #\n###################################\n";
 if [[ $PLESK_FAIL2BAN == 1 ]]; then
   printf "Activating Fail2Ban:\n";
 	plesk bin ip_ban --enable; echo;
