@@ -3,15 +3,16 @@ LINUX_PACKAGES="htop nano"
 NGINX_GZIP=1
 
 # DEPLOYMENT - PHP
-PHP_IONCUBE=1         # Not implemented yet
+PHP_IONCUBE=1                     # Not implemented yet
 
 # DEPLOYMENT - PLESK
-PLESK_FIREWALL=1      # Not implemented yet
+PLESK_FIREWALL=1                  # Not implemented yet
+PLESK_MODSECURITY_FIREWALL=1      # Not implemented yet
 PLESK_FAIL2BAN=1
 PLESK_FAIL2BAN_BAN_PERIOD=1800
 PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800
 PLESK_FAIL2BAN_BAN_MAX_ENTRIES=3
-PLESK_BRANDING_CSS=1  # Not implemented yet
+PLESK_BRANDING_CSS=1              # Not implemented yet
 PLESK_EXTENSIONS_DEPLOYMENT=1
 PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
