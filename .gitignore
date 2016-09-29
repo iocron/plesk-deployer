@@ -32,4 +32,4 @@ scripts/custom/*
 !/downloads/.gitkeep
 
 # Test Files
-test.sh
+/test.sh
