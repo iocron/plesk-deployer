@@ -1,24 +1,38 @@
-# DEPLOYMENT - CONFIGS & SCRIPTS
-CONFIGS_DEFAULT=1
-CONFIGS_CUSTOM=1
-SCRIPTS_DEFAULT=1
-SCRIPTS_CUSTOM=1
+# GLOBAL CONFIGS & SCRIPTS
+CONFIGS_DEFAULT=1   # deploy configs/default
+CONFIGS_CUSTOM=1    # deploy configs/custom
+SCRIPTS_DEFAULT=1   # deploy scripts/default
+SCRIPTS_CUSTOM=1    # deploy scripts/custom
 
-# DEPLOYMENT - GENERAL CONFIGS
+# LINUX
 LINUX_PACKAGES="htop nano"
+
+# WEBSERVER CONFIGS
 NGINX_GZIP=1
 
-# DEPLOYMENT - PHP
+# PHP CONFIGS
 PHP_IONCUBE=1                     # Not implemented yet
 
-# DEPLOYMENT - PLESK
+# PLESK - GENERAL SETTINGS
+PLESK_LOCALE="de-DE"              # Or en-US, en-GB, etc.
+PLESK_AUTOUPDATES=1
+PLESK_AUTOUPDATES_THIRD_PARTY=1
+PLESK_BRANDING_CSS=1              # Not implemented yet
+
+# PLESK - EXTENSIONS
+PLESK_EXTENSIONS_DEPLOYMENT=1
+PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
+PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
+
+# PLESK - SECURITY
+PLESK_MIN_PW_STRENGTH="Mediocre"  # VeryWeak|Weak|Mediocre|Strong|Stronger
+
 PLESK_FIREWALL=1                  # Not implemented yet
+PLESK_FIREWALL_RULESET="csr"      # csr|tortix (csr=OWASP, tortix=Atomicorp's ASL)
+
 PLESK_MODSECURITY_FIREWALL=1      # Not implemented yet
+
 PLESK_FAIL2BAN=1
 PLESK_FAIL2BAN_BAN_PERIOD=1800
 PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800
 PLESK_FAIL2BAN_BAN_MAX_ENTRIES=3
-PLESK_BRANDING_CSS=1              # Not implemented yet
-PLESK_EXTENSIONS_DEPLOYMENT=1
-PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
-PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"

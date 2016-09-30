@@ -55,6 +55,7 @@ if [[ "${#DISTRO}" > 0 && $DISTRO != 0 ]]; then
 		apt-get -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
 	elif [[ $DISTRO =~ "centos" ]]; then
+		yum -y install epel-release
 		yum -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
 	else
@@ -98,24 +99,44 @@ else
 	syslogger "INFO" "Skipped Import of Scripts (scripts/)..";
 fi
 
-printf "\n###################################\n#     Install Plesk Extensions    #\n###################################\n";
-if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; then
-  for ext in "${PLESK_EXTENSIONS[@]}"
-  do
-    printf "Deployment of ${ext}:\n";
-    if [[ $ext =~ ".zip" ]]; then
-      plesk bin extension --upgrade $ext; echo;
-    elif [[ $ext =~ "http://" || $ext =~ "https://" ]]; then
-      plesk bin extension --upgrade-url $ext; echo;
-    fi
-  done
-	syslogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
+printf "\n###################################\n# Plesk Interface & System Prefs  #\n###################################\n";
+# Plesk Localization
+if [[ $PLESK_LOCALE != 0 ]]; then
+	printf "Deploy Plesk Localization.. "; plesk bin server_pref --set-default -locale $PLESK_LOCALE; echo;
+fi
+# Plesk AutoUpdates
+if [[ $PLESK_AUTOUPDATES == 1 ]]; then
+	printf "Activate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates true; echo;
 else
-  syslogger "INFO" "No Extension Deployment specified or is deactivated (Please keep in mind that the Deployment isn't able to remove extensions), skip..";
+	printf "Deactivate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates false; echo;
+fi
+# Plesk AutoUpdates Third Party
+fi [[ $PLESK_AUTOUPDATES_THIRD_PARTY == 1 ]]; then
+	printf "Activate Plesk AutoUpdates Third Party.. "; plesk bin server_pref -u -autoupdates-third-party true; echo;
+else
+	printf "Deactivate Plesk AutoUpdates Third Party..  "; plesk bin server_pref -u -autoupdates-third-party false; echo;
+fi
+# Plesk Min Password Strength
+if [[ $PLESK_MIN_PW_STRENGTH != 0 ]]; then
+	printf "Deploy Plesk Min Password Strength.. "; plesk bin server_pref -u -min_password_strength $PLESK_MIN_PW_STRENGTH; echo;
+fi
+# Plesk Force DB Prefix
+if [[ $PLESK_DB_FORCE_PREFIX == 1 ]]; then
+	printf "Activate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix true; echo;
+else
+	printf "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix fakse; echo;
 fi
 
-printf "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
+syslogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
 
+printf "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
+if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
+	printf "Activate Web Application Firewall (ModSecurity) with Ruleset.. ";
+	plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET;
+else
+	printf "Deactivate Web Application Firewall (ModSecurity).. ";
+	plesk bin server_pref -waf-rule-engine off
+fi
 
 printf "\n###################################\n#          Plesk Firewall         #\n###################################\n";
 
@@ -131,19 +152,39 @@ if [[ $PLESK_FAIL2BAN == 1 ]]; then
   printf "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot; echo;
   printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap; echo;
   printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde; echo;
-  #printf "plesk-modsecurity.. ";   plesk bin ip_ban --enable-jails plesk-modsecurity; echo; # Only possible if ModSecurity is activated
+	if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
+  	printf "plesk-modsecurity.. ";   plesk bin ip_ban --enable-jails plesk-modsecurity; echo;
+	fi
   printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel; echo;
   printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix; echo;
   printf "plesk-proftpd.. ";       plesk bin ip_ban --enable-jails plesk-proftpd; echo;
   printf "plesk-wordpress.. ";     plesk bin ip_ban --enable-jails plesk-wordpress; echo;
   printf "recidive.. ";            plesk bin ip_ban --enable-jails recidive; echo;
   printf "ssh.. ";                 plesk bin ip_ban --enable-jails ssh; echo;
+	syslogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>installed/activated).";
 else
   printf "Deactivating Fail2Ban:\n";
   plesk bin ip_ban --disable
+	syslogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>deactivated).";
 fi
 
-syslogger "DONE" "Finished Deployment of Plesk Fail2Ban.";
+printf "\n###################################\n#     Install Plesk Extensions    #\n###################################\n";
+if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; then
+  for ext in "${PLESK_EXTENSIONS[@]}"
+  do
+    printf "Deployment of ${ext}:\n";
+    if [[ $ext =~ ".zip" ]]; then
+      plesk bin extension --upgrade $ext; echo;
+    elif [[ $ext =~ "http://" || $ext =~ "https://" ]]; then
+      plesk bin extension --upgrade-url $ext; echo;
+    fi
+  done
+	syslogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
+	printf "(please keep in mind that the Deployment isn't able to remove extensions)\n";
+else
+  syslogger "INFO" "No Plesk Extension Deployment specified or it's deactivated, skip..";
+	printf "(please keep in mind that the Deployment isn't able to remove extensions)\n";
+fi
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
 syslogger "DONE" "The Plesk Deployer has finished your deployment.";
