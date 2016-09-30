@@ -1,23 +1,36 @@
 # GLOBAL CONFIGS & SCRIPTS
-CONFIGS_DEFAULT=1   # deploy configs/default
-CONFIGS_CUSTOM=1    # deploy configs/custom
-SCRIPTS_DEFAULT=1   # deploy scripts/default
-SCRIPTS_CUSTOM=1    # deploy scripts/custom
+CONFIGS_DEFAULT=1       # deploy configs/default
+CONFIGS_CUSTOM=1        # deploy configs/custom
+SCRIPTS_DEFAULT=1       # deploy scripts/default
+SCRIPTS_CUSTOM=1        # deploy scripts/custom
+
+# PRE-DEPLOYMENT
+PRE_DEPLOYMENT=0        # Your own shell-script / command before the Deployment starts / initializes
+                        # (e.g. /root/bin/prepare-something.sh)
+                        # Not implemented yet
 
 # LINUX
 LINUX_PACKAGES="htop nano"
 
 # WEBSERVER CONFIGS
+NGINX_INSTALL=1
 NGINX_GZIP=1
 
 # PHP CONFIGS
-PHP_IONCUBE=1                     # Not implemented yet
+PHP70_INSTALL=1                               # Not implemented yet
+PHP56_INSTALL=1                               # Not implemented yet
+PHP55_INSTALL=0                               # Not implemented yet
+PHP54_INSTALL=0                               # Not implemented yet
+PHP_IONCUBE=1                                 # Not implemented yet
 
 # PLESK - GENERAL SETTINGS
-PLESK_LOCALE="de-DE"              # Or en-US, en-GB, etc.
+PLESK_LOCALE="de-DE"                          # Or en-US (pre-installed), en-GB, etc.
 PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
-PLESK_BRANDING_CSS=1              # Not implemented yet
+PLESK_BRANDING_CSS=1                          # Not implemented yet
+
+# PLESK - OTHER COMPONENTS
+PLESK_COMPONENTS_SERVICE_HEALTH_MONITOR=0     # Not implemented yet
 
 # PLESK - EXTENSIONS
 PLESK_EXTENSIONS_DEPLOYMENT=1
@@ -25,13 +38,10 @@ PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
 
 # PLESK - SECURITY
-PLESK_MIN_PW_STRENGTH="Mediocre"  # VeryWeak|Weak|Mediocre|Strong|Stronger
-
-PLESK_FIREWALL=1                  # Not implemented yet
-PLESK_FIREWALL_RULESET="csr"      # csr|tortix (csr=OWASP, tortix=Atomicorp's ASL)
-
-PLESK_MODSECURITY_FIREWALL=1      # Not implemented yet
-
+PLESK_MIN_PW_STRENGTH="Mediocre"              # VeryWeak|Weak|Mediocre|Strong|Stronger
+PLESK_FIREWALL=1                              # Not implemented yet
+PLESK_MODSECURITY_FIREWALL=1
+PLESK_MODSECURITY_FIREWALL_RULESET="csr"      # csr|tortix (csr=OWASP, tortix=Atomicorp's ASL)
 PLESK_FAIL2BAN=1
 PLESK_FAIL2BAN_BAN_PERIOD=1800
 PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800

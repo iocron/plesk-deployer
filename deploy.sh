@@ -59,7 +59,7 @@ if [[ "${#DISTRO}" > 0 && $DISTRO != 0 ]]; then
 		yum -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
 	else
-		syslogger "WARNING" "Wasn't able to determine your Distro Type (e.g. CentOS, Ubuntu), therefor no linux packages have been installed.";
+		syslogger "WARNING" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefor no linux packages have been installed.";
 	fi
 fi
 
@@ -187,4 +187,4 @@ else
 fi
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
-syslogger "DONE" "The Plesk Deployer has finished your deployment.";
+syslogger "DONE" "The Plesk Deployer has finished your deployment. Please check the output from above to be sure that everything went fine.";
