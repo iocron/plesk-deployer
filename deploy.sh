@@ -3,18 +3,24 @@
 ### Bash Exit if a command exits with a non-zero status ###
 set -e
 
-### Include Global Config ###
+### Include Global Configs ###
 TMP_BF=$(dirname "$BASH_SOURCE");
+if [[ -f $TMP_BF/system.cnf ]]; then
+	source $TMP_BF/system.cnf;
+else
+	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file system.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
+fi
+
 if [[ -f $TMP_BF/config.cnf ]]; then
 	source $TMP_BF/config.cnf;
 else
-	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure a configuration file (config.cnf) is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
+	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file config.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
 fi
 
 ### Include Library ###
 source $LIB_PATH/functions.sh
 
-### Check Requirements ###
+### Check System Requirements ###
 if [[ $EUID != 0 ]]; then
 	syslogger "ERROR" "Please run this script as root.";
 fi
