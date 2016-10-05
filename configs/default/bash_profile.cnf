@@ -1,10 +1,10 @@
-### BASH_PROFILE_DEFAULT ###
-# (DON'T CHANGE THE COMMENT ABOVE OR THE DEPLOYMENT WILL BREAK)
+### PLESK_DEPLOYER ###
+# (DON'T CHANGE THE COMMENT ABOVE OR THE ONE AT THE BOTTOM OTHERWISE THE DEPLOYMENT WILL BREAK)
 
 # Custom Variables
 logs=/var/log/
 projects=/var/www/vhosts/
-PATH=$PATH:~/bin
+PATH=$PATH:~/scripts
 
 # Custom Aliases / Commands
 alias plesk-nginx-reload='bash ~/bin/plesk-nginx-reload.sh'
@@ -16,4 +16,4 @@ alias php55='/opt/plesk/php/5.5/bin/php -c "/opt/plesk/php/5.5/etc/php.ini"'
 alias php54='/opt/plesk/php/5.4/bin/php -c "/opt/plesk/php/5.4/etc/php.ini"'
 alias php53='/opt/plesk/php/5.3/bin/php -c "/opt/plesk/php/5.3/etc/php.ini"'
 
-### BASH_PROFILE_DEFAULT ###
+### PLESK_DEPLOYER ###

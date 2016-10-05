@@ -17,7 +17,7 @@ else
 	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file config.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
 fi
 
-### Include Library ###
+### Include Libraries ###
 source $LIB_PATH/functions.sh
 
 ### Check System Requirements ###
@@ -32,10 +32,29 @@ fi
 printf "\n##################################\n#     Deployment in Progress     #\n##################################\n";
 printf "Deployment Init..\n";
 
+printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
+if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
+	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
+		apt-get -y install $LINUX_PACKAGES
+		LINUX_INSTALL_PCKGS=1
+	elif [[ $LINUX_DISTRO =~ "centos" ]]; then
+		yum -y install epel-release
+		yum -y install $LINUX_PACKAGES
+		LINUX_INSTALL_PCKGS=1
+	else
+		syslogger "WARNING" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore no linux packages have been installed.";
+	fi
+fi
+
+if [[ $LINUX_INSTALL_PCKGS == 1 ]]; then
+	syslogger "DONE" "Installed the additional linux packages $LINUX_PACKAGES (please see the install process above to check if everything has been installed successfully)";
+else
+	syslogger "INFO" "No Linux Packages Selected / Installed, skip..";
+fi
+
 printf "\n###################################\n#    Custom Bash Profiles Init    #\n###################################\n";
 if [[ -f ~/.bash_profile ]]; then
-	sed -i -e '/### BASH_PROFILE_DEFAULT ###/,/### BASH_PROFILE_DEFAULT ###/d' ~/.bash_profile
-	sed -i -e '/### BASH_PROFILE_CUSTOM ###/,/### BASH_PROFILE_CUSTOM ###/d' ~/.bash_profile
+	sed -i -e '/### PLESK_DEPLOYER ###/,/### PLESK_DEPLOYER ###/d' ~/.bash_profile
 	syslogger "INFO" "Old bash_profile Deployments have been removed (if any available).";
 else
 	syslogger "WARNING" "File ~/.bash_profile wasn't found on your system. A new ~/.bash_profile will be created from your config (as long as CONFIGS_DEFAULT or CONFIGS_CUSTOM is set).";
@@ -47,26 +66,6 @@ if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
 	syslogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
 	syslogger "INFO" "No Bash Profile Configuration in your config.cnf selected, skip..";
-fi
-
-printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
-if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
-	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
-		apt-get -y install $LINUX_PACKAGES
-		LINUX_INSTALL_PCKGS=1
-	elif [[ $LINUX_DISTRO =~ "centos" ]]; then
-		yum -y install epel-release
-		yum -y install $LINUX_PACKAGES
-		LINUX_INSTALL_PCKGS=1
-	else
-		syslogger "WARNING" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefor no linux packages have been installed.";
-	fi
-fi
-
-if [[ $LINUX_INSTALL_PCKGS == 1 ]]; then
-	syslogger "DONE" "Installed the additional linux packages $LINUX_PACKAGES (please see the install process above to check if everything has been installed successfully)";
-else
-	syslogger "INFO" "No Linux Packages Selected / Installed, skip..";
 fi
 
 printf "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
@@ -125,20 +124,22 @@ if [[ $PHP53_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php5.3
 fi
 
-printf "\n###################################\n# Import Default / Custom Scripts #\n###################################\n";
-if [[ ! -d ~/bin ]]; then mkdir ~/bin; fi
+printf "\n###################################\n# Export Default / Custom Scripts #\n###################################\n";
+if [[ ! -d $SCRIPTS_EXPORT_PATH ]]; then mkdir $SCRIPTS_EXPORT_PATH; fi
 
 if [[ $SCRIPTS_DEFAULT == 1 || $SCRIPTS_CUSTOM == 1 ]]; then
+	find $SCRIPTS_EXPORT_PATH -type f -exec rm -f {} \;
+
 	if [[ $SCRIPTS_DEFAULT == 1 ]]; then
-		find "$SCRIPTPATH/scripts/default/" -type f -exec /bin/cp -f {} ~/bin \;
+		find "$SCRIPTPATH/scripts/default/" -type f -exec /bin/cp -f {} $SCRIPTS_EXPORT_PATH \;
 	fi
 
 	if [[ $SCRIPTS_CUSTOM == 1 ]]; then
-		find "$SCRIPTPATH/scripts/custom/" -type f -exec /bin/cp -f {} ~/bin \;
+		find "$SCRIPTPATH/scripts/custom/" -type f -exec /bin/cp -f {} $SCRIPTS_EXPORT_PATH \;
 	fi
 
-	chmod 700 ~/bin/*
-	syslogger "DONE" "All configured scripts have been copied to ~/bin, you can call a script with yourscript.sh from anywhere.";
+	find $SCRIPTS_EXPORT_PATH -type f -exec chmod 700 {} \;
+	syslogger "DONE" "All configured scripts have been copied to $SCRIPTS_EXPORT_PATH, you can call a script with yourscript.sh from anywhere.";
 else
 	syslogger "INFO" "Skipped Import of Scripts (scripts/)..";
 fi
