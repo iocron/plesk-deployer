@@ -40,11 +40,11 @@ function syslogger(){
 }
 
 function sysloggerCollector(){
-
+	echo "";
 }
 
 function mailAdmin(){
-	
+	echo "";
 }
 
 ### currentTime() ###
