@@ -23,8 +23,8 @@ function getConfig(){
 # Usage: syslogger <type> <message>
 # Usage Example: syslogger "ERROR" "This is a Error Message."
 # Parameter: <type> Can be ERROR, WARNING, INFO or DONE
-# Parameter: <message> Just a normal Text to Inform the User
-# Meaning: Logs or Outputs/Returns specific Messages (and outputs them to a file if it is a error)
+# Parameter: <message> Just a normal Text to inform the User that something happened
+# Meaning: Outputs/Returns specific Messages (and outputs them to a file if it's a "ERROR" type)
 function syslogger(){
 	if [[ ! ${2+x} ]]; then
 		printf "${RED}${MSG_ERROR} syslogger() Parameters missing. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Parameters missing.\n" >> $ERROR_LOG; exit 1;
@@ -37,6 +37,14 @@ function syslogger(){
 		"DONE") printf "\n${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
 		*) printf "\n${RED}${MSG_ERROR} syslogger() Wrong parameter <type> given. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Wrong type given. \n" >> $ERROR_LOG; exit 1;;
 	esac
+}
+
+function sysloggerCollector(){
+
+}
+
+function mailAdmin(){
+	
 }
 
 ### currentTime() ###

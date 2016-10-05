@@ -69,6 +69,17 @@ else
 	syslogger "INFO" "No Linux Packages Selected / Installed, skip..";
 fi
 
+printf "\n###################################\n#   Install Plesk Nginx Package   #\n###################################\n";
+if [[ $NGINX_INSTALL == 1 ]]; then
+	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
+	plesk installer --select-product-id plesk --select-release-current --install-component nginx
+fi
+
+printf "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
+if [[ $PHP70_INSTALL == 1 ]]; then
+
+fi
+
 printf "\n###################################\n#     Additional Nginx Conf's     #\n###################################\n";
 getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
 echo;
@@ -138,7 +149,7 @@ else
 	plesk bin server_pref -waf-rule-engine off
 fi
 
-printf "\n###################################\n#          Plesk Firewall         #\n###################################\n";
+printf "\n###################################\n#         Plesk Firewall          #\n###################################\n";
 
 
 printf "\n###################################\n#    Plesk Fail2Ban Deployment    #\n###################################\n";
