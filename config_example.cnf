@@ -12,16 +12,17 @@ SCRIPTS_CUSTOM=1        # deploy scripts/custom
 
 # LINUX
 LINUX_PACKAGES="htop nano"
+SSH_PORT=47321
 
 # WEBSERVER CONFIGS
-NGINX_INSTALL=1                               # Not implemented yet
+NGINX_INSTALL=1
 NGINX_GZIP=1
 
 # PHP CONFIGS
-PHP70_INSTALL=1                               # Not implemented yet
-PHP56_INSTALL=1                               # Not implemented yet
-PHP55_INSTALL=0                               # Not implemented yet
-PHP54_INSTALL=0                               # Not implemented yet
+PHP70_INSTALL=1
+PHP56_INSTALL=1
+PHP55_INSTALL=0
+PHP54_INSTALL=0
 PHP_IONCUBE=1                                 # Not implemented yet
 
 # PLESK - GENERAL SETTINGS

@@ -77,7 +77,16 @@ fi
 
 printf "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
 if [[ $PHP70_INSTALL == 1 ]]; then
-
+	plesk installer --select-product-id plesk --select-release-current --install-component php7.0
+fi
+if [[ $PHP56_INSTALL == 1 ]]; then
+	plesk installer --select-product-id plesk --select-release-current --install-component php5.6
+fi
+if [[ $PHP55_INSTALL == 1 ]]; then
+	plesk installer --select-product-id plesk --select-release-current --install-component php5.5
+fi
+if [[ $PHP54_INSTALL == 1 ]]; then
+	plesk installer --select-product-id plesk --select-release-current --install-component php5.4
 fi
 
 printf "\n###################################\n#     Additional Nginx Conf's     #\n###################################\n";
