@@ -50,11 +50,11 @@ else
 fi
 
 printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
-if [[ "${#DISTRO}" > 0 && $DISTRO != 0 ]]; then
-	if [[ $DISTRO =~ "Ubuntu" || $DISTRO =~ "Debian" ]]; then
+if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
+	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
 		apt-get -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
-	elif [[ $DISTRO =~ "centos" ]]; then
+	elif [[ $LINUX_DISTRO =~ "centos" ]]; then
 		yum -y install epel-release
 		yum -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
@@ -88,18 +88,39 @@ else
 fi
 
 printf "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
+# PHP 7.0
 if [[ $PHP70_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php7.0
+
+	# PHP 7.0 Ioncube Installation
+	if [[ $PHP70_IONCUBE == 1 ]]; then
+		if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
+			if [[ ! -d /opt/plesk/php/7.0/lib ]]; then syslogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi
+			cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/
+			printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader_lin_7.0.so" > /opt/plesk/php/7.0/etc/php.d/ioncube.ini
+		elif [[ $LINUX_MACHINE_TYPE == "x86_64" ]]; then
+			if [[ ! -d /opt/plesk/php/7.0/lib64 ]]; then syslogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib64/ does not exist."; fi
+			cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/
+			printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader_lin_7.0.so" > /opt/plesk/php/7.0/etc/php.d/ioncube.ini
+		else
+			syslogger "ERROR" "The Installation of the Ioncube Loader failed. The System was not able to determine your Linux Machine Type (x86 or x86_64).";
+		fi
+		plesk bin php_handler --reread
+	fi
 fi
+# PHP 5.6
 if [[ $PHP56_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php5.6
 fi
+# PHP 5.5
 if [[ $PHP55_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php5.5
 fi
+# PHP 5.4
 if [[ $PHP54_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php5.4
 fi
+# PHP 5.3
 if [[ $PHP53_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php5.3
 fi

@@ -9,7 +9,11 @@ PATH=$PATH:~/bin
 # Custom Aliases / Commands
 alias plesk-nginx-reload='bash ~/bin/plesk-nginx-reload.sh'
 alias find_str='bash ~/bin/find_str.sh'
+
+alias php70='/opt/plesk/php/7.0/bin/php -c "/opt/plesk/php/7.0/etc/php.ini"'
 alias php56='/opt/plesk/php/5.6/bin/php -c "/opt/plesk/php/5.6/etc/php.ini"'
-alias php7='/opt/plesk/php/7.0/bin/php -c "/opt/plesk/php/7.0/etc/php.ini"'
+alias php55='/opt/plesk/php/5.5/bin/php -c "/opt/plesk/php/5.5/etc/php.ini"'
+alias php54='/opt/plesk/php/5.4/bin/php -c "/opt/plesk/php/5.4/etc/php.ini"'
+alias php53='/opt/plesk/php/5.3/bin/php -c "/opt/plesk/php/5.3/etc/php.ini"'
 
 ### BASH_PROFILE_DEFAULT ###

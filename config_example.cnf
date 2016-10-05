@@ -20,11 +20,11 @@ NGINX_GZIP=1
 
 # PHP
 PHP70_INSTALL=1
+PHP70_IONCUBE=1                               # Not implemented yet
 PHP56_INSTALL=1
 PHP55_INSTALL=0
 PHP54_INSTALL=0
 PHP53_INSTALL=0
-PHP_IONCUBE=1                                 # Not implemented yet
 
 # PLESK - GENERAL SETTINGS
 PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, etc.
