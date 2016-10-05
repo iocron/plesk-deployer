@@ -1,28 +1,29 @@
-# PLESK DEPLOYER SETTINGS
+# PLESK DEPLOYER - SETTINGS
 PD_ADMIN_MAIL=admin123@groundstack.de           # Not implemented yet (for logging / sending log emails, otherwise set to "0")
 PD_PRE_DEPLOYMENT=0                             # Your own shell-script / command before the Deployment starts / initializes
                                                 # (e.g. /root/bin/prepare-something.sh)
                                                 # Not implemented yet
 
-# GLOBAL CONFIGS & SCRIPTS
+# PLESK DEPLOYER - CONFIGS & SCRIPTS
 CONFIGS_DEFAULT=1       # deploy configs/default
 CONFIGS_CUSTOM=1        # deploy configs/custom
 SCRIPTS_DEFAULT=1       # deploy scripts/default
 SCRIPTS_CUSTOM=1        # deploy scripts/custom
 
 # LINUX
-LINUX_PACKAGES="htop nano"
-SSH_PORT=47321
+LINUX_PACKAGES="htop nano git"
+SSH_PORT=22
 
-# WEBSERVER CONFIGS
+# NGINX
 NGINX_INSTALL=1
 NGINX_GZIP=1
 
-# PHP CONFIGS
+# PHP
 PHP70_INSTALL=1
 PHP56_INSTALL=1
 PHP55_INSTALL=0
 PHP54_INSTALL=0
+PHP53_INSTALL=0
 PHP_IONCUBE=1                                 # Not implemented yet
 
 # PLESK - GENERAL SETTINGS
@@ -31,13 +32,14 @@ PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
 PLESK_BRANDING_CSS=1                          # Not implemented yet
 
-# PLESK - OTHER COMPONENTS
-PLESK_COMPONENTS_SERVICE_HEALTH_MONITOR=0     # Not implemented yet
-
 # PLESK - EXTENSIONS
 PLESK_EXTENSIONS_DEPLOYMENT=1
 PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
+# For more packages see: https://ext.plesk.com/packages
+
+# PLESK - OTHER COMPONENTS
+PLESK_COMPONENTS_SERVICE_HEALTH_MONITOR=0     # Not implemented yet
 
 # PLESK - SECURITY
 PLESK_MIN_PW_STRENGTH="Mediocre"              # VeryWeak|Weak|Mediocre|Strong|Stronger

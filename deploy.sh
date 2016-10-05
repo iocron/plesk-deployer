@@ -69,10 +69,22 @@ else
 	syslogger "INFO" "No Linux Packages Selected / Installed, skip..";
 fi
 
-printf "\n###################################\n#   Install Plesk Nginx Package   #\n###################################\n";
+printf "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
 if [[ $NGINX_INSTALL == 1 ]]; then
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
 	plesk installer --select-product-id plesk --select-release-current --install-component nginx
+fi
+
+printf "\n###################################\n#        Plesk Nginx Conf's       #\n###################################\n";
+getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
+echo;
+
+if [[ $NGINX_GZIP == 1 ]]; then
+	rm -f /etc/nginx/conf.d/gzip.conf
+	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf
+	syslogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
+else
+	syslogger "INFO" "Skipped nginx gzip configuration..";
 fi
 
 printf "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
@@ -88,17 +100,8 @@ fi
 if [[ $PHP54_INSTALL == 1 ]]; then
 	plesk installer --select-product-id plesk --select-release-current --install-component php5.4
 fi
-
-printf "\n###################################\n#     Additional Nginx Conf's     #\n###################################\n";
-getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
-echo;
-
-if [[ $NGINX_GZIP == 1 ]]; then
-	rm -f /etc/nginx/conf.d/gzip.conf
-	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf
-	syslogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
-else
-	syslogger "INFO" "Skipped nginx gzip configuration..";
+if [[ $PHP53_INSTALL == 1 ]]; then
+	plesk installer --select-product-id plesk --select-release-current --install-component php5.3
 fi
 
 printf "\n###################################\n# Import Default / Custom Scripts #\n###################################\n";
@@ -152,7 +155,7 @@ syslogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
 printf "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
 if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 	printf "Activate Web Application Firewall (ModSecurity) with Ruleset.. ";
-	plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET;
+	plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET
 else
 	printf "Deactivate Web Application Firewall (ModSecurity).. ";
 	plesk bin server_pref -waf-rule-engine off
@@ -161,7 +164,7 @@ fi
 printf "\n###################################\n#         Plesk Firewall          #\n###################################\n";
 
 
-printf "\n###################################\n#    Plesk Fail2Ban Deployment    #\n###################################\n";
+printf "\n###################################\n#         Plesk Fail2Ban          #\n###################################\n";
 if [[ $PLESK_FAIL2BAN == 1 ]]; then
   printf "Activating Fail2Ban:\n";
 	plesk bin ip_ban --enable; echo;
@@ -188,7 +191,7 @@ else
 	syslogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>deactivated).";
 fi
 
-printf "\n###################################\n#     Install Plesk Extensions    #\n###################################\n";
+printf "\n###################################\n#         Plesk Extensions        #\n###################################\n";
 if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; then
   for ext in "${PLESK_EXTENSIONS[@]}"
   do
