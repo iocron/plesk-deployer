@@ -94,15 +94,15 @@ TMP_PHP_DEPLOYMENT=0
 
 # PHP Deployment Installation
 if [[ $PHP_VERSIONS && ${#PHP_VERSIONS[@]} -ne 0 ]]; then
-  for phpv in "${PHP_VERSIONS[@]}"
-  do
+	for phpv in "${PHP_VERSIONS[@]}"
+	do
 		if [[ ! -f /opt/plesk/php/${phpv}/etc/php.ini ]]; then
-    	syslogger "INFO" "Installation of PHP ${phpv}:";
+			syslogger "INFO" "Installation of PHP ${phpv}:";
 			plesk installer --select-product-id plesk --select-release-current --install-component php${phpv};
 			syslogger "DONE" "Installation of PHP ${phpv} is finished (please check if there are any possible errors above).";
 			TMP_PHP_DEPLOYMENT=1;
 		fi
-  done
+	done
 fi
 
 # PHP Deployment Uninstallation
@@ -224,28 +224,28 @@ printf "\n###################################\n#         Plesk Firewall         
 
 printf "\n###################################\n#         Plesk Fail2Ban          #\n###################################\n";
 if [[ $PLESK_FAIL2BAN == 1 ]]; then
-  printf "Activating Fail2Ban:\n";
+	printf "Activating Fail2Ban:\n";
 	plesk bin ip_ban --enable; echo;
-  printf "Applying Ban Settings:\n";
-  plesk bin ip_ban --update -ban_period $PLESK_FAIL2BAN_BAN_PERIOD -ban_time_window $PLESK_FAIL2BAN_BAN_TIME_WINDOW -max_retries $PLESK_FAIL2BAN_BAN_MAX_ENTRIES; echo;
-  printf "Applying Jails:\n";
-  printf "plesk-apache.. ";        plesk bin ip_ban --enable-jails plesk-apache; echo;
-  printf "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot; echo;
-  printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap; echo;
-  printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde; echo;
+	printf "Applying Ban Settings:\n";
+	plesk bin ip_ban --update -ban_period $PLESK_FAIL2BAN_BAN_PERIOD -ban_time_window $PLESK_FAIL2BAN_BAN_TIME_WINDOW -max_retries $PLESK_FAIL2BAN_BAN_MAX_ENTRIES; echo;
+	printf "Applying Jails:\n";
+	printf "plesk-apache.. ";        plesk bin ip_ban --enable-jails plesk-apache; echo;
+	printf "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot; echo;
+	printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap; echo;
+	printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde; echo;
 	if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
-  	printf "plesk-modsecurity.. ";   plesk bin ip_ban --enable-jails plesk-modsecurity; echo;
+		printf "plesk-modsecurity.. ";   plesk bin ip_ban --enable-jails plesk-modsecurity; echo;
 	fi
-  printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel; echo;
-  printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix; echo;
-  printf "plesk-proftpd.. ";       plesk bin ip_ban --enable-jails plesk-proftpd; echo;
-  printf "plesk-wordpress.. ";     plesk bin ip_ban --enable-jails plesk-wordpress; echo;
-  printf "recidive.. ";            plesk bin ip_ban --enable-jails recidive; echo;
-  printf "ssh.. ";                 plesk bin ip_ban --enable-jails ssh; echo;
+	printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel; echo;
+	printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix; echo;
+	printf "plesk-proftpd.. ";       plesk bin ip_ban --enable-jails plesk-proftpd; echo;
+	printf "plesk-wordpress.. ";     plesk bin ip_ban --enable-jails plesk-wordpress; echo;
+	printf "recidive.. ";            plesk bin ip_ban --enable-jails recidive; echo;
+	printf "ssh.. ";                 plesk bin ip_ban --enable-jails ssh; echo;
 	syslogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>installed/activated).";
 else
-  printf "Deactivating Fail2Ban:\n";
-  plesk bin ip_ban --disable
+	printf "Deactivating Fail2Ban:\n";
+	plesk bin ip_ban --disable
 	syslogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>deactivated).";
 fi
 
