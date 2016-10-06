@@ -1,6 +1,6 @@
 ### getConfig() - Usage: getConfig <configFileName> ###
 # Usage: getConfig <configFileName>
-# Usage Example: getConfig nginx_gzip.cnf
+# Example: getConfig nginx_gzip.cnf
 # Parameter: <configFileName> Can be any name that is available in configs/default or configs/custom
 # Meaning: Outputs/Returns the Path to the right config file depending on the config.cnf settings
 function getConfig(){
@@ -21,7 +21,7 @@ function getConfig(){
 
 ### syslogger() ###
 # Usage: syslogger <type> <message>
-# Usage Example: syslogger "ERROR" "This is a Error Message."
+# Example: syslogger "ERROR" "This is a Error Message."
 # Parameter: <type> Can be ERROR, WARNING, INFO or DONE
 # Parameter: <message> Just a normal Text to inform the User that something happened
 # Meaning: Outputs/Returns specific Messages (and outputs them to a file if it's a "ERROR" type)
@@ -47,6 +47,10 @@ function mailAdmin(){
 	echo "";
 }
 
+### arrayDiff() ###
+# Usage: arrayDiff <array1> <array2>
+# Example: array3=$($(arrayDiff array1[@] array2[@]))	# Saves the Difference / Result as a Array
+# Meaning: Compares two arrays to each other and returns the Difference (diff)
 function arrayDiff(){
 	awk 'BEGIN{RS=ORS=" "}
        {NR==FNR?a[$0]++:a[$0]--}

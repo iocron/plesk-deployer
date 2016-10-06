@@ -120,7 +120,7 @@ fi
 
 # PHP Deployment Satus Message
 if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
-	syslogger "INFO" "No PHP Versions to Deploy. Your chosen PHP Versions are: ${PHP_VERSIONS}. Skip..";
+	syslogger "INFO" "No PHP Versions to Deploy. Your chosen PHP Versions are (if any): ${PHP_VERSIONS[@]}. Skip..";
 fi
 
 printf "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
