@@ -205,7 +205,7 @@ fi
 if [[ $PLESK_DB_FORCE_PREFIX == 1 ]]; then
 	printf "Activate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix true; echo;
 else
-	printf "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix fakse; echo;
+	printf "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix false; echo;
 fi
 
 syslogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
