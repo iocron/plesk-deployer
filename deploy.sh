@@ -125,19 +125,39 @@ fi
 
 printf "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
 # PHP 7.0 Ioncube Deployment
-if [[ $PHP70_IONCUBE == 1 ]]; then
+if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
+		# Linux x86 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib ]]; then syslogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi
-		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/
-		printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader_lin_7.0.so" > /opt/plesk/php/7.0/etc/php.d/ioncube.ini
+		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
+		printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so" > /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
+		chmod 755 /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
+		plesk bin php_handler --reread
+		syslogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
+
 	elif [[ $LINUX_MACHINE_TYPE == "x86_64" ]]; then
+		# Linux x86_64 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib64 ]]; then syslogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib64/ does not exist."; fi
-		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/
-		printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader_lin_7.0.so" > /opt/plesk/php/7.0/etc/php.d/ioncube.ini
+		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
+		printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so" > /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
+		chmod 755 /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
+		plesk bin php_handler --reread
+		syslogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
 	else
-		syslogger "ERROR" "The Installation of the Ioncube Loader failed. The System was not able to determine your Linux Machine Type (x86 or x86_64).";
+		# Linux System Type not found
+		syslogger "ERROR" "The Installation of the PHP 7.0 Ioncube Loader failed. The System was not able to determine your Linux Machine Type (x86 or x86_64).";
 	fi
+elif [[ ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
+	# PHP 7.0 not installed on this system
+	syslogger "WARNING" "PHP7 is not installed on this system, therefore a Ioncube Deployment for PHP7 is not possible.";
+elif [[ $PHP70_IONCUBE == 0 && -f /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini ]]; then
+	# Uninstall the PHP 7.0 Ioncube Loader
+	rm -f /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
 	plesk bin php_handler --reread
+	syslogger "DONE" "The Uninstallation of the PHP 7.0 Ioncube Loader was successful.";
+else
+	# No PHP 7.0 Deploymet specified
+	syslogger "INFO" "No Deployment for the PHP 7.0 Ioncube Loader specified, skip..";
 fi
 
 printf "\n###################################\n# Export Default / Custom Scripts #\n###################################\n";
@@ -243,9 +263,9 @@ if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; the
 	syslogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
 	printf "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 else
-  syslogger "INFO" "No Plesk Extension Deployment specified or it's deactivated, skip..";
+  syslogger "INFO" "No Plesk Extension Deployment specified or is deactivated, skip..";
 	printf "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 fi
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
-syslogger "DONE" "The Plesk Deployer has finished your deployment. Please check the output from above to be sure that everything went fine.";
+syslogger "DONE" "The Plesk Deployer has finished your Deployment. Please check the output from above to be sure that everything went fine. Enjoy your newly and freshly configured Server :)";

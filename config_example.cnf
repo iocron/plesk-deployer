@@ -3,12 +3,15 @@ PD_ADMIN_MAIL=admin123@groundstack.de           # Not implemented yet (for loggi
 PD_PRE_DEPLOYMENT=0                             # Your own shell-script / command before the Deployment starts / initializes
                                                 # (e.g. /root/bin/prepare-something.sh)
                                                 # Not implemented yet
+PD_AFT_DEPLOYMENT=0
 
 # PLESK DEPLOYER - CONFIGS & SCRIPTS
-CONFIGS_DEFAULT=1       # deploy configs/default
-CONFIGS_CUSTOM=1        # deploy configs/custom
-SCRIPTS_DEFAULT=1       # deploy scripts/default
-SCRIPTS_CUSTOM=1        # deploy scripts/custom
+CONFIGS_DEFAULT=1             # deploy configs/default
+CONFIGS_CUSTOM=1              # deploy configs/custom
+SCRIPTS_DEFAULT=1             # deploy scripts/default
+SCRIPTS_CUSTOM=1              # deploy scripts/custom
+SCRIPTS_EXPORT_PATH=~/scripts # If you change this value, then extend your PATH Variable in configs/custom/bash_profile.cnf accordingly
+                              # (if you have the directory ~/scripts on your server already, then change this path!)
 
 # LINUX
 LINUX_PACKAGES="htop nano git"
@@ -19,12 +22,8 @@ NGINX_INSTALL=1
 NGINX_GZIP=1
 
 # PHP
-PHP70_INSTALL=1
-PHP70_IONCUBE=1                               # Not implemented yet
-PHP56_INSTALL=1
-PHP55_INSTALL=0
-PHP54_INSTALL=0
-PHP53_INSTALL=0
+PHP_VERSIONS=( "7.0" "5.6" )                  # If you don't want any additional PHP Interpreters then use: PHP_VERSIONS=()
+PHP70_IONCUBE=1                               # Plesk's PHP 7 is missing ionCube, you can optionally install it with this option
 
 # PLESK - GENERAL SETTINGS
 PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, etc.
@@ -38,7 +37,7 @@ PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
 # For more packages see: https://ext.plesk.com/packages
 
-# PLESK - OTHER COMPONENTS
+# PLESK - COMPONENTS
 PLESK_COMPONENTS_SERVICE_HEALTH_MONITOR=0     # Not implemented yet
 
 # PLESK - SECURITY
