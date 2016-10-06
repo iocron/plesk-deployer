@@ -87,24 +87,44 @@ else
 fi
 
 printf "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
-# PHP 7.0 Installation
-if [[ $PHP70_INSTALL == 1 ]]; then plesk installer --select-product-id plesk --select-release-current --install-component php7.0; fi
-# PHP 5.6 Installation
-if [[ $PHP56_INSTALL == 1 ]]; then plesk installer --select-product-id plesk --select-release-current --install-component php5.6; fi
-# PHP 5.5 Installation
-if [[ $PHP55_INSTALL == 1 ]]; then plesk installer --select-product-id plesk --select-release-current --install-component php5.5; fi
-# PHP 5.4 Installation
-if [[ $PHP54_INSTALL == 1 ]]; then plesk installer --select-product-id plesk --select-release-current --install-component php5.4; fi
-# PHP 5.3 Installation
-if [[ $PHP53_INSTALL == 1 ]]; then plesk installer --select-product-id plesk --select-release-current --install-component php5.3 fi
+# PHP Deployment Variables
+PHP_VERSIONS_ALL=( "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
+PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
+TMP_PHP_DEPLOYMENT=0
 
-# PHP Packages not selected
-if [[ $PHP70_INSTALL == 0 && $PHP56_INSTALL == 0 && $PHP55_INSTALL == 0 && $PHP54_INSTALL == 0 && $PHP53_INSTALL == 0 ]]; then
-	syslogger "INFO" "No PHP Packages selected, skip..";
+# PHP Deployment Installation
+if [[ $PHP_VERSIONS && ${#PHP_VERSIONS[@]} -ne 0 ]]; then
+  for phpv in "${PHP_VERSIONS[@]}"
+  do
+		if [[ ! -f /opt/plesk/php/${phpv}/etc/php.ini ]]; then
+    	syslogger "INFO" "Installation of PHP ${phpv}:";
+			plesk installer --select-product-id plesk --select-release-current --install-component php${phpv};
+			syslogger "DONE" "Installation of PHP ${phpv} is finished (please check if there are any possible errors above).";
+			TMP_PHP_DEPLOYMENT=1;
+		fi
+  done
+fi
+
+# PHP Deployment Uninstallation
+if [[ $PHP_VERSIONS_DIFF && ${#PHP_VERSIONS_DIFF[@]} -ne 0 ]]; then
+	for phpv_delete in "${PHP_VERSIONS_DIFF[@]}"
+	do
+		if [[ -f /opt/plesk/php/${phpv_delete}/etc/php.ini ]]; then
+			syslogger "INFO" "Uninstallation of PHP ${phpv_delete}:";
+			plesk installer --select-product-id plesk --select-release-current --remove-component php${phpv_delete};
+			syslogger "DONE" "Uninstallation of PHP ${phpv_delete} is finished (please check if there are any possible errors above).";
+			TMP_PHP_DEPLOYMENT=1;
+		fi
+	done
+fi
+
+# PHP Deployment Satus Message
+if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
+	syslogger "INFO" "No PHP Versions to Deploy. Your chosen PHP Versions are: ${PHP_VERSIONS}. Skip..";
 fi
 
 printf "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
-# PHP 7.0 Ioncube Installation
+# PHP 7.0 Ioncube Deployment
 if [[ $PHP70_IONCUBE == 1 ]]; then
 	if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
 		if [[ ! -d /opt/plesk/php/7.0/lib ]]; then syslogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi

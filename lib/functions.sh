@@ -47,6 +47,12 @@ function mailAdmin(){
 	echo "";
 }
 
+function arrayDiff(){
+	awk 'BEGIN{RS=ORS=" "}
+       {NR==FNR?a[$0]++:a[$0]--}
+       END{for(k in a)if(a[k])print k}' <(echo -n "${!1}") <(echo -n "${!2}")
+}
+
 ### currentTime() ###
 # Usage: currentTime
 # Meaning: Outputs/Returns the current Time
