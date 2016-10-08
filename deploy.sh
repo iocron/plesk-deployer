@@ -280,9 +280,18 @@ else
 	printf "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 fi
 
-printf "\n###################################\n#        FTP Passive Ports        #\n###################################\n";
+printf "\n###################################\n#      ProFTPD Passive Ports      #\n###################################\n";
+printf "Deploying ProFTPD Passive Ports for ProFTPD..\n";
 if [[ $FTP_PASSIVE_PORTS != 0 ]]; then
-	printf "PassivePorts ${FTP_PASSIVE_PORTS}" > /etc/proftpd.d/passive_ports.conf;
+	if [[ -d /etc/proftpd.d/ ]]; then
+		printf "PassivePorts ${FTP_PASSIVE_PORTS}" > /etc/proftpd.d/passive_ports.conf;
+		service xinetd restart
+		syslogger "DONE" "Finished Deployment of ProFTPD Passive Ports (Portrange: ${FTP_PASSIVE_PORTS}).";
+	else
+		syslogger "ERROR" "The folder /etc/proftpd.d/ is missing, maybe ProFTPD isn't installed on your System.";
+	fi
+else
+	syslogger "INFO" "ProFTPD Passive Port Deployment is deactivated, skip..";
 fi
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
