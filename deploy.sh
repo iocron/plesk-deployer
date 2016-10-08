@@ -32,6 +32,13 @@ fi
 printf "\n###################################\n#     Deployment in Progress      #\n###################################\n";
 printf "Deployment Init..\n";
 
+printf "\n###################################\n#    Initialize Pre-Deployment    #\n###################################\n";
+if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
+	$PD_PRE_DEPLOYMENT;
+else
+	syslogger "INFO" "No Pre-Deployment set, skip..";
+fi
+
 printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
 	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
@@ -292,6 +299,13 @@ if [[ $FTP_PASSIVE_PORTS != 0 ]]; then
 	fi
 else
 	syslogger "INFO" "ProFTPD Passive Port Deployment is deactivated, skip..";
+fi
+
+printf "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";
+if [[ $PD_AFT_DEPLOYMENT != 0 && -f $PD_AFT_DEPLOYMENT ]]; then
+	$PD_AFT_DEPLOYMENT;
+else
+	syslogger "INFO" "No Aft-Deployment set, skip..";
 fi
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";

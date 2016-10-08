@@ -1,9 +1,7 @@
 # PLESK DEPLOYER - SETTINGS
 PD_ADMIN_MAIL=admin123@groundstack.de           # Not implemented yet (for logging / sending log emails, otherwise set to "0")
-PD_PRE_DEPLOYMENT=0                             # Your own shell-script / command before the Deployment starts / initializes
-                                                # (e.g. /root/bin/prepare-something.sh)
-                                                # Not implemented yet
-PD_AFT_DEPLOYMENT=0
+PD_PRE_DEPLOYMENT=0                             # Executes a custom shell-script (absolute path to file) before the Deployment starts
+PD_AFT_DEPLOYMENT=0                             # Executes a custom shell-script (absolute path to file) after the Deployment ends
 
 # PLESK DEPLOYER - CONFIGS & SCRIPTS
 CONFIGS_DEFAULT=1             # deploy configs/default
