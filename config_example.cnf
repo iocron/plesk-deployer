@@ -15,7 +15,8 @@ SCRIPTS_EXPORT_PATH=~/scripts # If you change this value, then extend your PATH 
 
 # LINUX
 LINUX_PACKAGES="htop nano git"
-SSH_PORT=22                   # Not implemented yet
+SSH_PORT=22                                   # Not implemented yet
+FTP_PASSIVE_PORTS="49152 50152"               # Not implemented yet
 
 # NGINX
 NGINX_INSTALL=1
