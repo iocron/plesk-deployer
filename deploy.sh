@@ -211,18 +211,23 @@ fi
 syslogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
 
 printf "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
-if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
-	printf "Activate Web Application Firewall (ModSecurity) with Ruleset.. ";
-	plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET
-
-	if [[ $PLESK_MODSECURITY_FIREWALL_RULESET == "tortix" ]]; then
+if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
+	if plesk bin server_pref --show-web-app-firewall | grep -q "${PLESK_MODSECURITY_FIREWALL_RULESET}"; then
+		syslogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}), skip..";
+	else
+		printf "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
+		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET
 		plesk sbin modsecurity_ctl --disable
-		plesk sbin modsecurity_ctl –enable
+		plesk sbin modsecurity_ctl --enable
 		service httpd restart
+		syslogger "DONE" "Finished Deployment of the Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\".";
 	fi
 else
-	printf "Deactivate Web Application Firewall (ModSecurity).. ";
-	plesk bin server_pref -waf-rule-engine off
+	printf "Deactivating Web Application Firewall (ModSecurity)..\n";
+	plesk bin server_pref --update-web-app-firewall -waf-rule-engine off
+	plesk sbin modsecurity_ctl --disable
+	service httpd restart
+	syslogger "DONE" "Finished deactivating ModSecurity.";
 fi
 
 printf "\n###################################\n#         Plesk Firewall          #\n###################################\n";
@@ -273,6 +278,11 @@ if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; the
 else
   syslogger "INFO" "No Plesk Extension Deployment specified or is deactivated, skip..";
 	printf "(please keep in mind that the Deployment isn't able to remove extensions)\n";
+fi
+
+printf "\n###################################\n#        FTP Passive Ports        #\n###################################\n";
+if [[ $FTP_PASSIVE_PORTS != 0 ]]; then
+	printf "PassivePorts ${FTP_PASSIVE_PORTS}" > /etc/proftpd.d/passive_ports.conf;
 fi
 
 printf "\n###################################\n#       Deployment Finished       #\n###################################\n";
