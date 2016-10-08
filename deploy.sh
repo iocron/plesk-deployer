@@ -214,6 +214,12 @@ printf "\n###################################\n#    Plesk ModSecurity Firewall  
 if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 	printf "Activate Web Application Firewall (ModSecurity) with Ruleset.. ";
 	plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET
+
+	if [[ $PLESK_MODSECURITY_FIREWALL_RULESET == "tortix" ]]; then
+		plesk sbin modsecurity_ctl --disable
+		plesk sbin modsecurity_ctl –enable
+		service httpd restart
+	fi
 else
 	printf "Deactivate Web Application Firewall (ModSecurity).. ";
 	plesk bin server_pref -waf-rule-engine off
@@ -234,7 +240,9 @@ if [[ $PLESK_FAIL2BAN == 1 ]]; then
 	printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap; echo;
 	printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde; echo;
 	if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
-		printf "plesk-modsecurity.. ";   plesk bin ip_ban --enable-jails plesk-modsecurity; echo;
+		printf "plesk-modsecurity.. "; plesk bin ip_ban --enable-jails plesk-modsecurity; echo;
+	else
+		printf "plesk-modsecurity (disable).. "; plesk bin ip_ban --disable-jails plesk-modsecurity; echo;
 	fi
 	printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel; echo;
 	printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix; echo;
