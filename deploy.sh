@@ -72,13 +72,14 @@ if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
 
 	syslogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
-	syslogger "INFO" "No Bash Profile Configuration in your config.cnf selected, skip..";
+	syslogger "INFO" "No Bash Profile Configuration possible due to your config.cnf configuration, skip..";
 fi
 
 printf "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
 if [[ $NGINX_INSTALL == 1 ]]; then
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
 	plesk installer --select-product-id plesk --select-release-current --install-component nginx
+	syslogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
 fi
 
 printf "\n###################################\n#        Plesk Nginx Conf's       #\n###################################\n";
@@ -90,7 +91,7 @@ if [[ $NGINX_GZIP == 1 ]]; then
 	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf
 	syslogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
 else
-	syslogger "INFO" "Skipped nginx gzip configuration..";
+	syslogger "INFO" "Nginx gzip configuration is deactivated, skip..";
 fi
 
 printf "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
@@ -152,7 +153,7 @@ if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 		syslogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
 	else
 		# Linux System Type not found
-		syslogger "ERROR" "The Installation of the PHP 7.0 Ioncube Loader failed. The System was not able to determine your Linux Machine Type (x86 or x86_64).";
+		syslogger "ERROR" "The Installation of the PHP 7.0 Ioncube Loader failed. The Plesk Deployer wasn't able to determine your Linux Machine Type (x86 or x86_64).";
 	fi
 elif [[ ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	# PHP 7.0 not installed on this system
@@ -297,6 +298,10 @@ if [[ $FTP_PASSIVE_PORTS != 0 ]]; then
 	else
 		syslogger "ERROR" "The folder /etc/proftpd.d/ is missing, maybe ProFTPD isn't installed on your System.";
 	fi
+elif [[ -f /etc/proftpd.d/passive_ports.conf ]]; then
+	rm -f /etc/proftpd.d/passive_ports.conf
+	service xinetd restart
+	syslogger "DONE" "Finished Deployment of removing the ProFTPD Passive Ports.";
 else
 	syslogger "INFO" "ProFTPD Passive Port Deployment is deactivated, skip..";
 fi

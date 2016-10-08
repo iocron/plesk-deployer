@@ -1,20 +1,15 @@
 # PLESK DEPLOYER - SETTINGS
-PD_ADMIN_MAIL=admin123@groundstack.de           # Not implemented yet (for logging / sending log emails, otherwise set to "0")
+PD_ADMIN_MAIL=admin123@groundstack.de           # Choose if Informations about the Deployment should be send to the Admin (0 = deactivated)
 PD_PRE_DEPLOYMENT=0                             # Executes a custom shell-script (absolute path to file) before the Deployment starts
 PD_AFT_DEPLOYMENT=0                             # Executes a custom shell-script (absolute path to file) after the Deployment ends
-
-# PLESK DEPLOYER - CONFIGS & SCRIPTS
-CONFIGS_DEFAULT=1             # deploy configs/default
-CONFIGS_CUSTOM=1              # deploy configs/custom
-SCRIPTS_DEFAULT=1             # deploy scripts/default
-SCRIPTS_CUSTOM=1              # deploy scripts/custom
-SCRIPTS_EXPORT_PATH=~/scripts # If you change this value, then extend your PATH Variable in configs/custom/bash_profile.cnf accordingly
-                              # (if you have the directory ~/scripts on your server already, then change this path!)
+PD_AUTO_UPDATE=0                                # NOT IMPLEMENTED YET - AutoUpdate will Update the Plesk Deployer to the latest Version periodically
+PD_AUTO_UPDATE_PERIOD=7                         # Period in Days of how often the AutoUpdater should start a Update
+PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
 
 # LINUX
-LINUX_PACKAGES="htop nano git"
-SSH_PORT=22                                   # Not implemented yet
-FTP_PASSIVE_PORTS="49152 50152"               # Not implemented yet
+LINUX_PACKAGES="htop nano"
+SSH_PORT=22                                   # NOT IMPLEMENTED YET
+FTP_PASSIVE_PORTS="49152 50152"
 
 # NGINX
 NGINX_INSTALL=1
@@ -28,7 +23,7 @@ PHP70_IONCUBE=1                               # Plesk's PHP 7 is missing ionCube
 PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, etc.
 PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
-PLESK_BRANDING_CSS=1                          # Not implemented yet
+PLESK_BRANDING_CSS=1                          # NOT IMPLEMENTED YET
 
 # PLESK - EXTENSIONS
 PLESK_EXTENSIONS_DEPLOYMENT=1
@@ -38,10 +33,18 @@ PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509
 
 # PLESK - SECURITY
 PLESK_MIN_PW_STRENGTH="Mediocre"              # VeryWeak|Weak|Mediocre|Strong|Stronger
-PLESK_FIREWALL=1                              # Not implemented yet
+PLESK_FIREWALL=1                              # NOT IMPLEMENTED YET
 PLESK_MODSECURITY_FIREWALL=1
 PLESK_MODSECURITY_FIREWALL_RULESET="tortix"   # crs|tortix (crs=OWASP, tortix=Atomicorp's ASL)
 PLESK_FAIL2BAN=1
 PLESK_FAIL2BAN_BAN_PERIOD=1800
 PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800
 PLESK_FAIL2BAN_BAN_MAX_ENTRIES=3
+
+# PLESK DEPLOYER - CONFIGS & SCRIPTS
+CONFIGS_DEFAULT=1             # deploy configs/default
+CONFIGS_CUSTOM=1              # deploy configs/custom
+SCRIPTS_DEFAULT=1             # deploy scripts/default
+SCRIPTS_CUSTOM=1              # deploy scripts/custom
+SCRIPTS_EXPORT_PATH=~/scripts # If you change this value, then extend your PATH Variable in configs/custom/bash_profile.cnf accordingly
+                              # (for example, if you have the directory ~/scripts already on your server, then change this path)
