@@ -39,6 +39,30 @@ else
 	syslogger "INFO" "No Pre-Deployment set, skip..";
 fi
 
+printf "\n###################################\n#   Plesk Deployer Auto Updater   #\n###################################\n";
+if [[ $PD_AUTO_UPDATE == 1 ]]; then
+	printf "Check if dependencies are installed (git)..\n";
+	if ! hash git 2>/dev/null; then
+		printf "Installing Git..\n";
+		if hash apt-get 2>/dev/null; then
+			apt-get -y install git;
+		elif hash yum 2>/dev/null; then
+			yum -y install git;
+		else
+			syslogger "ERROR" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore the Git Package wasn't installed.";
+		fi
+	else
+		printf "Git is already installed on your system, skip..\n";
+	fi
+
+	printf "Initialize Auto Update of the Plesk Deployer..\n";
+	printf "$(currentTime) [GIT_PULL]: " >> $LOG_GIT;
+	cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_GIT;
+	syslogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above).";
+else
+	syslogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
+fi
+
 printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
 	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
@@ -49,7 +73,7 @@ if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
 		yum -y install $LINUX_PACKAGES
 		LINUX_INSTALL_PCKGS=1
 	else
-		syslogger "WARNING" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore no linux packages have been installed.";
+		syslogger "ERROR" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore no linux packages have been installed.";
 	fi
 fi
 
@@ -324,7 +348,7 @@ if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "P
 	syslogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
 	syslogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
 else
-	syslogger "INFO" "The SSH Port is already set accordingly to your configurations (or if you are sure that you have changed the port, then the ssh port regex check might have failed), skip..";
+	syslogger "INFO" "The SSH Port is already set accordingly to your configurations, skip..";
 fi
 
 printf "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";

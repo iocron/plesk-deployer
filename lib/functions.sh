@@ -27,24 +27,25 @@ function getConfig(){
 # Meaning: Outputs/Returns specific Messages (and outputs them to a file if it's a "ERROR" type)
 function syslogger(){
 	if [[ ! ${2+x} ]]; then
-		printf "${RED}${MSG_ERROR} syslogger() Parameters missing. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Parameters missing.\n" >> $ERROR_LOG; exit 1;
+		printf "${RED}${MSG_ERROR} syslogger() Parameters missing. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Parameters missing.\n" >> $LOG_ERROR; exit 1;
 	fi
 
 	case "$1" in
-		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: $2 \n" >> $ERROR_LOG; exit 1;;
-		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [WARNING]: $2 \n" >> $ERROR_LOG;;
+		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; mailAdmin "ERROR" "$2"; printf "$(currentTime) [ERROR]: $2 \n" >> $LOG_ERROR; exit 1;;
+		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [WARNING]: $2 \n" >> $LOG_ERROR;;
 		"INFO") printf "\n${UNDERLINE}${MSG_INFO} $2 ${MSG_RESET}\n";;
 		"DONE") printf "\n${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
-		*) printf "\n${RED}${MSG_ERROR} syslogger() Wrong parameter <type> given. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Wrong type given. \n" >> $ERROR_LOG; exit 1;;
+		*) printf "\n${RED}${MSG_ERROR} syslogger() Wrong parameter <type> given. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Wrong type given. \n" >> $LOG_ERROR; exit 1;;
 	esac
 }
 
-function sysloggerCollector(){
-	echo "";
-}
-
+### mailAdmin ###
+# Usage: mailAdmin <subject> <yourMessage>
+# Example: mailAdmin "ERROR" "Your Message"
 function mailAdmin(){
-	echo "";
+	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 ]]; then
+		echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
+	fi
 }
 
 ### arrayDiff() ###
