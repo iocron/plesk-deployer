@@ -306,6 +306,27 @@ else
 	syslogger "INFO" "ProFTPD Passive Port Deployment is deactivated, skip..";
 fi
 
+printf "\n###################################\n#         Change SSH Port         #\n###################################\n";
+TMP_SSH_PORT_REGEX='^(?!#)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
+TMP_SSH_PORT_REGEX_COMMENT='^(#|#\s)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
+TMP_SSHD_CONFIG_PATH=/etc/ssh/sshd_config
+
+if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "Port ${SSH_PORT}" ]]; then
+	if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH})" ]]; then
+		perl -pi -e "s/${TMP_SSH_PORT_REGEX}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH;
+	elif [[ "$(grep -P ${TMP_SSH_PORT_REGEX_COMMENT} ${TMP_SSHD_CONFIG_PATH})" ]]; then
+		perl -pi -e "s/${TMP_SSH_PORT_REGEX_COMMENT}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH;
+	else
+		printf "Port ${SSH_PORT}" >> $TMP_SSHD_CONFIG_PATH;
+	fi
+
+	service sshd reload;
+	syslogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
+	syslogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
+else
+	syslogger "INFO" "The SSH Port is already set accordingly to your configurations (or the SSH Port Check failed if you have changed the port for sure), skip..";
+fi
+
 printf "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";
 if [[ $PD_AFT_DEPLOYMENT != 0 && -f $PD_AFT_DEPLOYMENT ]]; then
 	$PD_AFT_DEPLOYMENT;

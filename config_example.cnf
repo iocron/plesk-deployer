@@ -1,14 +1,14 @@
 # PLESK DEPLOYER - SETTINGS
-PD_ADMIN_MAIL=admin123@groundstack.de           # Choose if Informations about the Deployment should be send to the Admin (0 = deactivated)
-PD_PRE_DEPLOYMENT=0                             # Executes a custom shell-script (absolute path to file) before the Deployment starts
-PD_AFT_DEPLOYMENT=0                             # Executes a custom shell-script (absolute path to file) after the Deployment ends
-PD_AUTO_UPDATE=0                                # NOT IMPLEMENTED YET - AutoUpdate will Update the Plesk Deployer to the latest Version periodically
-PD_AUTO_UPDATE_PERIOD=7                         # Period in Days of how often the AutoUpdater should start a Update
+PD_ADMIN_MAIL=admin123@groundstack.de         # Choose if Informations about the Deployment should be send to the Admin (0 = deactivated)
+PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) before the Deployment starts
+PD_AFT_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) after the Deployment ends
+PD_AUTO_UPDATE=0                              # NOT IMPLEMENTED YET - AutoUpdate will Update the Plesk Deployer to the latest Version periodically
+PD_AUTO_UPDATE_PERIOD=7                       # Period in Days of how often the AutoUpdater should start a Update
 PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
 
 # LINUX
 LINUX_PACKAGES="htop nano"
-SSH_PORT=22                                   # NOT IMPLEMENTED YET
+SSH_PORT=46666                                # NOT IMPLEMENTED YET
 FTP_PASSIVE_PORTS="49152 50152"
 
 # NGINX
