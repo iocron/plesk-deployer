@@ -8,7 +8,7 @@ PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git
 
 # LINUX
 LINUX_PACKAGES="htop nano"
-SSH_PORT=46666                                # NOT IMPLEMENTED YET
+SSH_PORT=46666
 FTP_PASSIVE_PORTS="49152 50152"
 
 # NGINX

@@ -324,7 +324,7 @@ if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "P
 	syslogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
 	syslogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
 else
-	syslogger "INFO" "The SSH Port is already set accordingly to your configurations (or the SSH Port Check failed if you have changed the port for sure), skip..";
+	syslogger "INFO" "The SSH Port is already set accordingly to your configurations (or if you are sure that you have changed the port, then the ssh port regex check might have failed), skip..";
 fi
 
 printf "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";
