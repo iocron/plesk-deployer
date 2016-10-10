@@ -3,7 +3,6 @@ PD_ADMIN_MAIL="admin123@groundstack.de"       # Choose if Errors about the Deplo
 PD_ADMIN_MAIL_SEND_LOG="LOG_DEPLOYMENT"       # Choose between "LOG_DEPLOYMENT" or "LOG_ERROR"
 PD_AUTO_UPDATE=0                              # The Auto Updater will Update the Plesk Deployer to the latest Version automatically
 PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
-PD_LOG_DEPLOYMENT=1                           # Turn Off or On the Deployment Logging
 
 # PLESK DEPLOYER - CUSTOM DEPLOYMENTS
 PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) before the Deployment starts

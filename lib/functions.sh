@@ -34,13 +34,13 @@ function sysLogger(){
 	# Write Deployment Logging
 	# $PD_ADMIN_MAIL != 0 && $PD_ADMIN_MAIL_SEND_LOG != 0
 	# if [[ $PD_ADMIN_MAIL_SEND_LOG == "$1" || $PD_ADMIN_MAIL_SEND_LOG == "ALL" ]]; then
-	if [[ $PD_LOG_DEPLOYMENT != 0 ]]; then
+	#if [[ $PD_LOG_DEPLOYMENT != 0 ]]; then
 		if [[ "$1" == "TEXT" ]]; then
 			printf "$2" >> $LOG_DEPLOYMENT;
 		else
 			printf "[$1]: $2\n" >> $LOG_DEPLOYMENT;
 		fi
-	fi
+	#fi
 
 	# Write Error Logging & Output Messages
 	case "$1" in
@@ -61,11 +61,12 @@ function mailAdmin(){
 	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 ]]; then
 		if [[ ${1+x} && ${2+x} ]]; then
 			echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
-		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" && $PD_LOG_DEPLOYMENT == 1 ]]; then
+		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" ]]; then
+			# elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" && $PD_LOG_DEPLOYMENT == 1 ]]; then
 			sysLogger "DONE" "A Email with the content of the Log Deployment will be sent to ${PD_ADMIN_MAIL}.";
 			mail -s "Plesk Deployer - Deployment Log (deployment_$TIME_CURRENT_FILE.log)" "$PD_ADMIN_MAIL" < $LOG_DEPLOYMENT
 		else
-			sysLogger "WARNING" "Wrong Admin Mail Log type specified or no Log type specified at all (see PD_ADMIN_MAIL, PD_ADMIN_MAIL_SEND_LOG and maybe PD_LOG_DEPLOYMENT as well)";
+			sysLogger "WARNING" "Wrong Admin Mail Log type specified or no Log type specified at all (see PD_ADMIN_MAIL and PD_ADMIN_MAIL_SEND_LOG)";
 		fi
 	else
 		sysLogger "INFO" "The mailAdmin functionality isn't activated, skip..";
