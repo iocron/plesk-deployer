@@ -10,32 +10,32 @@ function getConfig(){
 		elif [[ $CONFIGS_DEFAULT == 1 && -f $CONFIGS_PATH_DEFAULT/$1 ]]; then
 			printf $CONFIGS_PATH_DEFAULT/$1
 		elif [[ $CONFIGS_DEFAULT != 1 && $CONFIGS_CUSTOM != 1 ]]; then
-			syslogger "INFO" "Both of your configs_default and configs_custom are turned off. Skip config import of $1.."
+			sysLogger "INFO" "Both of your configs_default and configs_custom are turned off. Skip config import of $1.."
 		else
-			syslogger "ERROR" "No file ${CONFIGS_PATH_DEFAULT}/$1 found."
+			sysLogger "ERROR" "No file ${CONFIGS_PATH_DEFAULT}/$1 found."
 		fi
 	else
-		syslogger "ERROR" "The getConfig() function got no parameter.";
+		sysLogger "ERROR" "The getConfig() function got no parameter.";
 	fi
 }
 
-### syslogger() ###
-# Usage: syslogger <type> <message>
-# Example: syslogger "ERROR" "This is a Error Message."
+### sysLogger() ###
+# Usage: sysLogger <type> <message>
+# Example: sysLogger "ERROR" "This is a Error Message."
 # Parameter: <type> Can be ERROR, WARNING, INFO or DONE
 # Parameter: <message> Just a normal Text to inform the User that something happened
 # Meaning: Outputs/Returns specific Messages (and outputs them to a file if it's a "ERROR" type)
-function syslogger(){
+function sysLogger(){
 	if [[ ! ${2+x} ]]; then
-		printf "${RED}${MSG_ERROR} syslogger() Parameters missing. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Parameters missing.\n" >> $LOG_ERROR; exit 1;
+		printf "${RED}${MSG_ERROR} sysLogger() Parameters missing. E.g. sysLogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [$1]: sysLogger() Parameters missing.\n" >> $LOG_ERROR; exit 1;
 	fi
 
 	case "$1" in
-		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; mailAdmin "ERROR" "$2"; printf "$(currentTime) [ERROR]: $2 \n" >> $LOG_ERROR; exit 1;;
-		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [WARNING]: $2 \n" >> $LOG_ERROR;;
+		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; mailAdmin "$1" "$2"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR; exit 1;;
+		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR;;
 		"INFO") printf "\n${UNDERLINE}${MSG_INFO} $2 ${MSG_RESET}\n";;
 		"DONE") printf "\n${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
-		*) printf "\n${RED}${MSG_ERROR} syslogger() Wrong parameter <type> given. E.g. syslogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [ERROR]: syslogger() Wrong type given. \n" >> $LOG_ERROR; exit 1;;
+		*) printf "\n${RED}${MSG_ERROR} sysLogger() Wrong parameter <type> given. E.g. sysLogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [$1]: sysLogger() Wrong type given. \n" >> $LOG_ERROR; exit 1;;
 	esac
 }
 
@@ -45,6 +45,26 @@ function syslogger(){
 function mailAdmin(){
 	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 ]]; then
 		echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
+	fi
+}
+
+### sysCollector ###
+# Usage: sysCollector <type> <message>
+# Parameter: <type> Can be ERROR, WARNING, INFO or DONE
+# Parameter: <message> Just a normal Text, but use preferably the sysLoggers message
+# Meaning: Collects all relevant System Messages and merges them to one String (with line breaks)
+function sysCollector(){
+	$SYS_COLLECTION="${SYS_COLLECTION}\n$1: $2";
+}
+
+### sysCollectorMail ###
+# Usage: sysCollectorMail
+# Meaning: Sends all collected System Messages to the Admin Email
+function sysCollectorMail(){
+	if [[ $SYS_COLLECTION != 0 && "${#SYS_COLLECTION}" > 0 ]]; then
+		echo "$SYS_COLLECTION" | mail -s "Plesk Deployer - sysCollector Report" "$PD_ADMIN_MAIL";
+	else
+		echo "The sysCollector was triggered, but the syscollection contains no messages." | mail -s "Plesk Deployer - sysCollector Report" "$PD_ADMIN_MAIL";
 	fi
 }
 

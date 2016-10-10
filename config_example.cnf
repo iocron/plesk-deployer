@@ -1,5 +1,5 @@
 # PLESK DEPLOYER - SETTINGS
-PD_ADMIN_MAIL="admin123@groundstack.de"       # Choose if Informations about the Deployment should be send to the Admin (0 = deactivated)
+PD_ADMIN_MAIL="admin123@groundstack.de"       # Choose if Errors about the Deployment should be send to the Admin (0 = deactivated)
 PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) before the Deployment starts
 PD_AFT_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) after the Deployment ends
 PD_AUTO_UPDATE=0                              # The Auto Updater will Update the Plesk Deployer to the latest Version automatically
@@ -8,7 +8,7 @@ PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git
 # LINUX
 LINUX_PACKAGES="htop nano"
 SSH_PORT=46666
-FTP_PASSIVE_PORTS="49152 50152"
+FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the FTP Passive Ports (e.g. 1000 1100 means 1000-1100)
 
 # NGINX
 NGINX_INSTALL=1
@@ -16,7 +16,7 @@ NGINX_GZIP=1
 
 # PHP
 PHP_VERSIONS=( "7.0" "5.6" )                  # If you don't want any additional PHP Interpreters then use: PHP_VERSIONS=()
-PHP70_IONCUBE=1                               # Plesk's PHP 7 is missing ionCube, you can optionally install it with this option
+PHP70_IONCUBE=1                               # Plesk's PHP 7 Package is missing ionCube, you can install it with this option
 
 # PLESK - GENERAL SETTINGS
 PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, etc.
@@ -28,6 +28,7 @@ PLESK_BRANDING_CSS=1                          # NOT IMPLEMENTED YET
 PLESK_EXTENSIONS_DEPLOYMENT=1
 PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
+# A Plesk Extension can parameter can be composed of a URL or a local ZIP File (absolute path)
 # For more packages see: https://ext.plesk.com/packages
 
 # PLESK - SECURITY
