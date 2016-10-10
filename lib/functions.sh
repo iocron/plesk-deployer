@@ -30,6 +30,8 @@ function sysLogger(){
 		printf "${RED}${MSG_ERROR} sysLogger() Parameters missing. E.g. sysLogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [$1]: sysLogger() Parameters missing.\n" >> $LOG_ERROR; exit 1;
 	fi
 
+	printf "$(currentTime) [$1]: $2 \n" | tee -a $LOG_DEPLOYMENT;
+
 	case "$1" in
 		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; mailAdmin "$1" "$2"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR; exit 1;;
 		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR;;
@@ -45,26 +47,6 @@ function sysLogger(){
 function mailAdmin(){
 	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 ]]; then
 		echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
-	fi
-}
-
-### sysCollector ###
-# Usage: sysCollector <type> <message>
-# Parameter: <type> Can be ERROR, WARNING, INFO or DONE
-# Parameter: <message> Just a normal Text, but use preferably the sysLoggers message
-# Meaning: Collects all relevant System Messages and merges them to one String (with line breaks)
-function sysCollector(){
-	$SYS_COLLECTION="${SYS_COLLECTION}\n$1: $2";
-}
-
-### sysCollectorMail ###
-# Usage: sysCollectorMail
-# Meaning: Sends all collected System Messages to the Admin Email
-function sysCollectorMail(){
-	if [[ $SYS_COLLECTION != 0 && "${#SYS_COLLECTION}" > 0 ]]; then
-		echo "$SYS_COLLECTION" | mail -s "Plesk Deployer - sysCollector Report" "$PD_ADMIN_MAIL";
-	else
-		echo "The sysCollector was triggered, but the syscollection contains no messages." | mail -s "Plesk Deployer - sysCollector Report" "$PD_ADMIN_MAIL";
 	fi
 }
 

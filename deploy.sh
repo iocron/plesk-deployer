@@ -34,7 +34,7 @@ printf "Deployment Init..\n";
 
 printf "\n###################################\n#    Initialize Pre-Deployment    #\n###################################\n";
 if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
-	$PD_PRE_DEPLOYMENT;
+	$PD_PRE_DEPLOYMENT | tee -a $LOG_DEPLOYMENT;
 else
 	sysLogger "INFO" "No Pre-Deployment set, skip..";
 fi
@@ -45,9 +45,9 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 	if ! hash git 2>/dev/null; then
 		printf "Installing Git..\n";
 		if hash apt-get 2>/dev/null; then
-			apt-get -y install git;
+			apt-get -y install git | tee -a $LOG_DEPLOYMENT;
 		elif hash yum 2>/dev/null; then
-			yum -y install git;
+			yum -y install git | tee -a $LOG_DEPLOYMENT;
 		else
 			sysLogger "ERROR" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore the Git Package wasn't installed.";
 		fi
@@ -56,8 +56,8 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 	fi
 
 	printf "Initialize Auto Update of the Plesk Deployer..\n";
-	printf "$(currentTime) [GIT_PULL]: " >> $LOG_GIT;
-	cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_GIT;
+	printf "$(currentTime) [GIT_PULL]: " | tee -a $LOG_DEPLOYMENT;
+	cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above).";
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
@@ -66,11 +66,11 @@ fi
 printf "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
 	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
-		apt-get -y install $LINUX_PACKAGES
+		apt-get -y install $LINUX_PACKAGES | tee -a $LOG_DEPLOYMENT;
 		LINUX_INSTALL_PCKGS=1
 	elif [[ $LINUX_DISTRO =~ "centos" ]]; then
-		yum -y install epel-release
-		yum -y install $LINUX_PACKAGES
+		yum -y install epel-release | tee -a $LOG_DEPLOYMENT;
+		yum -y install $LINUX_PACKAGES | tee -a $LOG_DEPLOYMENT;
 		LINUX_INSTALL_PCKGS=1
 	else
 		sysLogger "ERROR" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore no linux packages have been installed.";
@@ -85,14 +85,14 @@ fi
 
 printf "\n###################################\n#    Custom Bash Profiles Init    #\n###################################\n";
 if [[ -f ~/.bash_profile ]]; then
-	sed -i -e '/### PLESK_DEPLOYER ###/,/### PLESK_DEPLOYER ###/d' ~/.bash_profile
+	sed -i -e '/### PLESK_DEPLOYER ###/,/### PLESK_DEPLOYER ###/d' ~/.bash_profile | tee -a $LOG_DEPLOYMENT;
 	sysLogger "INFO" "Old bash_profile Deployments have been removed (if any available).";
 else
 	sysLogger "WARNING" "File ~/.bash_profile wasn't found on your system. A new ~/.bash_profile will be created from your config (as long as CONFIGS_DEFAULT or CONFIGS_CUSTOM is set).";
 fi
 
 if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
-	cat $(getConfig bash_profile.cnf) >> ~/.bash_profile;
+	cat $(getConfig bash_profile.cnf) | tee -a ~/.bash_profile $LOG_DEPLOYMENT;
 
 	sysLogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
@@ -102,7 +102,7 @@ fi
 printf "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
 if [[ $NGINX_INSTALL == 1 ]]; then
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
-	plesk installer --select-product-id plesk --select-release-current --install-component nginx
+	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
 fi
 
@@ -112,7 +112,7 @@ echo;
 
 if [[ $NGINX_GZIP == 1 ]]; then
 	rm -f /etc/nginx/conf.d/gzip.conf
-	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf
+	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
 else
 	sysLogger "INFO" "Nginx gzip configuration is deactivated, skip..";
@@ -130,7 +130,7 @@ if [[ $PHP_VERSIONS && ${#PHP_VERSIONS[@]} -ne 0 ]]; then
 	do
 		if [[ ! -f /opt/plesk/php/${phpv}/etc/php.ini ]]; then
 			sysLogger "INFO" "Installation of PHP ${phpv}:";
-			plesk installer --select-product-id plesk --select-release-current --install-component php${phpv};
+			plesk installer --select-product-id plesk --select-release-current --install-component php${phpv} | tee -a $LOG_DEPLOYMENT;
 			sysLogger "DONE" "Installation of PHP ${phpv} is finished (please check if there are any possible errors above).";
 			TMP_PHP_DEPLOYMENT=1;
 		fi
@@ -143,7 +143,7 @@ if [[ $PHP_VERSIONS_DIFF && ${#PHP_VERSIONS_DIFF[@]} -ne 0 ]]; then
 	do
 		if [[ -f /opt/plesk/php/${phpv_delete}/etc/php.ini ]]; then
 			sysLogger "INFO" "Uninstallation of PHP ${phpv_delete}:";
-			plesk installer --select-product-id plesk --select-release-current --remove-component php${phpv_delete};
+			plesk installer --select-product-id plesk --select-release-current --remove-component php${phpv_delete} | tee -a $LOG_DEPLOYMENT;
 			sysLogger "DONE" "Uninstallation of PHP ${phpv_delete} is finished (please check if there are any possible errors above).";
 			TMP_PHP_DEPLOYMENT=1;
 		fi
@@ -161,19 +161,19 @@ if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
 		# Linux x86 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi
-		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
+		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
 		printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so" > /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
 		chmod 755 /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
-		plesk bin php_handler --reread
+		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
 
 	elif [[ $LINUX_MACHINE_TYPE == "x86_64" ]]; then
 		# Linux x86_64 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib64 ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib64/ does not exist."; fi
-		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
+		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
 		printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so" > /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
 		chmod 755 /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
-		plesk bin php_handler --reread
+		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
 	else
 		# Linux System Type not found
@@ -185,7 +185,7 @@ elif [[ ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 elif [[ $PHP70_IONCUBE == 0 && -f /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini ]]; then
 	# Uninstall the PHP 7.0 Ioncube Loader
 	rm -f /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
-	plesk bin php_handler --reread
+	plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "The Uninstallation of the PHP 7.0 Ioncube Loader was successful.";
 else
 	# No PHP 7.0 Deploymet specified
@@ -215,29 +215,29 @@ fi
 printf "\n###################################\n# Plesk Interface & System Prefs  #\n###################################\n";
 # Plesk Localization
 if [[ $PLESK_LOCALE != 0 ]]; then
-	printf "Deploy Plesk Localization.. "; plesk bin server_pref --set-default -locale $PLESK_LOCALE; echo;
+	printf "Deploy Plesk Localization.. "; plesk bin server_pref --set-default -locale $PLESK_LOCALE | tee -a $LOG_DEPLOYMENT; echo;
 fi
 # Plesk AutoUpdates
 if [[ $PLESK_AUTOUPDATES == 1 ]]; then
-	printf "Activate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates true; echo;
+	printf "Activate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates true | tee -a $LOG_DEPLOYMENT; echo;
 else
-	printf "Deactivate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates false; echo;
+	printf "Deactivate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates false | tee -a $LOG_DEPLOYMENT; echo;
 fi
 # Plesk AutoUpdates Third Party
 fi [[ $PLESK_AUTOUPDATES_THIRD_PARTY == 1 ]]; then
-	printf "Activate Plesk AutoUpdates Third Party.. "; plesk bin server_pref -u -autoupdates-third-party true; echo;
+	printf "Activate Plesk AutoUpdates Third Party.. "; plesk bin server_pref -u -autoupdates-third-party true | tee -a $LOG_DEPLOYMENT; echo;
 else
-	printf "Deactivate Plesk AutoUpdates Third Party..  "; plesk bin server_pref -u -autoupdates-third-party false; echo;
+	printf "Deactivate Plesk AutoUpdates Third Party..  "; plesk bin server_pref -u -autoupdates-third-party false | tee -a $LOG_DEPLOYMENT; echo;
 fi
 # Plesk Min Password Strength
 if [[ $PLESK_MIN_PW_STRENGTH != 0 ]]; then
-	printf "Deploy Plesk Min Password Strength.. "; plesk bin server_pref -u -min_password_strength $PLESK_MIN_PW_STRENGTH; echo;
+	printf "Deploy Plesk Min Password Strength.. "; plesk bin server_pref -u -min_password_strength $PLESK_MIN_PW_STRENGTH | tee -a $LOG_DEPLOYMENT; echo;
 fi
 # Plesk Force DB Prefix
 if [[ $PLESK_DB_FORCE_PREFIX == 1 ]]; then
-	printf "Activate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix true; echo;
+	printf "Activate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix true | tee -a $LOG_DEPLOYMENT; echo;
 else
-	printf "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix false; echo;
+	printf "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix false | tee -a $LOG_DEPLOYMENT; echo;
 fi
 
 sysLogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
@@ -248,17 +248,17 @@ if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 		sysLogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}), skip..";
 	else
 		printf "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
-		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET
-		plesk sbin modsecurity_ctl --disable
-		plesk sbin modsecurity_ctl --enable
-		service httpd restart
+		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET | tee -a $LOG_DEPLOYMENT;
+		plesk sbin modsecurity_ctl --disable | tee -a $LOG_DEPLOYMENT;
+		plesk sbin modsecurity_ctl --enable | tee -a $LOG_DEPLOYMENT;
+		service httpd restart | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "Finished Deployment of the Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\".";
 	fi
 else
 	printf "Deactivating Web Application Firewall (ModSecurity)..\n";
-	plesk bin server_pref --update-web-app-firewall -waf-rule-engine off
-	plesk sbin modsecurity_ctl --disable
-	service httpd restart
+	plesk bin server_pref --update-web-app-firewall -waf-rule-engine off | tee -a $LOG_DEPLOYMENT;
+	plesk sbin modsecurity_ctl --disable | tee -a $LOG_DEPLOYMENT;
+	service httpd restart | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished deactivating ModSecurity.";
 fi
 
@@ -268,29 +268,29 @@ printf "\n###################################\n#         Plesk Firewall         
 printf "\n###################################\n#         Plesk Fail2Ban          #\n###################################\n";
 if [[ $PLESK_FAIL2BAN == 1 ]]; then
 	printf "Activating Fail2Ban:\n";
-	plesk bin ip_ban --enable; echo;
+	plesk bin ip_ban --enable | tee -a $LOG_DEPLOYMENT; echo;
 	printf "Applying Ban Settings:\n";
-	plesk bin ip_ban --update -ban_period $PLESK_FAIL2BAN_BAN_PERIOD -ban_time_window $PLESK_FAIL2BAN_BAN_TIME_WINDOW -max_retries $PLESK_FAIL2BAN_BAN_MAX_ENTRIES; echo;
+	plesk bin ip_ban --update -ban_period $PLESK_FAIL2BAN_BAN_PERIOD -ban_time_window $PLESK_FAIL2BAN_BAN_TIME_WINDOW -max_retries $PLESK_FAIL2BAN_BAN_MAX_ENTRIES | tee -a $LOG_DEPLOYMENT; echo;
 	printf "Applying Jails:\n";
-	printf "plesk-apache.. ";        plesk bin ip_ban --enable-jails plesk-apache; echo;
-	printf "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot; echo;
-	printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap; echo;
-	printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde; echo;
+	printf "plesk-apache.. ";        plesk bin ip_ban --enable-jails plesk-apache | tee -a $LOG_DEPLOYMENT; echo;
+	printf "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot | tee -a $LOG_DEPLOYMENT; echo;
+	printf "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap | tee -a $LOG_DEPLOYMENT; echo;
+	printf "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde | tee -a $LOG_DEPLOYMENT; echo;
 	if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
-		printf "plesk-modsecurity.. "; plesk bin ip_ban --enable-jails plesk-modsecurity; echo;
+		printf "plesk-modsecurity.. "; plesk bin ip_ban --enable-jails plesk-modsecurity | tee -a $LOG_DEPLOYMENT; echo;
 	else
-		printf "plesk-modsecurity (disable).. "; plesk bin ip_ban --disable-jails plesk-modsecurity; echo;
+		printf "plesk-modsecurity (disable).. "; plesk bin ip_ban --disable-jails plesk-modsecurity | tee -a $LOG_DEPLOYMENT; echo;
 	fi
-	printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel; echo;
-	printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix; echo;
-	printf "plesk-proftpd.. ";       plesk bin ip_ban --enable-jails plesk-proftpd; echo;
-	printf "plesk-wordpress.. ";     plesk bin ip_ban --enable-jails plesk-wordpress; echo;
-	printf "recidive.. ";            plesk bin ip_ban --enable-jails recidive; echo;
-	printf "ssh.. ";                 plesk bin ip_ban --enable-jails ssh; echo;
+	printf "plesk-panel.. ";         plesk bin ip_ban --enable-jails plesk-panel | tee -a $LOG_DEPLOYMENT; echo;
+	printf "plesk-postfix.. ";       plesk bin ip_ban --enable-jails plesk-postfix | tee -a $LOG_DEPLOYMENT; echo;
+	printf "plesk-proftpd.. ";       plesk bin ip_ban --enable-jails plesk-proftpd | tee -a $LOG_DEPLOYMENT; echo;
+	printf "plesk-wordpress.. ";     plesk bin ip_ban --enable-jails plesk-wordpress | tee -a $LOG_DEPLOYMENT; echo;
+	printf "recidive.. ";            plesk bin ip_ban --enable-jails recidive | tee -a $LOG_DEPLOYMENT; echo;
+	printf "ssh.. ";                 plesk bin ip_ban --enable-jails ssh | tee -a $LOG_DEPLOYMENT; echo;
 	sysLogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>installed/activated).";
 else
 	printf "Deactivating Fail2Ban:\n";
-	plesk bin ip_ban --disable
+	plesk bin ip_ban --disable | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished Deployment of Plesk Fail2Ban (=>deactivated).";
 fi
 
@@ -300,9 +300,9 @@ if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; the
   do
     printf "Deployment of ${ext}:\n";
     if [[ $ext =~ ".zip" ]]; then
-      plesk bin extension --upgrade $ext; echo;
+      plesk bin extension --upgrade $ext | tee -a $LOG_DEPLOYMENT; echo;
     elif [[ $ext =~ "http://" || $ext =~ "https://" ]]; then
-      plesk bin extension --upgrade-url $ext; echo;
+      plesk bin extension --upgrade-url $ext | tee -a $LOG_DEPLOYMENT; echo;
     fi
   done
 	sysLogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
@@ -317,14 +317,14 @@ printf "Deploying ProFTPD Passive Ports for ProFTPD..\n";
 if [[ $FTP_PASSIVE_PORTS != 0 ]]; then
 	if [[ -d /etc/proftpd.d/ ]]; then
 		printf "PassivePorts ${FTP_PASSIVE_PORTS}" > /etc/proftpd.d/passive_ports.conf;
-		service xinetd restart
+		service xinetd restart | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "Finished Deployment of ProFTPD Passive Ports (Portrange: ${FTP_PASSIVE_PORTS}).";
 	else
 		sysLogger "ERROR" "The folder /etc/proftpd.d/ is missing, maybe ProFTPD isn't installed on your System.";
 	fi
 elif [[ -f /etc/proftpd.d/passive_ports.conf ]]; then
 	rm -f /etc/proftpd.d/passive_ports.conf
-	service xinetd restart
+	service xinetd restart | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished Deployment of removing the ProFTPD Passive Ports.";
 else
 	sysLogger "INFO" "ProFTPD Passive Port Deployment is deactivated, skip..";
@@ -337,14 +337,14 @@ TMP_SSHD_CONFIG_PATH=/etc/ssh/sshd_config
 
 if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "Port ${SSH_PORT}" ]]; then
 	if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH})" ]]; then
-		perl -pi -e "s/${TMP_SSH_PORT_REGEX}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH;
+		perl -pi -e "s/${TMP_SSH_PORT_REGEX}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
 	elif [[ "$(grep -P ${TMP_SSH_PORT_REGEX_COMMENT} ${TMP_SSHD_CONFIG_PATH})" ]]; then
-		perl -pi -e "s/${TMP_SSH_PORT_REGEX_COMMENT}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH;
+		perl -pi -e "s/${TMP_SSH_PORT_REGEX_COMMENT}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
 	else
-		printf "Port ${SSH_PORT}" >> $TMP_SSHD_CONFIG_PATH;
+		printf "Port ${SSH_PORT}" | tee -a $TMP_SSHD_CONFIG_PATH $LOG_DEPLOYMENT;
 	fi
 
-	service sshd reload;
+	service sshd reload | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
 	sysLogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
 else
@@ -353,7 +353,7 @@ fi
 
 printf "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";
 if [[ $PD_AFT_DEPLOYMENT != 0 && -f $PD_AFT_DEPLOYMENT ]]; then
-	$PD_AFT_DEPLOYMENT;
+	$PD_AFT_DEPLOYMENT | tee -a $LOG_DEPLOYMENT;
 else
 	sysLogger "INFO" "No Aft-Deployment set, skip..";
 fi
