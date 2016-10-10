@@ -4,7 +4,6 @@ PD_ADMIN_MAIL_SEND_LOG="LOG_DEPLOYMENT"       # Choose between "LOG_DEPLOYMENT" 
 PD_AUTO_UPDATE=0                              # If the Auto Updater should update the Plesk Deployer to the latest Version automatically
 PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
 PD_DEBUG_MODE=0                               # Debug Mode On or Off (do not use it in production!)
-# Plesk Deployer Auto Updater Test...
 
 # PLESK DEPLOYER - CUSTOM DEPLOYMENTS
 PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) before the Deployment starts
@@ -37,7 +36,7 @@ PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509
 # For more packages see: https://ext.plesk.com/packages
 
 # PLESK - SECURITY
-PLESK_MIN_PW_STRENGTH="Mediocre"              # VeryWeak|Weak|Mediocre|Strong|Stronger
+PLESK_MIN_PW_STRENGTH="medium"                # very_weak|weak|medium|strong|very_strong
 PLESK_FIREWALL=1                              # NOT IMPLEMENTED YET
 PLESK_MODSECURITY_FIREWALL=1
 PLESK_MODSECURITY_FIREWALL_RULESET="tortix"   # crs|tortix (crs=OWASP, tortix=Atomicorp's ASL)
