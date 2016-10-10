@@ -18,7 +18,7 @@ else
 fi
 
 ### Debug Mode ###
-if [[ $PD_DEBUG_MODE == 1 ]]; then
+if [[ $PD_DEBUG_MODE == 1 ]]; then
 	set -x; # Turn off with set +x; again
 fi
 
