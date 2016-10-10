@@ -17,7 +17,7 @@ else
 	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file config.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
 fi
 
-### Turn On Debug Mode if specified by the Config ###
+### Debug Mode ###
 if [[ $PD_DEBUG_MODE == 1 ]]; then
 	set -x; # Turn off with set +x; again
 fi
@@ -33,6 +33,11 @@ fi
 if ! hash plesk 2>/dev/null; then
 	sysLogger "ERROR" "Plesk is not installed on your System.";
 fi
+
+### Plesk Deployer Auto Updater - Check ###
+# (after successful update the following code shouldn't be executed again)
+if [[ -z "$1" && "$1" != "autoupdater" ]]; then
+### Plesk Deployer Auto Updater - Check ###
 
 sysLogger "TEXT" "\n###################################\n#     Deployment in Progress      #\n###################################\n";
 sysLogger "TEXT" "Deployment Init..\n";
@@ -62,11 +67,21 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 
 	sysLogger "TEXT" "Initialize Auto Update of the Plesk Deployer..\n";
 	sysLogger "TEXT" "$(currentTime) [GIT_PULL]: ";
-	cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
-	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above).";
+
+	if [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" == "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]; then
+		sysLogger "INFO" "Your Repository is already up-to-date, skip..";
+	else
+		# Update the Plesk Deployer through git (will propably update the deploy.sh as well),
+		# then restart the deploy.sh script ($SCRIPT) as a background process and exit this script (old)
+		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && $SCRIPT "autoupdater" & wait && sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." && exit 1;
+	fi
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
 fi
+
+### Plesk Deployer Auto Updater - Check ###
+fi
+### Plesk Deployer Auto Updater - Check ###
 
 sysLogger "TEXT" "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
