@@ -58,7 +58,7 @@ function sysLogger(){
 # Example1: mailAdmin # Sends all Logs (Log Deployment) or no Logs to the Admin (based on the config settings)
 # Example2: mailAdmin "A Error occurred" "Your Message.." # Send only a specific Message to the Admin
 function mailAdmin(){
-	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 ]]; then
+	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 && $PD_ADMIN_MAIL_SEND_LOG != 0 ]]; then
 		if [[ ${1+x} && ${2+x} ]]; then
 			echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
 		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" ]]; then
