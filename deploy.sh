@@ -66,7 +66,7 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 	fi
 
 	sysLogger "TEXT" "Initialize Auto Update of the Plesk Deployer..\n";
-	sysLogger "TEXT" "$(currentTime) [GIT_PULL]: ";
+	sysLogger "TEXT" "[GIT_PULL]:\n";
 
 	if [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" == "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]; then
 		sysLogger "INFO" "Your Repository is already up-to-date, skip..";
@@ -176,22 +176,23 @@ if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
+TMP_IONCUBE_LOADER_INI_PATH=/opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
 # PHP 7.0 Ioncube Deployment
 if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
 		# Linux x86 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi
 		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
-		printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so" > /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
+		printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so" > $TMP_IONCUBE_LOADER_INI_PATH
 		chmod 755 /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
 		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
-		sysLogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
+		sysLogger "DONE" "The Ioncube PHP 7.0 Loader is successfully deployed.";
 
 	elif [[ $LINUX_MACHINE_TYPE == "x86_64" ]]; then
 		# Linux x86_64 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib64 ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib64/ does not exist."; fi
 		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
-		printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so" > /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
+		printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so" > $TMP_IONCUBE_LOADER_INI_PATH
 		chmod 755 /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
 		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
@@ -202,9 +203,9 @@ if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 elif [[ ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	# PHP 7.0 not installed on this system
 	sysLogger "WARNING" "PHP7 is not installed on this system, therefore a Ioncube Deployment for PHP7 is not possible.";
-elif [[ $PHP70_IONCUBE == 0 && -f /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini ]]; then
+elif [[ $PHP70_IONCUBE == 0 && -f $TMP_IONCUBE_LOADER_INI_PATH ]]; then
 	# Uninstall the PHP 7.0 Ioncube Loader
-	rm -f /opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
+	rm -f $TMP_IONCUBE_LOADER_INI_PATH
 	plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "The Uninstallation of the PHP 7.0 Ioncube Loader was successful.";
 else
@@ -355,7 +356,7 @@ TMP_SSH_PORT_REGEX='^(?!#)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSH_PORT_REGEX_COMMENT='^(#|#\s)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSHD_CONFIG_PATH=/etc/ssh/sshd_config
 
-if [[ $SSH_PORT != 0 ]]; then
+if [[ $SSH_PORT != 0 ]]; then
 	if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "Port ${SSH_PORT}" ]]; then
 		if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH})" ]]; then
 			perl -pi -e "s/${TMP_SSH_PORT_REGEX}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
