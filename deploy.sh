@@ -40,7 +40,7 @@ if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 ### Plesk Deployer Auto Updater - Check ###
 
 sysLogger "TEXT" "\n###################################\n#     Deployment in Progress      #\n###################################\n";
-sysLogger "TEXT" "Deployment Init..\n";
+sysLogger "TEXT" "\nDeployment Init..\n";
 
 sysLogger "TEXT" "\n###################################\n#    Initialize Pre-Deployment    #\n###################################\n";
 if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
@@ -172,7 +172,7 @@ fi
 
 # PHP Deployment Satus Message
 if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
-	sysLogger "INFO" "No PHP Versions to Deploy. Your chosen PHP Versions are (if any): ${PHP_VERSIONS[@]}. Skip..";
+	sysLogger "INFO" "Your PHP Versions \"${PHP_VERSIONS[*]}\" are already installed, skip..";
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
@@ -244,7 +244,7 @@ else
 	sysLogger "TEXT" "Deactivate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates false | tee -a $LOG_DEPLOYMENT; echo;
 fi
 # Plesk AutoUpdates Third Party
-fi [[ $PLESK_AUTOUPDATES_THIRD_PARTY == 1 ]]; then
+if [[ $PLESK_AUTOUPDATES_THIRD_PARTY == 1 ]]; then
 	sysLogger "TEXT" "Activate Plesk AutoUpdates Third Party.. "; plesk bin server_pref -u -autoupdates-third-party true | tee -a $LOG_DEPLOYMENT; echo;
 else
 	sysLogger "TEXT" "Deactivate Plesk AutoUpdates Third Party..  "; plesk bin server_pref -u -autoupdates-third-party false | tee -a $LOG_DEPLOYMENT; echo;
