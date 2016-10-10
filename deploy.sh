@@ -71,9 +71,11 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 	if [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" == "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]; then
 		sysLogger "INFO" "Your Repository is already up-to-date, skip..";
 	else
-		# Update the Plesk Deployer through git (will propably update the deploy.sh as well),
-		# then restart the deploy.sh script ($SCRIPT) as a background process and exit this script (old)
-		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && $SCRIPT "autoupdater" && sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." && exit 1;
+		# Update the Plesk Deployer through git and exit this running script,
+		# then restart the deploy.sh script through the git hook "post-merge"
+		# (otherwise the running script (and all dependent files) will run into problems while they get overwritten)
+		printf "#!/bin/bash\n${SCRIPT} \"autoupdater\"" | tee $LOG_DEPLOYMENT $SCRIPTPATH/.git/hooks/post-merge;
+		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." && exit 1;
 	fi
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
