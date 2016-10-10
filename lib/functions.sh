@@ -1,9 +1,9 @@
-### getConfig() - Usage: getConfig <configFileName> ###
-# Usage: getConfig <configFileName>
-# Example: getConfig nginx_gzip.cnf
+### getConfigFile() - Usage: getConfigFile <configFileName> ###
+# Usage: getConfigFile <configFileName>
+# Example: getConfigFile nginx_gzip.cnf
 # Parameter: <configFileName> Can be any name that is available in configs/default or configs/custom
 # Meaning: Outputs/Returns the Path to the right config file depending on the config.cnf settings
-function getConfig(){
+function getConfigFile(){
 	if [[ -n "$1" ]]; then
 		if [[ $CONFIGS_CUSTOM == 1 && -f $CONFIGS_PATH_CUSTOM/$1 ]]; then
 			printf $CONFIGS_PATH_CUSTOM/$1
@@ -15,7 +15,7 @@ function getConfig(){
 			sysLogger "ERROR" "No file ${CONFIGS_PATH_DEFAULT}/$1 found."
 		fi
 	else
-		sysLogger "ERROR" "The getConfig() function got no parameter.";
+		sysLogger "ERROR" "The getConfigFile() function got no parameter.";
 	fi
 }
 

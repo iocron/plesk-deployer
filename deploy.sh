@@ -92,7 +92,7 @@ else
 fi
 
 if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
-	cat $(getConfig bash_profile.cnf) | tee -a ~/.bash_profile $LOG_DEPLOYMENT;
+	cat $(getConfigFile bash_profile.cnf) | tee -a ~/.bash_profile $LOG_DEPLOYMENT;
 
 	sysLogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
@@ -107,13 +107,13 @@ if [[ $NGINX_INSTALL == 1 ]]; then
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk Nginx Conf's       #\n###################################\n";
-getConfig nginx_gzip.cnf; # Return exit 1 if the check fails
+getConfigFile nginx_gzip.cnf; # Return exit 1 if the check fails
 echo;
 
 if [[ $NGINX_GZIP == 1 ]]; then
 	rm -f /etc/nginx/conf.d/gzip.conf
-	cp $(getConfig nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf | tee -a $LOG_DEPLOYMENT;
-	sysLogger "DONE" "Copied $(getConfig nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
+	cp $(getConfigFile nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf | tee -a $LOG_DEPLOYMENT;
+	sysLogger "DONE" "Copied $(getConfigFile nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
 else
 	sysLogger "INFO" "Nginx gzip configuration is deactivated, skip..";
 fi
