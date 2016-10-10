@@ -296,7 +296,7 @@ if [[ $PLESK_FAIL2BAN == 1 ]]; then
 	sysLogger "TEXT" "plesk-apache-badbot.. "; plesk bin ip_ban --enable-jails plesk-apache-badbot | tee -a $LOG_DEPLOYMENT; echo;
 	sysLogger "TEXT" "plesk-courierimap.. ";   plesk bin ip_ban --enable-jails plesk-courierimap | tee -a $LOG_DEPLOYMENT; echo;
 	sysLogger "TEXT" "plesk-horde.. ";         plesk bin ip_ban --enable-jails plesk-horde | tee -a $LOG_DEPLOYMENT; echo;
-	if[[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
+	if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 		sysLogger "TEXT" "plesk-modsecurity.. "; plesk bin ip_ban --enable-jails plesk-modsecurity | tee -a $LOG_DEPLOYMENT; echo;
 	else
 		sysLogger "TEXT" "plesk-modsecurity (disable).. "; plesk bin ip_ban --disable-jails plesk-modsecurity | tee -a $LOG_DEPLOYMENT; echo;
