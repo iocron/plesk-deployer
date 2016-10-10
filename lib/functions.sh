@@ -26,17 +26,21 @@ function getConfig(){
 # Parameter: <message> Just a normal Text to inform the User that something happened
 # Meaning: Outputs/Returns specific Messages (and outputs them to a file if it's a "ERROR" type)
 function sysLogger(){
+	# Check if the Function has been properly accessed
 	if [[ ! ${2+x} ]]; then
 		printf "${RED}${MSG_ERROR} sysLogger() Parameters missing. E.g. sysLogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [$1]: sysLogger() Parameters missing.\n" >> $LOG_ERROR; exit 1;
 	fi
 
-	printf "$(currentTime) [$1]: $2 \n" | tee -a $LOG_DEPLOYMENT;
+	# Write Log Deployment
+	printf "$2\n" >> $LOG_DEPLOYMENT;
 
+	# SysLogger Message Output & Error Logging
 	case "$1" in
 		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; mailAdmin "$1" "$2"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR; exit 1;;
 		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR;;
 		"INFO") printf "\n${UNDERLINE}${MSG_INFO} $2 ${MSG_RESET}\n";;
 		"DONE") printf "\n${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
+		"TEXT") printf "$2";;
 		*) printf "\n${RED}${MSG_ERROR} sysLogger() Wrong parameter <type> given. E.g. sysLogger <type> <message>\n(possible types are: ${MSG_TYPES}) ${MSG_RESET}\n"; printf "$(currentTime) [$1]: sysLogger() Wrong type given. \n" >> $LOG_ERROR; exit 1;;
 	esac
 }
