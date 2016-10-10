@@ -17,6 +17,11 @@ else
 	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file config.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
 fi
 
+### Turn On Debug Mode if specified by the Config ###
+if [[ $PD_DEBUG_MODE == 1 ]]; then
+	set -x; # Turn off with set +x; again
+fi
+
 ### Include Libraries ###
 source $LIB_PATH/functions.sh
 

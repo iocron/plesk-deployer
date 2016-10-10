@@ -3,6 +3,7 @@ PD_ADMIN_MAIL="admin123@groundstack.de"       # If Logs about the Deployment sho
 PD_ADMIN_MAIL_SEND_LOG="LOG_DEPLOYMENT"       # Choose between "LOG_DEPLOYMENT" or "LOG_ERROR" (0 = deactivated)
 PD_AUTO_UPDATE=0                              # If the Auto Updater should update the Plesk Deployer to the latest Version automatically
 PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
+PD_DEBUG_MODE=0                               # Debug Mode On or Off (do not use it in production!)
 
 # PLESK DEPLOYER - CUSTOM DEPLOYMENTS
 PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) before the Deployment starts
@@ -31,7 +32,7 @@ PLESK_BRANDING_CSS=1                          # NOT IMPLEMENTED YET
 PLESK_EXTENSIONS_DEPLOYMENT=1
 PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
 PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
-# A Plesk Extension can parameter can be composed of a URL or a local ZIP File (absolute path)
+# A Plesk Extension parameter can be composed of a URL or a local ZIP File (absolute path)
 # For more packages see: https://ext.plesk.com/packages
 
 # PLESK - SECURITY
