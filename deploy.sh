@@ -335,20 +335,24 @@ TMP_SSH_PORT_REGEX='^(?!#)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSH_PORT_REGEX_COMMENT='^(#|#\s)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSHD_CONFIG_PATH=/etc/ssh/sshd_config
 
-if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "Port ${SSH_PORT}" ]]; then
-	if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH})" ]]; then
-		perl -pi -e "s/${TMP_SSH_PORT_REGEX}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
-	elif [[ "$(grep -P ${TMP_SSH_PORT_REGEX_COMMENT} ${TMP_SSHD_CONFIG_PATH})" ]]; then
-		perl -pi -e "s/${TMP_SSH_PORT_REGEX_COMMENT}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
-	else
-		printf "Port ${SSH_PORT}" | tee -a $TMP_SSHD_CONFIG_PATH $LOG_DEPLOYMENT;
-	fi
+if [[ $SSH_PORT != 0 ]]; then
+	if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "Port ${SSH_PORT}" ]]; then
+		if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH})" ]]; then
+			perl -pi -e "s/${TMP_SSH_PORT_REGEX}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
+		elif [[ "$(grep -P ${TMP_SSH_PORT_REGEX_COMMENT} ${TMP_SSHD_CONFIG_PATH})" ]]; then
+			perl -pi -e "s/${TMP_SSH_PORT_REGEX_COMMENT}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
+		else
+			printf "Port ${SSH_PORT}" | tee -a $TMP_SSHD_CONFIG_PATH $LOG_DEPLOYMENT;
+		fi
 
-	service sshd reload | tee -a $LOG_DEPLOYMENT;
-	sysLogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
-	sysLogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
+		service sshd reload | tee -a $LOG_DEPLOYMENT;
+		sysLogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
+		sysLogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
+	else
+		sysLogger "INFO" "The SSH Port is already set accordingly to your configurations, skip..";
+	fi
 else
-	sysLogger "INFO" "The SSH Port is already set accordingly to your configurations, skip..";
+	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated, skip..";
 fi
 
 sysLogger "TEXT" "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";
