@@ -73,7 +73,7 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 	else
 		# Update the Plesk Deployer through git (will propably update the deploy.sh as well),
 		# then restart the deploy.sh script ($SCRIPT) as a background process and exit this script (old)
-		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && $SCRIPT "autoupdater" & wait && sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." && exit 1;
+		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && $SCRIPT "autoupdater" && sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." && exit 1;
 	fi
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
