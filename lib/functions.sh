@@ -22,7 +22,7 @@ function getConfig(){
 ### sysLogger() ###
 # Usage: sysLogger <type> <message>
 # Example: sysLogger "ERROR" "This is a Error Message."
-# Parameter: <type> Can be ERROR, WARNING, INFO or DONE
+# Parameter: <type> Can be ERROR, WARNING, INFO, DONE or TEXT
 # Parameter: <message> Just a normal Text to inform the User that something happened
 # Meaning: Outputs/Returns specific Messages (and outputs them to a file if it's a "ERROR" type)
 function sysLogger(){
@@ -59,7 +59,7 @@ function sysLogger(){
 # Example2: mailAdmin "A Error occurred" "Your Message.." # Send only a specific Message to the Admin
 function mailAdmin(){
 	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 ]]; then
-		if [[ ! ${1+x} && ! ${2+x} ]]; then
+		if [[ ${1+x} && ${2+x} ]]; then
 			echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
 		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" && $PD_LOG_DEPLOYMENT == 1 ]]; then
 			sysLogger "DONE" "A Email with the content of the Log Deployment will be sent to ${PD_ADMIN_MAIL}.";
