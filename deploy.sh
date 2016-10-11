@@ -76,14 +76,10 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 		# (otherwise the running script (and all dependent files) will run into problems while they get overwritten)
 		# printf "#!/bin/bash\n${SCRIPT} \"autoupdater\"" | tee $LOG_DEPLOYMENT $SCRIPTPATH/.git/hooks/post-merge;
 		cd $SCRIPTPATH && git checkout $PD_AUTO_UPDATE_REPOSITORY_BRANCH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
-		while true
+		while [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" != "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]
 		do
-			if [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" == "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]; then
-				$SCRIPTPATH/deploy.sh "autoupdater";
-				false;
-			fi
-	    sleep 1
-		done && exit 1;
+			sleep 1
+		done && $SCRIPTPATH/test.sh "autoupdater" && exit 1;
 	fi
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
