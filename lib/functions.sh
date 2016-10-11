@@ -32,9 +32,6 @@ function sysLogger(){
 	fi
 
 	# Write Deployment Logging
-	# $PD_ADMIN_MAIL != 0 && $PD_ADMIN_MAIL_SEND_LOG != 0
-	# if [[ $PD_ADMIN_MAIL_SEND_LOG == "$1" || $PD_ADMIN_MAIL_SEND_LOG == "ALL" ]]; then
-	#if [[ $PD_LOG_DEPLOYMENT != 0 ]]; then
 		if [[ "$1" == "TEXT" ]]; then
 			printf "$2" >> $LOG_DEPLOYMENT;
 		else
@@ -44,7 +41,7 @@ function sysLogger(){
 
 	# Write Error Logging & Output Messages
 	case "$1" in
-		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; if [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_ERROR" ]]; then mailAdmin "$1" "$2"; fi; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR; exit 1;;
+		"ERROR") printf "\n${RED}${MSG_ERROR} $2 ${MSG_RESET}\n"; if [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_ERROR" || $PD_ADMIN_MAIL_SEND_LOG == "LOG_ALL" ]]; then mailAdmin "$1" "$2"; fi; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR; exit 1;;
 		"WARNING") printf "\n${YELLOW}${MSG_WARNING} $2 ${MSG_RESET}\n"; printf "$(currentTime) [$1]: $2 \n" >> $LOG_ERROR;;
 		"INFO") printf "\n${UNDERLINE}${MSG_INFO} $2 ${MSG_RESET}\n";;
 		"DONE") printf "\n${GREEN}${MSG_DONE} $2 ${MSG_RESET}\n";;
@@ -61,8 +58,7 @@ function mailAdmin(){
 	if [[ $PD_ADMIN_MAIL != 0 && "${#PD_ADMIN_MAIL}" > 0 && $PD_ADMIN_MAIL_SEND_LOG != 0 ]]; then
 		if [[ ${1+x} && ${2+x} ]]; then
 			echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
-		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" ]]; then
-			# elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" && $PD_LOG_DEPLOYMENT == 1 ]]; then
+		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" || $PD_ADMIN_MAIL_SEND_LOG == "LOG_ALL" ]]; then
 			sysLogger "DONE" "A Email with the content of the Log Deployment will be sent to ${PD_ADMIN_MAIL}.";
 			mail -s "Plesk Deployer - Deployment Log (deployment_$TIME_CURRENT_FILE.log)" "$PD_ADMIN_MAIL" < $LOG_DEPLOYMENT
 		else

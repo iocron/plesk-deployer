@@ -385,8 +385,6 @@ else
 	sysLogger "INFO" "No Aft-Deployment set, skip..";
 fi
 
-sysLogger "TEXT" "\n###################################\n# Send Logs / Errors to the Admin #\n###################################\n";
-mailAdmin;
-
 sysLogger "TEXT" "\n###################################\n#       Deployment Finished       #\n###################################\n";
 sysLogger "DONE" "The Plesk Deployer has finished your Deployment. Please check the output from above to be sure that everything went fine. Enjoy your newly and freshly configured Server :)";
+mailAdmin;

@@ -1,6 +1,6 @@
 # PLESK DEPLOYER - SETTINGS
 PD_ADMIN_MAIL="admin123@groundstack.de"       # If Logs about the Deployment should be send to the Admin (0 = deactivated)
-PD_ADMIN_MAIL_SEND_LOG="LOG_DEPLOYMENT"       # Choose between "LOG_DEPLOYMENT" or "LOG_ERROR" (0 = deactivated)
+PD_ADMIN_MAIL_SEND_LOG="LOG_ALL"              # Choose between "LOG_ALL", "LOG_DEPLOYMENT" or "LOG_ERROR" (0 = deactivated)
 PD_AUTO_UPDATE=0                              # If the Auto Updater should update the Plesk Deployer to the latest Version automatically
 PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
 PD_DEBUG_MODE=0                               # Debug Mode On or Off (do not use it in production!)
