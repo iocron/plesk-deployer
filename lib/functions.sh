@@ -60,7 +60,7 @@ function mailAdmin(){
 			echo "$2" | mail -s "Plesk Deployer - $1" "$PD_ADMIN_MAIL";
 		elif [[ $PD_ADMIN_MAIL_SEND_LOG == "LOG_DEPLOYMENT" || $PD_ADMIN_MAIL_SEND_LOG == "LOG_ALL" ]]; then
 			sysLogger "DONE" "A Email with the content of the Log Deployment will be sent to ${PD_ADMIN_MAIL}.";
-			mail -s "Plesk Deployer - Deployment Log (deployment_$TIME_CURRENT_FILE.log)" "$PD_ADMIN_MAIL" < $LOG_DEPLOYMENT
+			mail -s "Plesk Deployer - Deployment Log (deployment_$TIME_STAMP_FILE.log)" "$PD_ADMIN_MAIL" < $LOG_DEPLOYMENT
 		else
 			sysLogger "WARNING" "Wrong Admin Mail Log type specified or no Log type specified at all (see PD_ADMIN_MAIL and PD_ADMIN_MAIL_SEND_LOG)";
 		fi

@@ -34,13 +34,48 @@ if ! hash plesk 2>/dev/null; then
 	sysLogger "ERROR" "Plesk is not installed on your System.";
 fi
 
-### Plesk Deployer Auto Updater - Check ###
-# (after successful update the following code shouldn't be executed again)
-if [[ -z "$1" && "$1" != "autoupdater" ]]; then
-### Plesk Deployer Auto Updater - Check ###
+### Plesk Deployer Auto Updater ###
+if [[ "$1" == "autoupdater" && -n "$2" && -n "$3" ]]; then
+	TIME_STAMP=$2; # Reset the TimeStamp of the previous script
+	TIME_STAMP_FILE=$3; # Reset the TimeStamp (File) of the previous script
+	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)."
+else
+	sysLogger "TEXT" "\n###################################\n#     Deployment in Progress      #\n###################################\n";
+	sysLogger "TEXT" "\nDeployment Init..\n";
 
-sysLogger "TEXT" "\n###################################\n#     Deployment in Progress      #\n###################################\n";
-sysLogger "TEXT" "\nDeployment Init..\n";
+	sysLogger "TEXT" "\n###################################\n#   Plesk Deployer Auto Updater   #\n###################################\n";
+	if [[ $PD_AUTO_UPDATE == 1 ]]; then
+		sysLogger "TEXT" "Check if dependencies are installed (git)..\n";
+		if ! hash git 2>/dev/null; then
+			sysLogger "TEXT" "Installing Git..\n";
+			if hash apt-get 2>/dev/null; then
+				apt-get -y install git | tee -a $LOG_DEPLOYMENT;
+			elif hash yum 2>/dev/null; then
+				yum -y install git | tee -a $LOG_DEPLOYMENT;
+			else
+				sysLogger "ERROR" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore the Git Package wasn't installed.";
+			fi
+		else
+			sysLogger "TEXT" "Git is already installed on your system, skip..\n";
+		fi
+
+		sysLogger "TEXT" "Initialize Auto Update of the Plesk Deployer..\n";
+		sysLogger "TEXT" "[GIT_PULL]:\n";
+
+		if [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" == "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]; then
+			sysLogger "INFO" "Your Repository is already up-to-date, skip..";
+		else
+			# Start the Plesk Deployer Auto Update through git. Once the update (git pull / merge) is fully finished, then restart this script again (updated version).
+			cd $SCRIPTPATH && git checkout $PD_AUTO_UPDATE_REPOSITORY_BRANCH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
+			while [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" != "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]
+			do
+				sleep 1
+			done && $SCRIPTPATH/deploy.sh "autoupdater" $TIME_STAMP $TIME_STAMP_FILE && exit 1;
+		fi
+	else
+		sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
+	fi
+fi
 
 sysLogger "TEXT" "\n###################################\n#    Initialize Pre-Deployment    #\n###################################\n";
 if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
@@ -48,48 +83,6 @@ if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
 else
 	sysLogger "INFO" "No Pre-Deployment set, skip..";
 fi
-
-sysLogger "TEXT" "\n###################################\n#   Plesk Deployer Auto Updater   #\n###################################\n";
-if [[ $PD_AUTO_UPDATE == 1 ]]; then
-	sysLogger "TEXT" "Check if dependencies are installed (git)..\n";
-	if ! hash git 2>/dev/null; then
-		sysLogger "TEXT" "Installing Git..\n";
-		if hash apt-get 2>/dev/null; then
-			apt-get -y install git | tee -a $LOG_DEPLOYMENT;
-		elif hash yum 2>/dev/null; then
-			yum -y install git | tee -a $LOG_DEPLOYMENT;
-		else
-			sysLogger "ERROR" "Wasn't able to determine your Distro Type (e.g. CentOS, Debian or Ubuntu), therefore the Git Package wasn't installed.";
-		fi
-	else
-		sysLogger "TEXT" "Git is already installed on your system, skip..\n";
-	fi
-
-	sysLogger "TEXT" "Initialize Auto Update of the Plesk Deployer..\n";
-	sysLogger "TEXT" "[GIT_PULL]:\n";
-
-	if [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" == "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]; then
-		sysLogger "INFO" "Your Repository is already up-to-date, skip..";
-	else
-		# Update the Plesk Deployer through git and exit this running script,
-		# then restart the deploy.sh script through the git hook "post-merge"
-		# (otherwise the running script (and all dependent files) will run into problems while they get overwritten)
-		# printf "#!/bin/bash\n${SCRIPT} \"autoupdater\"" | tee $LOG_DEPLOYMENT $SCRIPTPATH/.git/hooks/post-merge;
-		cd $SCRIPTPATH && git checkout $PD_AUTO_UPDATE_REPOSITORY_BRANCH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
-		while [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" != "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]
-		do
-			sleep 1
-		done && $SCRIPTPATH/deploy.sh "autoupdater" && exit 1;
-	fi
-else
-	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
-fi
-
-### Plesk Deployer Auto Updater - Check ###
-else
-	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)."
-fi
-### Plesk Deployer Auto Updater - Check ###
 
 sysLogger "TEXT" "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
