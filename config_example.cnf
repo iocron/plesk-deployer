@@ -5,6 +5,7 @@ PD_AUTO_UPDATE=0                              # If the Auto Updater should updat
 PD_AUTO_UPDATE_REPOSITORY="https://github.com/groundstack-org/plesk-deployer.git"
 PD_AUTO_UPDATE_REPOSITORY_BRANCH="master"
 PD_DEBUG_MODE=0                               # Debug Mode On or Off (do not use it in production!)
+### Test PD Auto Updater...
 
 # PLESK DEPLOYER - CUSTOM DEPLOYMENTS
 PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) before the Deployment starts
