@@ -36,8 +36,6 @@ fi
 
 ### Plesk Deployer Auto Updater ###
 if [[ "$1" == "autoupdater" && -n "$2" && -n "$3" ]]; then
-	TIME_STAMP=$2; # Reset the TimeStamp of the previous script
-	TIME_STAMP_FILE=$3; # Reset the TimeStamp (File) of the previous script
 	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)."
 else
 	sysLogger "TEXT" "\n###################################\n#     Deployment in Progress      #\n###################################\n";
