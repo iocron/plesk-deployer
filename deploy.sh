@@ -74,14 +74,17 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 		# Update the Plesk Deployer through git and exit this running script,
 		# then restart the deploy.sh script through the git hook "post-merge"
 		# (otherwise the running script (and all dependent files) will run into problems while they get overwritten)
-		printf "#!/bin/bash\n${SCRIPT} \"autoupdater\"" | tee $LOG_DEPLOYMENT $SCRIPTPATH/.git/hooks/post-merge;
-		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." && exit 1;
+		# printf "#!/bin/bash\n${SCRIPT} \"autoupdater\"" | tee $LOG_DEPLOYMENT $SCRIPTPATH/.git/hooks/post-merge;
+		cd $SCRIPTPATH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT && $SCRIPTPATH "autoupdater" && exit 1;
+		# sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)."
 	fi
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
 fi
 
 ### Plesk Deployer Auto Updater - Check ###
+else
+	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)." 
 fi
 ### Plesk Deployer Auto Updater - Check ###
 
