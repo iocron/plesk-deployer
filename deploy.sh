@@ -103,7 +103,7 @@ if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
 fi
 
 if [[ $LINUX_INSTALL_PCKGS == 1 ]]; then
-	sysLogger "DONE" "Installed the additional linux packages $LINUX_PACKAGES (please see the install process above to check if everything has been installed successfully)";
+	sysLogger "DONE" "The Deployment of the linux packages has finished (selected packages (config): $LINUX_PACKAGES), please see the install process above to check if everything has been installed successfully.";
 else
 	sysLogger "INFO" "No Linux Packages Selected / Installed, skip..";
 fi
