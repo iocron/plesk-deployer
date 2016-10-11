@@ -79,7 +79,7 @@ if [[ $PD_AUTO_UPDATE == 1 ]]; then
 		while [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" != "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]
 		do
 			sleep 1
-		done && $SCRIPTPATH/test.sh "autoupdater" && exit 1;
+		done && $SCRIPTPATH/deploy.sh "autoupdater" && exit 1;
 	fi
 else
 	sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
