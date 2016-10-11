@@ -383,7 +383,7 @@ fi
 
 sysLogger "TEXT" "\n###################################\n#       Clean Up Tmp Folder       #\n###################################\n";
 if [[ -n "$TMP_PATH" ]]; then
-	rm -Rf $TMP_PATH
+	rm -Rf $TMP_PATH/*
 	sysLogger "DONE" "Cleanup of $TMP_PATH was successful.";
 else
 	sysLogger "WARNING" "The Folder $TMP_PATH doesn't exist.";
