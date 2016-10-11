@@ -35,9 +35,7 @@ if ! hash plesk 2>/dev/null; then
 fi
 
 ### Plesk Deployer Auto Updater ###
-if [[ "$1" == "autoupdater" && -n "$2" && -n "$3" ]]; then
-	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above)."
-else
+if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 	sysLogger "TEXT" "\n###################################\n#     Deployment in Progress      #\n###################################\n";
 	sysLogger "TEXT" "\nDeployment Init..\n";
 
@@ -79,6 +77,8 @@ else
 	else
 		sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
 	fi
+else
+	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#    Initialize Pre-Deployment    #\n###################################\n";
