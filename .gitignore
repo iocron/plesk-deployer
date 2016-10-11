@@ -16,6 +16,7 @@ Thumbs.db
 
 # Logs
 logs/*
+!logs/deployments/.gitkeep
 
 # Temp Folder
 tmp/*
