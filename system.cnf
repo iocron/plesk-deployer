@@ -12,8 +12,8 @@ CONFIGS_PATH_DEFAULT=$CONFIGS_PATH/default
 CONFIGS_PATH_CUSTOM=$CONFIGS_PATH/custom
 TIME_FORMAT="%Y-%m-%d_%H:%M:%S"
 TIME_FORMAT_FILE="%Y-%m-%d-%H%M%S"
-TIME_STAMP="${$(cat $TMP_PATH/time_stamp.lock):-$(date +$TIME_FORMAT)}"
-TIME_STAMP_FILE="${$(cat $TMP_PATH/time_stamp_file.lock):-$(date +$TIME_FORMAT_FILE)}"
+if [[ -f $TMP_PATH/time_stamp.lock ]]; then TIME_STAMP=$(cat $TMP_PATH/time_stamp.lock); else $(date +"$TIME_FORMAT"); fi
+if [[ -f $TMP_PATH/time_stamp_file.lock ]]; then TIME_STAMP_FILE=$(cat $TMP_PATH/time_stamp_file.lock); else $(date +"$TIME_FORMAT_FILE"); fi
 
 # SYSTEM - LOGS
 LOG_PATH=$SCRIPTPATH/logs
