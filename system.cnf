@@ -6,13 +6,14 @@ LINUX_DISTRO=$(python -mplatform)
 SCRIPT=$BASH_SOURCE
 SCRIPTPATH=$(dirname $(realpath $SCRIPT))
 LIB_PATH=$SCRIPTPATH/lib
+TMP_PATH=$SCRIPTPATH/tmp
 CONFIGS_PATH=$SCRIPTPATH/configs
 CONFIGS_PATH_DEFAULT=$CONFIGS_PATH/default
 CONFIGS_PATH_CUSTOM=$CONFIGS_PATH/custom
 TIME_FORMAT="%Y-%m-%d_%H:%M:%S"
 TIME_FORMAT_FILE="%Y-%m-%d-%H%M%S"
-TIME_STAMP="${2:-$(date +$TIME_FORMAT)}"
-TIME_STAMP_FILE="${3:-$(date +$TIME_FORMAT_FILE)}"
+TIME_STAMP="${$(cat $TMP_PATH/time_stamp.lock):-$(date +$TIME_FORMAT)}"
+TIME_STAMP_FILE="${$(cat $TMP_PATH/time_stamp_file.lock):-$(date +$TIME_FORMAT_FILE)}"
 
 # SYSTEM - LOGS
 LOG_PATH=$SCRIPTPATH/logs

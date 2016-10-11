@@ -11,8 +11,14 @@ Thumbs.db
 # Never exclude .gitkeep files
 !.gitkeep
 
+# Exclude Lock Files
+*.lock
+
 # Logs
 logs/*
+
+# Temp Folder
+tmp/*
 
 # Configs
 /config.cnf

@@ -44,6 +44,12 @@ else
 	sysLogger "TEXT" "\n###################################\n#   Plesk Deployer Auto Updater   #\n###################################\n";
 	if [[ $PD_AUTO_UPDATE == 1 ]]; then
 		sysLogger "TEXT" "Check if dependencies are installed (git)..\n";
+
+		# Write temporary Lock Files ###
+		printf "$TIME_STAMP" > $TMP_PATH/time_stamp.lock;
+		printf "$TIME_STAMP_FILE" > $TMP_PATH/time_stamp_file.lock;
+
+		# Check if Git is installed, otherwise install Git
 		if ! hash git 2>/dev/null; then
 			sysLogger "TEXT" "Installing Git..\n";
 			if hash apt-get 2>/dev/null; then
@@ -373,6 +379,14 @@ if [[ $SSH_PORT != 0 ]]; then
 	fi
 else
 	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated, skip..";
+fi
+
+sysLogger "TEXT" "\n###################################\n#       Clean Up Tmp Folder       #\n###################################\n";
+if [[ -n "$TMP_PATH" ]]; then
+	rm -Rf $TMP_PATH
+	sysLogger "DONE" "Cleanup of $TMP_PATH was successful.";
+else
+	sysLogger "WARNING" "The Folder $TMP_PATH doesn't exist.";
 fi
 
 sysLogger "TEXT" "\n###################################\n#   Initialize After-Deployment   #\n###################################\n";
