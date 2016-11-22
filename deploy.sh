@@ -42,7 +42,7 @@ if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 	sysLogger "TEXT" "\nDeployment Init..\n";
 
 	sysLogger "TEXT" "\n###################################\n#   Plesk Deployer Auto Updater   #\n###################################\n";
-	$TMP_ABORT_DEPLOYMENT=0;
+	TMP_ABORT_DEPLOYMENT=0;
 	if [[ $PD_AUTO_UPDATE == 1 ]]; then
 		sysLogger "TEXT" "Check if dependencies are installed (git)..\n";
 
@@ -71,7 +71,7 @@ if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 			sysLogger "INFO" "Your Repository is already up-to-date, skip..";
 		else
 			# Start the Plesk Deployer Auto Update through git. Once the update (git pull / merge) is fully finished, then restart this script again (updated version).
-			$TMP_ABORT_DEPLOYMENT=1;
+			TMP_ABORT_DEPLOYMENT=1;
 			cd $SCRIPTPATH && git checkout $PD_AUTO_UPDATE_REPOSITORY_BRANCH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
 			while [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" != "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]
 			do
@@ -401,13 +401,13 @@ fi
 sysLogger "TEXT" "\n###################################\n#       Plesk Custom Styling      #\n###################################\n";
 if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
 	if [[ -f $FILES_PATH/plesk-theme-custom/css/custom.css ]]; then
-		$TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme-custom/;
+		TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme-custom/;
 		find $TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR -type d -exec /bin/cp -Rf {} $PLESK_THEME_CUSTOM \;
 	elif [[ -f $FILES_PATH/plesk-theme/css/custom.css ]]; then
-		$TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme/;
+		TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme/;
 		find $TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR -type d -exec /bin/cp -Rf {} $PLESK_THEME_CUSTOM \;
 	else
-		$TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=0;
+		TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=0;
 	fi
 	sysLogger "DONE" "Finished Deployment of the Plesk Custom Styling (from ${TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR} to ${PLESK_THEME_CUSTOM}).";
 else
