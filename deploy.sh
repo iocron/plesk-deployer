@@ -258,29 +258,29 @@ fi
 sysLogger "TEXT" "\n###################################\n# Plesk Interface & System Prefs  #\n###################################\n";
 # Plesk Localization
 if [[ $PLESK_LOCALE != 0 ]]; then
-	sysLogger "TEXT" "Deploy Plesk Localization.. "; plesk bin server_pref --set-default -locale $PLESK_LOCALE | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Deploy Plesk Localization to ${PLESK_LOCALE}.. "; plesk bin server_pref --set-default -locale $PLESK_LOCALE | tee -a $LOG_DEPLOYMENT;
 fi
 # Plesk AutoUpdates
 if [[ $PLESK_AUTOUPDATES == 1 ]]; then
-	sysLogger "TEXT" "Activate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates true | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Activate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates true | tee -a $LOG_DEPLOYMENT;
 else
-	sysLogger "TEXT" "Deactivate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates false | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Deactivate Plesk AutoUpdates.. "; plesk bin server_pref -u -autoupdates false | tee -a $LOG_DEPLOYMENT;
 fi
 # Plesk AutoUpdates Third Party
 if [[ $PLESK_AUTOUPDATES_THIRD_PARTY == 1 ]]; then
-	sysLogger "TEXT" "Activate Plesk AutoUpdates Third Party.. "; plesk bin server_pref -u -autoupdates-third-party true | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Activate Plesk AutoUpdates Third Party.. "; plesk bin server_pref -u -autoupdates-third-party true | tee -a $LOG_DEPLOYMENT;
 else
-	sysLogger "TEXT" "Deactivate Plesk AutoUpdates Third Party..  "; plesk bin server_pref -u -autoupdates-third-party false | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Deactivate Plesk AutoUpdates Third Party..  "; plesk bin server_pref -u -autoupdates-third-party false | tee -a $LOG_DEPLOYMENT;
 fi
 # Plesk Min Password Strength
 if [[ $PLESK_MIN_PW_STRENGTH != 0 ]]; then
-	sysLogger "TEXT" "Deploy Plesk Min Password Strength.. "; plesk bin server_pref -u -min_password_strength $PLESK_MIN_PW_STRENGTH | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Deploy Plesk Min Password Strength to ${PLESK_MIN_PW_STRENGTH}.. "; plesk bin server_pref -u -min_password_strength $PLESK_MIN_PW_STRENGTH | tee -a $LOG_DEPLOYMENT;
 fi
 # Plesk Force DB Prefix
 if [[ $PLESK_DB_FORCE_PREFIX == 1 ]]; then
-	sysLogger "TEXT" "Activate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix true | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Activate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix true | tee -a $LOG_DEPLOYMENT;
 else
-	sysLogger "TEXT" "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix false | tee -a $LOG_DEPLOYMENT; echo;
+	sysLogger "TEXT" "Deactivate Force DB Prefix.. "; plesk bin server_pref -u -force-db-prefix false | tee -a $LOG_DEPLOYMENT;
 fi
 
 sysLogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
