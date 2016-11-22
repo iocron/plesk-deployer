@@ -30,6 +30,10 @@ configs/custom/*
 scripts/custom/*
 !scripts/custom/*_example*
 
+# Files - Plesk Theme
+/files/plesk-theme-custom/*
+!/files/plesk-theme-custom/.gitkeep
+
 # IDE Specific Files
 .ftpconfig
 

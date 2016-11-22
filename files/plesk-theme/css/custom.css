@@ -1,0 +1,38 @@
+/* GLOBAL */
+html { overflow-y:auto !important; }
+
+/* LOGIN PAGE */
+body.sid-login { background:url("/theme/images/custom/bg.jpg") no-repeat center center; background-size:cover; }
+#login-page a { color:#95c122; overflow-y:hidden; }
+#login-page #content { border-radius:4px; }
+#login-page #header {  }
+#login-page #header { background:url("/theme/images/custom/logo.svg") no-repeat center center; background-size:contain; height:154px; padding:0; margin-bottom:10px; }
+#login-page #header .logo { display:none; }
+
+.sid-login .btns-box .btn:not(.action):not(.btn-primary), .sid-login .btns-box .btn:not(.action):not(.btn-primary) > button {
+        background-color:#3c3c3c;
+}
+
+.sid-login .btns-box .btn:hover:not(.action):not(.btn-primary), .sid-login .btns-box .btn:not(.action):not(.btn-primary) > button:hover, .btn-primary:focus, .btn.action:focus, .btn.action > button:focus, .sid-login .btns-box .btn:focus:not(.action):not(.btn-primary), .sid-login .btns-box .btn:not(.action):not(.btn-primary) > button:focus {
+        background-color:#161616;
+}
+
+.sid-login .form-control:focus,.sid-login select:focus,.sid-login textarea:focus,.sid-login .textarea:focus,.sid-login input:focus:not([type]),.sid-login input[type="text"]:focus,.sid-login input[type="password"]:focus,.sid-login input[type="datetime"]:focus,.sid-login input[type="datetime-local"]:focus,.sid-login input[type="date"]:focus,.sid-login input[type="month"]:focus,.sid-login input[type="time"]:focus,.sid-login input[type="week"]:focus,.sid-login input[type="number"]:focus,.sid-login input[type="email"]:focus,.sid-login input[type="url"]:focus,.sid-login input[type="search"]:focus,.sid-login input[type="tel"]:focus,.sid-login input[type="color"]:focus {
+        border-color:#95c122;
+        background:#ebf2d6;
+}
+
+/* BACKEND - HEADER, SIDEBAR, FOOTER */
+.main-header {  }
+.main-header .main-header-brand { background:url("/theme/images/custom/logo-right-small.svg") no-repeat left center; background-size:contain; }
+.main-header .main-header-brand img { display:none; }
+
+.page-header { background:#312e2b; border-bottom:1px solid #3b3b3b; }
+.sid-main .page-sidebar-menu .sub-menu a { border-bottom:1px solid #605c58; }
+.sid-main .page-sidebar-menu .sub-menu > li:first-child a { border-top:1px solid #605c58;  }
+.page-sidebar-wrapper { background:#4b4844; }
+.page-footer { background:#312e2b; }
+.page-sidebar-menu .sub-menu .active > a, .page-sidebar-menu .sub-menu .active > a:hover { background:#96c123; }
+
+/* BACKEND - CONTENT BODY */
+.active-list .caption-head-wrap { background:#312e2b; }

@@ -8,13 +8,15 @@ TMP_BF=$(dirname "$BASH_SOURCE");
 if [[ -f $TMP_BF/system.cnf ]]; then
 	source $TMP_BF/system.cnf;
 else
-	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file system.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
+	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file system.cnf is set.\n" | tee -a $TMP_BF/logs/error.log;
+	exit 1;
 fi
 
 if [[ -f $TMP_BF/config.cnf ]]; then
 	source $TMP_BF/config.cnf;
 else
-	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file config.cnf is set.\n" | tee -a $TMP_BF/logs/error.log; exit 1;
+	printf "$(date +"%Y-%m-%d_%M:%S") [ERROR]: Please make sure the configuration file config.cnf is set.\n" | tee -a $TMP_BF/logs/error.log;
+	exit 1;
 fi
 
 ### Debug Mode ###
@@ -199,16 +201,15 @@ if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
 		# Linux x86 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi
-		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
+		cp $FILES_PATH/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
 		printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so" > $TMP_IONCUBE_LOADER_INI_PATH
 		chmod 755 /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
 		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "The Ioncube PHP 7.0 Loader is successfully deployed.";
-
 	elif [[ $LINUX_MACHINE_TYPE == "x86_64" ]]; then
 		# Linux x86_64 Systems
 		if [[ ! -d /opt/plesk/php/7.0/lib64 ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib64/ does not exist."; fi
-		cp $SCRIPTPATH/files/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
+		cp $FILES_PATH/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
 		printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so" > $TMP_IONCUBE_LOADER_INI_PATH
 		chmod 755 /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
 		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
@@ -391,6 +392,22 @@ if [[ $SSH_PORT != 0 ]]; then
 	fi
 else
 	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated, skip..";
+fi
+
+sysLogger "TEXT" "\n###################################\n#       Plesk Custom Styling      #\n###################################\n";
+if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
+	if [[ -f $FILES_PATH/plesk-theme-custom/css/custom.css ]]; then
+		$TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme-custom/;
+		find $TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR -type d -exec /bin/cp -Rf {} $PLESK_THEME_CUSTOM \;
+	elif [[ -f $FILES_PATH/plesk-theme/css/custom.css ]]; then
+		$TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme/;
+		find $TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR -type d -exec /bin/cp -Rf {} $PLESK_THEME_CUSTOM \;
+	else
+		$TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=0;
+	fi
+	sysLogger "DONE" "Finished Deployment of the Plesk Custom Styling (from ${TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR} to ${PLESK_THEME_CUSTOM}).";
+else
+	sysLogger "INFO" "The Deployment of the Plesk Custom Styling is deactivated, skip..";
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Clean Up Tmp Folder       #\n###################################\n";

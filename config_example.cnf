@@ -11,9 +11,12 @@ PD_PRE_DEPLOYMENT=0                           # Executes a custom shell-script (
 PD_AFT_DEPLOYMENT=0                           # Executes a custom shell-script (absolute path to file) after the Deployment ends
 
 # LINUX
+HOST_NAME=0                                   # Changes the HostName of this machine (includes a startup-script as well) (NOT IMPLEMENTED YET!)
+                                              # See also: https://blog.hosteurope.de/blog/hostnamen-aendern/
+HOST_NAME_RESOLVE=0                           # Resolve to the newly set HostName (NOT IMPLEMENTED YET!)
 LINUX_PACKAGES="htop nano"
 SSH_PORT=46666
-FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the FTP Passive Ports (e.g. 1000 1100 means 1000-1100)
+FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the FTP Passive Ports (e.g. 49152 50152 means 49152-50152)
 
 # NGINX
 NGINX_INSTALL=1
@@ -24,10 +27,11 @@ PHP_VERSIONS=( "7.0" "5.6" )                  # If you don't want any additional
 PHP70_IONCUBE=1                               # Plesk's PHP 7 Package is missing ionCube, you can install it with this option
 
 # PLESK - GENERAL SETTINGS
-PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, etc.
+PLESK_PORT=8443                               # Plesk Port (default: 8443) - (NOT IMPLEMENTED YET!)
+PLESK_LOCALE="en-US"                          # Or en-US, en-GB, de-DE, etc.
 PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
-PLESK_BRANDING_CSS=1                          # NOT IMPLEMENTED YET
+PLESK_THEME_CUSTOM="/usr/local/psa/admin/htdocs/theme" # Your custom theme files will be deployed to the specified path (use 0 to deactivate)
 
 # PLESK - EXTENSIONS
 PLESK_EXTENSIONS_DEPLOYMENT=1
@@ -46,10 +50,33 @@ PLESK_FAIL2BAN_BAN_PERIOD=1800
 PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800
 PLESK_FAIL2BAN_BAN_MAX_ENTRIES=3
 
+# PLESK - MAIL SPAM ASSASSIN                                  (NOT IMPLEMENTED YET!)
+SPAM_ASSASSIN=1                                               # plesk bin spamassassin --update-server -status true
+SPAM_ASSASSIN_SCORE=7                                         # plesk bin spamassassin --update-server -hits 7
+SPAM_ASSASSIN_MAX_PROC=1                                      # plesk bin spamassassin --update-server -max-proc 1 // 1|2|3|4|5
+
+# PLESK - MAIL SERVERWIDE SETTINGS                            (NOT IMPLEMENTED YET!)
+MAIL_MAPS_STATUS=auth                                         # plesk bin mailserver --set-maps-status true // auth or closed
+MAIL_MAPS_ZONES="sbl.spamhaus.org,xbl.spamhaus.org"           # plesk bin mailserver --add-maps-zone sbl.spamhaus.org,xbl.spamhaus.org
+                                                              # oder sbl.spamhaus.org;xbl.spamhaus.org ?
+
+MAIL_AUTH=both                                                # plesk bin mailserver --set-relay auth -auth-type both // pop3 | smtp | both
+MAIL_AUTH_LOCK_TIME=10                                        # plesk bin mailserver --set-relay auth -auth-type both -lock-time 10
+MAIL_MAX_SIZE=10M                                             # plesk bin spamassassin --update-server -max-mail-size 10M
+MAIL_MAX_CONNECTIONS=40                                       # plesk bin mailserver --set-max-connections 40
+MAIL_MAX_CONNECTIONS_PER_IP=20                                # plesk bin mailserver --set-max-connections-per-ip 20
+MAIL_SIGN_OUTGOING_MAIL=0                                     # plesk bin mailserver --sign-outgoing-mail true
+MAIL_VERIFY_INCOMING_MAIL=0                                   # plesk bin mailserver --verify-incoming-mail true
+
+MAIL_OUTGOING_ANTISPAM=1                                      # plesk bin mailserver --enable-outgoing-antispam or plesk bin mailserver --disable-outgoing-antispam 
+MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT=20                       # plesk bin mailserver --set-outgoing-messages-mbox-limit 20
+MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT=100                       # plesk bin mailserver --set-outgoing-messages-domain-limit 100
+MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT=200                 # plesk bin mailserver --set-outgoing-messages-subscription-limit 200
+
 # PLESK DEPLOYER - CONFIGS & SCRIPTS
 CONFIGS_DEFAULT=1             # deploy configs/default
 CONFIGS_CUSTOM=1              # deploy configs/custom
 SCRIPTS_DEFAULT=1             # deploy scripts/default
 SCRIPTS_CUSTOM=1              # deploy scripts/custom
 SCRIPTS_EXPORT_PATH=~/scripts # If you change this value, then extend your PATH Variable in configs/custom/bash_profile.cnf accordingly
-                              # (for example, if you have the directory ~/scripts already on your server, then change this path)
+                              # (for example, if you have the directory ~/scripts already on your server, then change this path if needed)
