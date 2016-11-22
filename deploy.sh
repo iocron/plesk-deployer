@@ -42,6 +42,7 @@ if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 	sysLogger "TEXT" "\nDeployment Init..\n";
 
 	sysLogger "TEXT" "\n###################################\n#   Plesk Deployer Auto Updater   #\n###################################\n";
+	$TMP_ABORT_DEPLOYMENT=0;
 	if [[ $PD_AUTO_UPDATE == 1 ]]; then
 		sysLogger "TEXT" "Check if dependencies are installed (git)..\n";
 
@@ -70,11 +71,12 @@ if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 			sysLogger "INFO" "Your Repository is already up-to-date, skip..";
 		else
 			# Start the Plesk Deployer Auto Update through git. Once the update (git pull / merge) is fully finished, then restart this script again (updated version).
+			$TMP_ABORT_DEPLOYMENT=1;
 			cd $SCRIPTPATH && git checkout $PD_AUTO_UPDATE_REPOSITORY_BRANCH && git pull -f $PD_AUTO_UPDATE_REPOSITORY | tee -a $LOG_DEPLOYMENT;
 			while [[ "$(git log --pretty=%H ...refs/heads/master^ | head -n 1)" != "$(git ls-remote origin -h refs/heads/master | cut -f1)" ]]
 			do
 				sleep 1
-			done && $SCRIPTPATH/deploy.sh "autoupdater" $TIME_STAMP $TIME_STAMP_FILE && exit 1;
+			done && $SCRIPTPATH/deploy.sh "autoupdater" $TIME_STAMP $TIME_STAMP_FILE;
 		fi
 	else
 		sysLogger "INFO" "The Plesk Deployer Auto Updater is deactivated, skip..";
@@ -82,6 +84,8 @@ if [[ -z "$1" && "$1" != "autoupdater" ]]; then
 else
 	sysLogger "DONE" "The Plesk Deployer Auto Updater has finished the update (please check if there are any errors above).";
 fi
+
+if [[ $TMP_ABORT_DEPLOYMENT = 0 ]]; then # Start of - Execute further scripts only if the Auto Updater is not running
 
 sysLogger "TEXT" "\n###################################\n#    Initialize Pre-Deployment    #\n###################################\n";
 if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
@@ -428,3 +432,5 @@ fi
 sysLogger "TEXT" "\n###################################\n#       Deployment Finished       #\n###################################\n";
 sysLogger "DONE" "The Plesk Deployer has finished your Deployment. Please check the output from above to be sure that everything went fine. Enjoy your newly and freshly configured Server :)";
 mailAdmin;
+
+fi # End of - Execute further scripts only if the Auto Updater is not running
