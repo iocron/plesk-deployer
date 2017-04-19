@@ -131,16 +131,17 @@ else
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
-if [[ $NGINX_INSTALL == 1 ]]; then
+if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
 	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
 	
 	if hash systemctl 2>/dev/null; then
-		sudo systemctl enable nginx.service
+		systemctl enable nginx.service
+		systemctl restart nginx
 		sysLogger "DONE" "Enabled nginx Autostart (systemctl).";
 	elif hash chkconfig 2>/dev/null; then
-		chkconfig nginx on
+		chkconfig nginx on # Does not work if on IPv6 (count's for systemctl as well of course), see the fix: https://kb.plesk.com/en/128261
 		sysLogger "DONE" "Enabled nginx Autostart (chkconfig).";
 	else
 		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected)";

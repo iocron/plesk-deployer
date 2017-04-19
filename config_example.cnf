@@ -19,7 +19,7 @@ SSH_PORT=46666
 FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the FTP Passive Ports (e.g. 49152 50152 means 49152-50152)
 
 # NGINX
-NGINX_INSTALL=1
+NGINX_DEPLOYMENT=1
 NGINX_GZIP=1
 
 # PHP
