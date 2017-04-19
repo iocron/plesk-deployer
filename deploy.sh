@@ -147,6 +147,12 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected)";
 	fi
 	
+	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
+	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
+	if [[ $NGINX_DEPLOYMENT_REQ_ADDR_99_FIX == 1 ]]; then
+		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
+	fi
+	
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
 fi
 
