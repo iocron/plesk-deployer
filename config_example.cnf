@@ -17,8 +17,8 @@ FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the 
 
 # NGINX
 NGINX_DEPLOYMENT=1
-NGINX_DEPLOYMENT_REQ_ADDR_99_FIX=1            # See also: https://goo.gl/Crm8yl
 NGINX_GZIP=1
+NGINX_REQ_ADDR_99_FIX=1                       # See also: https://goo.gl/Crm8yl
 
 # PHP
 PHP_VERSIONS=( "7.0" "5.6" )                  # If you don't want any additional PHP Interpreters then use: PHP_VERSIONS=()

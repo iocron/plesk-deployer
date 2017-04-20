@@ -98,7 +98,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	
 	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
 	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
-	if [[ $NGINX_DEPLOYMENT_REQ_ADDR_99_FIX == 1 ]]; then
+	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
 		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
 	fi
 	
