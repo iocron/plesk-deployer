@@ -48,19 +48,20 @@ PLESK_FAIL2BAN_BAN_PERIOD=1800
 PLESK_FAIL2BAN_BAN_TIME_WINDOW=1800
 PLESK_FAIL2BAN_BAN_MAX_ENTRIES=3
 
-# PLESK - MAIL SPAM ASSASSIN                                  (NOT IMPLEMENTED YET!)
+# PLESK - MAIL SPAM ASSASSIN
 SPAM_ASSASSIN=1                                               # plesk bin spamassassin --update-server -status true
 SPAM_ASSASSIN_SCORE=7                                         # plesk bin spamassassin --update-server -hits 7
 SPAM_ASSASSIN_MAX_PROC=1                                      # plesk bin spamassassin --update-server -max-proc 1 // 1|2|3|4|5
 
-# PLESK - MAIL SERVERWIDE SETTINGS                            (NOT IMPLEMENTED YET!)
-MAIL_MAPS_STATUS=auth                                         # plesk bin mailserver --set-maps-status true // auth or closed
+# PLESK - MAIL SERVERWIDE SETTINGS
+MAIL_DEPLOYMENT=1
+MAIL_MAPS_STATUS=1                                            # plesk bin mailserver --set-maps-status true
 MAIL_MAPS_ZONES="sbl.spamhaus.org,xbl.spamhaus.org"           # plesk bin mailserver --add-maps-zone sbl.spamhaus.org,xbl.spamhaus.org
-                                                              # oder sbl.spamhaus.org;xbl.spamhaus.org ?
+                                                              # Use -- at the beginning of the string to remove existing maps zones
 
 MAIL_AUTH=both                                                # plesk bin mailserver --set-relay auth -auth-type both // pop3 | smtp | both
 MAIL_AUTH_LOCK_TIME=10                                        # plesk bin mailserver --set-relay auth -auth-type both -lock-time 10
-MAIL_MAX_SIZE=10M                                             # plesk bin spamassassin --update-server -max-mail-size 10M
+MAIL_MAX_SIZE=10M                                             # plesk bin mailserver --set-max-letter-size 10M
 MAIL_MAX_CONNECTIONS=40                                       # plesk bin mailserver --set-max-connections 40
 MAIL_MAX_CONNECTIONS_PER_IP=20                                # plesk bin mailserver --set-max-connections-per-ip 20
 MAIL_SIGN_OUTGOING_MAIL=0                                     # plesk bin mailserver --sign-outgoing-mail true

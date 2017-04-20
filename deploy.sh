@@ -40,7 +40,7 @@ sysLogger "TEXT" "\n###################################\n#    Initialize Pre-Dep
 if [[ $PD_PRE_DEPLOYMENT != 0 && -f $PD_PRE_DEPLOYMENT ]]; then
 	$PD_PRE_DEPLOYMENT | tee -a $LOG_DEPLOYMENT;
 else
-	sysLogger "INFO" "No Pre-Deployment set, skip..";
+	sysLogger "INFO" "No Pre-Deployment set (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
@@ -60,7 +60,7 @@ fi
 if [[ $LINUX_INSTALL_PCKGS == 1 ]]; then
 	sysLogger "DONE" "The Deployment of the linux packages has finished (selected packages (config): $LINUX_PACKAGES), please see the install process above to check if everything has been installed successfully.";
 else
-	sysLogger "INFO" "No Linux Packages Selected / Installed, skip..";
+	sysLogger "INFO" "No Linux Packages Selected / Installed (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#    Custom Bash Profiles Init    #\n###################################\n";
@@ -76,7 +76,7 @@ if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
 
 	sysLogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
-	sysLogger "INFO" "No Bash Profile Configuration possible due to your config.cnf configuration, skip..";
+	sysLogger "INFO" "No Bash Profile Configuration possible due to your config.cnf configuration (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
@@ -114,7 +114,7 @@ if [[ $NGINX_GZIP == 1 ]]; then
 	cp $(getConfigFile nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Copied $(getConfigFile nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
 else
-	sysLogger "INFO" "Nginx gzip configuration is deactivated, skip..";
+	sysLogger "INFO" "Nginx gzip configuration is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
@@ -151,7 +151,7 @@ fi
 
 # PHP Deployment Satus Message
 if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
-	sysLogger "INFO" "Your PHP Versions \"${PHP_VERSIONS[*]}\" are already installed, skip..";
+	sysLogger "INFO" "Your PHP Versions \"${PHP_VERSIONS[*]}\" are already installed (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
@@ -188,7 +188,7 @@ elif [[ $PHP70_IONCUBE == 0 && -f $TMP_IONCUBE_LOADER_INI_PATH ]]; then
 	sysLogger "DONE" "The Uninstallation of the PHP 7.0 Ioncube Loader was successful.";
 else
 	# No PHP 7.0 Deploymet specified
-	sysLogger "INFO" "No Deployment for the PHP 7.0 Ioncube Loader specified, skip..";
+	sysLogger "INFO" "No Deployment for the PHP 7.0 Ioncube Loader specified (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n# Export Default / Custom Scripts #\n###################################\n";
@@ -244,7 +244,7 @@ sysLogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
 sysLogger "TEXT" "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
 if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 	if plesk bin server_pref --show-web-app-firewall | grep -q "${PLESK_MODSECURITY_FIREWALL_RULESET}"; then
-		sysLogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}), skip..";
+		sysLogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}) (skip).";
 	else
 		sysLogger "TEXT" "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
 		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET | tee -a $LOG_DEPLOYMENT;
@@ -307,7 +307,7 @@ if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; the
 	sysLogger "DONE" "The Installation of the Plesk Extensions is finished (please check if there are any possible errors above).";
 	sysLogger "TEXT" "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 else
-  sysLogger "INFO" "No Plesk Extension Deployment specified or is deactivated, skip..";
+  sysLogger "INFO" "No Plesk Extension Deployment specified or is deactivated (skip).";
 	sysLogger "TEXT" "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 fi
 
@@ -329,8 +329,85 @@ elif [[ $SPAM_ASSASSIN == 0 ]]
 	plesk bin mailserver --set-maps-status false
 	sysLogger "DONE" "Finished Deployment of Spam Assassin (deactivated)."
 else
-	sysLogger "INFO" "No Deployment of Spam Assassin specified (skip)."
+	sysLogger "INFO" "The Deployment of Spam Assassin is disabled (skip)."
 fi
+
+sysLogger "TEXT" "\n###################################\n#    Mail Serverwide Settings     #\n###################################\n";
+sysLogger "TEXT" "Deploying Mail Serverwide Settings..\n"
+
+if [[ $MAIL_DEPLOYMENT == 1 ]]; then
+	
+	if [[ $MAIL_MAPS_STATUS == 1 ]]; then
+		plesk bin mailserver --set-maps-status true
+	elif [[ $MAIL_MAPS_STATUS == 0 ]]; then
+		plesk bin mailserver --set-maps-status false
+	fi
+
+	if [[ "${#MAIL_MAPS_ZONES}" > 0 && $MAIL_MAPS_ZONES != 0 ]]; then
+		if [[ $MAIL_MAPS_ZONES =~ '--' ]]; then
+			TMP_MAIL_MAPS_ZONES=$(echo $MAIL_MAPS_ZONES | tr --delete "--")
+			plesk bin mailserver --add-maps-zone $TMP_MAIL_MAPS_ZONES
+		else
+			plesk bin mailserver --add-maps-zone $MAIL_MAPS_ZONES
+		fi
+	fi
+
+	if [[ "${#MAIL_AUTH}" > 0 && $MAIL_AUTH != 0 ]]; then
+		plesk bin mailserver --set-relay auth -auth-type $MAIL_AUTH
+	fi
+
+	if [[ $MAIL_AUTH_LOCK_TIME > 0 ]]; then
+		plesk bin mailserver --set-relay auth -auth-type both -lock-time $MAIL_AUTH_LOCK_TIME
+	fi
+
+	if [[ $MAIL_MAX_SIZE != 0 ]]; then
+		plesk bin mailserver --set-max-letter-size $MAIL_MAX_SIZE
+	fi
+
+	if [[ $MAIL_MAX_CONNECTIONS > 0 ]]; then
+		plesk bin mailserver --set-max-connections $MAIL_MAX_CONNECTIONS
+	fi
+
+	if [[ $MAIL_MAX_CONNECTIONS_PER_IP > 0 ]]; then
+		plesk bin mailserver --set-max-connections-per-ip $MAIL_MAX_CONNECTIONS_PER_IP
+	fi
+
+	if [[ $MAIL_SIGN_OUTGOING_MAIL == 1 ]]; then
+		plesk bin mailserver --sign-outgoing-mail true
+	elif [[ $MAIL_SIGN_OUTGOING_MAIL == 0 ]]; then
+		plesk bin mailserver --sign-outgoing-mail false
+	fi
+
+	if [[ $MAIL_VERIFY_INCOMING_MAIL == 1 ]]; then
+		plesk bin mailserver --verify-incoming-mail true
+	elif [[ $MAIL_VERIFY_INCOMING_MAIL == 0 ]]; then
+		plesk bin mailserver --verify-incoming-mail false
+	fi
+	
+	sysLogger "DONE" "The Mail Serverwide Settings Deployment seems finished (please check if any errors above occured)."
+else
+	sysLogger "INFO" "The Mail Serverwide Settings Deployment is disabled (skip)."
+fi
+
+sysLogger "TEXT" "\n###################################\n#     Mail Outgoing Antispam      #\n###################################\n";
+sysLogger "TEXT" "Deploying Mail Outgoing Antispam..\n"
+
+if [[ $MAIL_OUTGOING_ANTISPAM == 1 ]]; then
+	plesk bin mailserver --enable-outgoing-antispam
+elif [[ $MAIL_OUTGOING_ANTISPAM == 0 ]]; then
+	plesk bin mailserver --disable-outgoing-antispam
+fi
+if [[ $MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT > 0 ]]; then
+	plesk bin mailserver --set-outgoing-messages-mbox-limit $MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT
+fi
+if [[ $MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT > 0 ]]; then
+	plesk bin mailserver --set-outgoing-messages-domain-limit $MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT
+fi
+if [[ $MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT > 0 ]]; then
+	plesk bin mailserver --set-outgoing-messages-subscription-limit $MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT
+fi
+
+sysLogger "DONE" "The Mail Outgoing Antispam Deployment seems finished (please check if any errors above occured)."
 
 sysLogger "TEXT" "\n###################################\n#      ProFTPD Passive Ports      #\n###################################\n";
 sysLogger "TEXT" "Deploying ProFTPD Passive Ports for ProFTPD..\n";
@@ -347,7 +424,7 @@ elif [[ -f /etc/proftpd.d/passive_ports.conf ]]; then
 	service xinetd restart | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished Deployment of removing the ProFTPD Passive Ports.";
 else
-	sysLogger "INFO" "ProFTPD Passive Port Deployment is deactivated, skip..";
+	sysLogger "INFO" "ProFTPD Passive Port Deployment is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#         Change SSH Port         #\n###################################\n";
@@ -369,10 +446,10 @@ if [[ $SSH_PORT != 0 ]]; then
 		sysLogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
 		sysLogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
 	else
-		sysLogger "INFO" "The SSH Port is already set accordingly to your configurations, skip..";
+		sysLogger "INFO" "The SSH Port is already set accordingly to your configurations (skip).";
 	fi
 else
-	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated, skip..";
+	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Plesk Custom Styling      #\n###################################\n";
@@ -388,7 +465,7 @@ if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
 	fi
 	sysLogger "DONE" "Finished Deployment of the Plesk Custom Styling (from ${TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR} to ${PLESK_THEME_CUSTOM}).";
 else
-	sysLogger "INFO" "The Deployment of the Plesk Custom Styling is deactivated, skip..";
+	sysLogger "INFO" "The Deployment of the Plesk Custom Styling is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Clean Up Tmp Folder       #\n###################################\n";
@@ -403,7 +480,7 @@ sysLogger "TEXT" "\n###################################\n#   Initialize After-De
 if [[ $PD_AFT_DEPLOYMENT != 0 && -f $PD_AFT_DEPLOYMENT ]]; then
 	$PD_AFT_DEPLOYMENT | tee -a $LOG_DEPLOYMENT;
 else
-	sysLogger "INFO" "No Aft-Deployment set, skip..";
+	sysLogger "INFO" "No Aft-Deployment set (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Deployment Finished       #\n###################################\n";
