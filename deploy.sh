@@ -311,6 +311,27 @@ else
 	sysLogger "TEXT" "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 fi
 
+sysLogger "TEXT" "\n###################################\n#       Plesk Spam Assassin       #\n###################################\n";
+sysLogger "TEXT" "Deploy Spam Assassin..\n";
+
+if [[ $SPAM_ASSASSIN == 1 ]]; then
+	plesk bin mailserver --set-maps-status true
+	
+	if [[ $SPAM_ASSASSIN_SCORE >= 0 ]]; then
+		plesk bin spamassassin --update-server -hits $SPAM_ASSASSIN_SCORE
+	fi
+	if [[ $SPAM_ASSASSIN_MAX_PROC >= 1 && $SPAM_ASSASSIN_MAX_PROC <= 5 ]]; then
+		plesk bin spamassassin --update-server -max-proc $SPAM_ASSASSIN_MAX_PROC
+	fi
+	
+	sysLogger "DONE" "Finished Deployment of Spam Assassin (activated). \nSpamassassin Score: ${SPAM_ASSASSIN_SCORE}\nSpamassassin Max Proc: ${SPAM_ASSASSIN_MAX_PROC}"
+elif [[ $SPAM_ASSASSIN == 0 ]]
+	plesk bin mailserver --set-maps-status false
+	sysLogger "DONE" "Finished Deployment of Spam Assassin (deactivated)."
+else
+	sysLogger "INFO" "No Deployment of Spam Assassin specified (skip)."
+fi
+
 sysLogger "TEXT" "\n###################################\n#      ProFTPD Passive Ports      #\n###################################\n";
 sysLogger "TEXT" "Deploying ProFTPD Passive Ports for ProFTPD..\n";
 if [[ $FTP_PASSIVE_PORTS != 0 ]]; then
