@@ -314,18 +314,23 @@ fi
 sysLogger "TEXT" "\n###################################\n#       Plesk Spam Assassin       #\n###################################\n";
 sysLogger "TEXT" "Deploy Spam Assassin..\n";
 
-if [[ $SPAM_ASSASSIN == 1 ]]; then
+if [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 1 ]]; then
 	plesk bin mailserver --set-maps-status true
 	
-	if [[ $SPAM_ASSASSIN_SCORE >= 0 ]]; then
+	if [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE -ge 1 ]]; then
 		plesk bin spamassassin --update-server -hits $SPAM_ASSASSIN_SCORE
+	elif [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE != -1 ]]; then
+		sysLogger "WARNING" "SPAM_ASSASSIN_SCORE (skip): Please use a number higher than 0."
 	fi
-	if [[ $SPAM_ASSASSIN_MAX_PROC >= 1 && $SPAM_ASSASSIN_MAX_PROC <= 5 ]]; then
+	
+	if [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC -ge 1 && $SPAM_ASSASSIN_MAX_PROC -le 5 ]]; then
 		plesk bin spamassassin --update-server -max-proc $SPAM_ASSASSIN_MAX_PROC
+	elif [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC != -1 ]]; then
+		sysLogger "WARNING" "SPAM_ASSASSIN_MAX_PROC (skip): Please use a number between 1 and 5."
 	fi
 	
 	sysLogger "DONE" "Finished Deployment of Spam Assassin (activated). \nSpamassassin Score: ${SPAM_ASSASSIN_SCORE}\nSpamassassin Max Proc: ${SPAM_ASSASSIN_MAX_PROC}"
-elif [[ $SPAM_ASSASSIN == 0 ]]
+elif [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 0 ]]
 	plesk bin mailserver --set-maps-status false
 	sysLogger "DONE" "Finished Deployment of Spam Assassin (deactivated)."
 else
