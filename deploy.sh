@@ -361,7 +361,7 @@ if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 		plesk bin mailserver --set-relay auth -auth-type $MAIL_AUTH
 	fi
 
-	if [[ $MAIL_AUTH_LOCK_TIME > 0 ]]; then
+	if [[ $MAIL_AUTH_LOCK_TIME -gt 0 ]]; then
 		plesk bin mailserver --set-relay auth -auth-type both -lock-time $MAIL_AUTH_LOCK_TIME
 	fi
 
@@ -369,11 +369,11 @@ if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 		plesk bin mailserver --set-max-letter-size $MAIL_MAX_SIZE
 	fi
 
-	if [[ $MAIL_MAX_CONNECTIONS > 0 ]]; then
+	if [[ $MAIL_MAX_CONNECTIONS -gt 0 ]]; then
 		plesk bin mailserver --set-max-connections $MAIL_MAX_CONNECTIONS
 	fi
 
-	if [[ $MAIL_MAX_CONNECTIONS_PER_IP > 0 ]]; then
+	if [[ $MAIL_MAX_CONNECTIONS_PER_IP -gt 0 ]]; then
 		plesk bin mailserver --set-max-connections-per-ip $MAIL_MAX_CONNECTIONS_PER_IP
 	fi
 
@@ -402,13 +402,13 @@ if [[ $MAIL_OUTGOING_ANTISPAM == 1 ]]; then
 elif [[ $MAIL_OUTGOING_ANTISPAM == 0 ]]; then
 	plesk bin mailserver --disable-outgoing-antispam
 fi
-if [[ $MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT > 0 ]]; then
+if [[ $MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT -gt 0 ]]; then
 	plesk bin mailserver --set-outgoing-messages-mbox-limit $MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT
 fi
-if [[ $MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT > 0 ]]; then
+if [[ $MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT -gt 0 ]]; then
 	plesk bin mailserver --set-outgoing-messages-domain-limit $MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT
 fi
-if [[ $MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT > 0 ]]; then
+if [[ $MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT -gt 0 ]]; then
 	plesk bin mailserver --set-outgoing-messages-subscription-limit $MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT
 fi
 
