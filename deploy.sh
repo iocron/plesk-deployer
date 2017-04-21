@@ -3,6 +3,12 @@
 ### Bash Exit if a command exits with a non-zero status ###
 set -e
 
+###
+# ToDo: 
+# - Optimization, see https://www.shellcheck.net/
+#   - Mainly "Double quote to prevent globbing and word splitting"
+###
+
 ### Include Global Configs ###
 TMP_BF=$(dirname "$BASH_SOURCE");
 if [[ -f $TMP_BF/system.cnf ]]; then
