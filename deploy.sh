@@ -1,13 +1,8 @@
 #!/bin/bash
+# shellcheck source=/dev/null
 
 ### Bash Exit if a command exits with a non-zero status ###
 set -e
-
-###
-# ToDo: 
-# - Optimization, see https://www.shellcheck.net/
-#   - Mainly "Double quote to prevent globbing and word splitting"
-###
 
 ### Include Global Configs ###
 TMP_BF=$(dirname "$BASH_SOURCE");
@@ -50,11 +45,11 @@ else
 fi
 
 sysLogger "TEXT" "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
-if [[ "${#LINUX_DISTRO}" > 0 && $LINUX_DISTRO != 0 ]]; then
-	if [[ $LINUX_DISTRO =~ "Ubuntu" || $LINUX_DISTRO =~ "Debian" ]]; then
+if [[ "${#LINUX_DISTRO}" -gt 0 ]]; then
+	if [[ $LINUX_DISTRO = *"Ubuntu"* || $LINUX_DISTRO = *"Debian"* ]]; then
 		apt-get -y install $LINUX_PACKAGES | tee -a $LOG_DEPLOYMENT;
 		LINUX_INSTALL_PCKGS=1
-	elif [[ $LINUX_DISTRO =~ "centos" ]]; then
+	elif [[ $LINUX_DISTRO = *"centos"* ]]; then
 		yum -y install epel-release | tee -a $LOG_DEPLOYMENT;
 		yum -y install $LINUX_PACKAGES | tee -a $LOG_DEPLOYMENT;
 		LINUX_INSTALL_PCKGS=1
@@ -78,7 +73,7 @@ else
 fi
 
 if [[ $CONFIGS_DEFAULT == 1 || $CONFIGS_CUSTOM == 1 ]]; then
-	cat $(getConfigFile bash_profile.cnf) | tee -a ~/.bash_profile $LOG_DEPLOYMENT;
+	cat "$(getConfigFile bash_profile.cnf)" | tee -a ~/.bash_profile $LOG_DEPLOYMENT;
 
 	sysLogger "DONE" "The bash profiles have been successfully applied / added to ~/.bash_profile.";
 else
@@ -117,7 +112,7 @@ echo;
 
 if [[ $NGINX_GZIP == 1 ]]; then
 	rm -f /etc/nginx/conf.d/gzip.conf
-	cp $(getConfigFile nginx_gzip.cnf) /etc/nginx/conf.d/gzip.conf | tee -a $LOG_DEPLOYMENT;
+	cp "$(getConfigFile nginx_gzip.cnf)" /etc/nginx/conf.d/gzip.conf | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Copied $(getConfigFile nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
 else
 	sysLogger "INFO" "Nginx gzip configuration is deactivated (skip).";
@@ -130,7 +125,7 @@ PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
 TMP_PHP_DEPLOYMENT=0
 
 # PHP Deployment Installation
-if [[ $PHP_VERSIONS && ${#PHP_VERSIONS[@]} -ne 0 ]]; then
+if [[ ${#PHP_VERSIONS[@]} -gt 0 ]]; then
 	for phpv in "${PHP_VERSIONS[@]}"
 	do
 		if [[ ! -f /opt/plesk/php/${phpv}/etc/php.ini ]]; then
@@ -143,7 +138,7 @@ if [[ $PHP_VERSIONS && ${#PHP_VERSIONS[@]} -ne 0 ]]; then
 fi
 
 # PHP Deployment Uninstallation
-if [[ $PHP_VERSIONS_DIFF && ${#PHP_VERSIONS_DIFF[@]} -ne 0 ]]; then
+if [[ ${#PHP_VERSIONS_DIFF[@]} -gt 0 ]]; then
 	for phpv_delete in "${PHP_VERSIONS_DIFF[@]}"
 	do
 		if [[ -f /opt/plesk/php/${phpv_delete}/etc/php.ini ]]; then
@@ -304,9 +299,9 @@ if [[ $PLESK_EXTENSIONS_DEPLOYMENT == 1 && ${#PLESK_EXTENSIONS[@]} -ne 0 ]]; the
   for ext in "${PLESK_EXTENSIONS[@]}"
   do
     sysLogger "TEXT" "Deployment of ${ext}:\n";
-    if [[ $ext =~ ".zip" ]]; then
+    if [[ $ext = *".zip"* ]]; then
       plesk bin extension --upgrade $ext | tee -a $LOG_DEPLOYMENT; echo;
-    elif [[ $ext =~ "http://" || $ext =~ "https://" ]]; then
+    elif [[ $ext = *"http://"* || $ext = *"https://"* ]]; then
       plesk bin extension --upgrade-url $ext | tee -a $LOG_DEPLOYMENT; echo;
     fi
   done
@@ -354,8 +349,8 @@ if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 		plesk bin mailserver --set-maps-status false
 	fi
 
-	if [[ "${#MAIL_MAPS_ZONES}" > 0 && $MAIL_MAPS_ZONES != 0 ]]; then
-		if [[ $MAIL_MAPS_ZONES =~ '--' ]]; then
+	if [[ "${#MAIL_MAPS_ZONES}" -gt 0 && $MAIL_MAPS_ZONES != 0 ]]; then
+		if [[ $MAIL_MAPS_ZONES = *"--"* ]]; then
 			TMP_MAIL_MAPS_ZONES=$(echo $MAIL_MAPS_ZONES | tr --delete "--")
 			plesk bin mailserver --add-maps-zone $TMP_MAIL_MAPS_ZONES
 		else
@@ -363,7 +358,7 @@ if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 		fi
 	fi
 
-	if [[ "${#MAIL_AUTH}" > 0 && $MAIL_AUTH != 0 ]]; then
+	if [[ "${#MAIL_AUTH}" -gt 0 && $MAIL_AUTH != 0 ]]; then
 		plesk bin mailserver --set-relay auth -auth-type $MAIL_AUTH
 	fi
 
@@ -481,7 +476,7 @@ fi
 
 sysLogger "TEXT" "\n###################################\n#       Clean Up Tmp Folder       #\n###################################\n";
 if [[ -n "$TMP_PATH" ]]; then
-	rm -Rf $TMP_PATH/*
+	rm -Rf "${TMP_PATH:?}/"*
 	sysLogger "DONE" "Cleanup of $TMP_PATH was successful.";
 else
 	sysLogger "WARNING" "The Folder $TMP_PATH doesn't exist.";
