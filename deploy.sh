@@ -330,7 +330,7 @@ if [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 1 ]]; then
 	fi
 	
 	sysLogger "DONE" "Finished Deployment of Spam Assassin (activated). \nSpamassassin Score: ${SPAM_ASSASSIN_SCORE}\nSpamassassin Max Proc: ${SPAM_ASSASSIN_MAX_PROC}"
-elif [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 0 ]]
+elif [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 0 ]]; then
 	plesk bin mailserver --set-maps-status false
 	sysLogger "DONE" "Finished Deployment of Spam Assassin (deactivated)."
 else
