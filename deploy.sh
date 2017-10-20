@@ -364,11 +364,9 @@ if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 		fi
 	fi
 
-	if [[ "${#MAIL_AUTH}" -gt 0 && $MAIL_AUTH != 0 ]]; then
+	if [[ "${#MAIL_AUTH}" -gt 0 && $MAIL_AUTH != 0 && "$MAIL_AUTH" == "smtp" ]]; then
 		plesk bin mailserver --set-relay auth -auth-type $MAIL_AUTH
-	fi
-
-	if [[ $MAIL_AUTH_LOCK_TIME -gt 0 ]]; then
+	elif [[ $MAIL_AUTH_LOCK_TIME -gt 0 && $MAIL_AUTH != 0 ]]; then
 		plesk bin mailserver --set-relay auth -auth-type both -lock-time $MAIL_AUTH_LOCK_TIME
 	fi
 
