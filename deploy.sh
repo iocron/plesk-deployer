@@ -84,11 +84,17 @@ sysLogger "TEXT" "\n###################################\n#       Plesk Nginx Pac
 if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
 	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
+	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf; fi
 	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
-	
+
 	if hash systemctl 2>/dev/null; then
 		systemctl enable nginx.service
-		systemctl restart nginx
+		if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
+			sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't restart (make sure in plesk that the service is in active use (e.g. activate nginx in plesk on a domain))";
+		else
+			systemctl restart nginx.service
+		fi
+
 		sysLogger "DONE" "Enabled nginx Autostart (systemctl).";
 	elif hash chkconfig 2>/dev/null; then
 		chkconfig nginx on # Does not work if on IPv6 (count's for systemctl as well of course), see the fix: https://kb.plesk.com/en/128261
@@ -96,13 +102,13 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	else
 		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected)";
 	fi
-	
+
 	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
 	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
 	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
 		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
 	fi
-	
+
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
 fi
 
@@ -317,19 +323,19 @@ sysLogger "TEXT" "Deploy Spam Assassin..\n";
 
 if [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 1 ]]; then
 	plesk bin mailserver --set-maps-status true
-	
+
 	if [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE -ge 1 ]]; then
 		plesk bin spamassassin --update-server -hits $SPAM_ASSASSIN_SCORE
 	elif [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE != -1 ]]; then
 		sysLogger "WARNING" "SPAM_ASSASSIN_SCORE (skip): Please use a number higher than 0."
 	fi
-	
+
 	if [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC -ge 1 && $SPAM_ASSASSIN_MAX_PROC -le 5 ]]; then
 		plesk bin spamassassin --update-server -max-proc $SPAM_ASSASSIN_MAX_PROC
 	elif [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC != -1 ]]; then
 		sysLogger "WARNING" "SPAM_ASSASSIN_MAX_PROC (skip): Please use a number between 1 and 5."
 	fi
-	
+
 	sysLogger "DONE" "Finished Deployment of Spam Assassin (activated). \nSpamassassin Score: ${SPAM_ASSASSIN_SCORE}\nSpamassassin Max Proc: ${SPAM_ASSASSIN_MAX_PROC}"
 elif [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 0 ]]; then
 	plesk bin mailserver --set-maps-status false
@@ -342,7 +348,7 @@ sysLogger "TEXT" "\n###################################\n#    Mail Serverwide Se
 sysLogger "TEXT" "Deploying Mail Serverwide Settings..\n"
 
 if [[ $MAIL_DEPLOYMENT == 1 ]]; then
-	
+
 	if [[ $MAIL_MAPS_STATUS == 1 ]]; then
 		plesk bin mailserver --set-maps-status true
 	elif [[ $MAIL_MAPS_STATUS == 0 ]]; then
@@ -389,7 +395,7 @@ if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 	elif [[ $MAIL_VERIFY_INCOMING_MAIL == 0 ]]; then
 		plesk bin mailserver --verify-incoming-mail false
 	fi
-	
+
 	sysLogger "DONE" "The Mail Serverwide Settings Deployment seems finished (please check if any errors above occured)."
 else
 	sysLogger "INFO" "The Mail Serverwide Settings Deployment is disabled (skip)."
