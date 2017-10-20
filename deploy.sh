@@ -90,7 +90,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	if hash systemctl 2>/dev/null; then
 		systemctl enable nginx.service
 		if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
-			sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't restart (make sure in plesk that the service is in active use (e.g. activate nginx in plesk on a domain))";
+			sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't start (please make sure that the service in plesk is in active use (e.g. activate nginx in plesk on a domain))";
 		else
 			systemctl restart nginx.service
 		fi
