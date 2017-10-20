@@ -148,9 +148,9 @@ if [[ ${#PHP_VERSIONS_DIFF[@]} -gt 0 ]]; then
 	for phpv_delete in "${PHP_VERSIONS_DIFF[@]}"
 	do
 		if [[ -f /opt/plesk/php/${phpv_delete}/etc/php.ini ]]; then
-			sysLogger "INFO" "Uninstallation of PHP ${phpv_delete}:";
+			sysLogger "INFO" "Uninstall of PHP ${phpv_delete}:";
 			plesk installer --select-product-id plesk --select-release-current --remove-component php${phpv_delete} | tee -a $LOG_DEPLOYMENT;
-			sysLogger "DONE" "Uninstallation of PHP ${phpv_delete} is finished (please check if there are any possible errors above).";
+			sysLogger "DONE" "Uninstall of PHP ${phpv_delete} is finished (please check if there are any possible errors above).";
 			TMP_PHP_DEPLOYMENT=1;
 		fi
 	done
