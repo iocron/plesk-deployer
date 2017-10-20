@@ -21,6 +21,7 @@ NGINX_GZIP=1
 NGINX_REQ_ADDR_99_FIX=1                       # See also: https://goo.gl/Crm8yl
 
 # PHP
+PHP_DEPLOYMENT=0                              # PHP Deployment - Activate (1) / Deactivate (0)
 PHP_VERSIONS=( "7.0" "5.6" )                  # If you don't want any additional PHP Interpreters then use: PHP_VERSIONS=()
 PHP70_IONCUBE=1                               # Plesk's PHP 7 Package is missing ionCube, you can install it with this option
 
@@ -67,7 +68,7 @@ MAIL_MAX_CONNECTIONS_PER_IP=20                                # plesk bin mailse
 MAIL_SIGN_OUTGOING_MAIL=0                                     # plesk bin mailserver --sign-outgoing-mail true
 MAIL_VERIFY_INCOMING_MAIL=0                                   # plesk bin mailserver --verify-incoming-mail true
 
-MAIL_OUTGOING_ANTISPAM=1                                      # plesk bin mailserver --enable-outgoing-antispam or plesk bin mailserver --disable-outgoing-antispam 
+MAIL_OUTGOING_ANTISPAM=1                                      # plesk bin mailserver --enable-outgoing-antispam or plesk bin mailserver --disable-outgoing-antispam
 MAIL_OUTGOING_ANTISPAM_MAILBOX_LIMIT=20                       # plesk bin mailserver --set-outgoing-messages-mbox-limit 20
 MAIL_OUTGOING_ANTISPAM_DOMAIN_LIMIT=100                       # plesk bin mailserver --set-outgoing-messages-domain-limit 100
 MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT=200                 # plesk bin mailserver --set-outgoing-messages-subscription-limit 200

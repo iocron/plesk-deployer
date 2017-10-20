@@ -125,40 +125,42 @@ else
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
-# PHP Deployment Variables
-PHP_VERSIONS_ALL=( "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
-PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
-TMP_PHP_DEPLOYMENT=0
+if [[ $PHP_DEPLOYMENT == 1 ]]; then
+	# PHP Deployment Variables
+	PHP_VERSIONS_ALL=( "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
+	PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
+	TMP_PHP_DEPLOYMENT=0
 
-# PHP Deployment Installation
-if [[ ${#PHP_VERSIONS[@]} -gt 0 ]]; then
-	for phpv in "${PHP_VERSIONS[@]}"
-	do
-		if [[ ! -f /opt/plesk/php/${phpv}/etc/php.ini ]]; then
-			sysLogger "INFO" "Installation of PHP ${phpv}:";
-			plesk installer --select-product-id plesk --select-release-current --install-component php${phpv} | tee -a $LOG_DEPLOYMENT;
-			sysLogger "DONE" "Installation of PHP ${phpv} is finished (please check if there are any possible errors above).";
-			TMP_PHP_DEPLOYMENT=1;
-		fi
-	done
-fi
+	# PHP Deployment Installation
+	if [[ ${#PHP_VERSIONS[@]} -gt 0 ]]; then
+		for phpv in "${PHP_VERSIONS[@]}"
+		do
+			if [[ ! -f /opt/plesk/php/${phpv}/etc/php.ini ]]; then
+				sysLogger "INFO" "Installation of PHP ${phpv}:";
+				plesk installer --select-product-id plesk --select-release-current --install-component php${phpv} | tee -a $LOG_DEPLOYMENT;
+				sysLogger "DONE" "Installation of PHP ${phpv} is finished (please check if there are any possible errors above).";
+				TMP_PHP_DEPLOYMENT=1;
+			fi
+		done
+	fi
 
-# PHP Deployment Uninstallation
-if [[ ${#PHP_VERSIONS_DIFF[@]} -gt 0 ]]; then
-	for phpv_delete in "${PHP_VERSIONS_DIFF[@]}"
-	do
-		if [[ -f /opt/plesk/php/${phpv_delete}/etc/php.ini ]]; then
-			sysLogger "INFO" "Uninstall of PHP ${phpv_delete}:";
-			plesk installer --select-product-id plesk --select-release-current --remove-component php${phpv_delete} | tee -a $LOG_DEPLOYMENT;
-			sysLogger "DONE" "Uninstall of PHP ${phpv_delete} is finished (please check if there are any possible errors above).";
-			TMP_PHP_DEPLOYMENT=1;
-		fi
-	done
-fi
+	# PHP Deployment Uninstallation
+	if [[ ${#PHP_VERSIONS_DIFF[@]} -gt 0 ]]; then
+		for phpv_delete in "${PHP_VERSIONS_DIFF[@]}"
+		do
+			if [[ -f /opt/plesk/php/${phpv_delete}/etc/php.ini ]]; then
+				sysLogger "INFO" "Uninstall of PHP ${phpv_delete}:";
+				plesk installer --select-product-id plesk --select-release-current --remove-component php${phpv_delete} | tee -a $LOG_DEPLOYMENT;
+				sysLogger "DONE" "Uninstall of PHP ${phpv_delete} is finished (please check if there are any possible errors above).";
+				TMP_PHP_DEPLOYMENT=1;
+			fi
+		done
+	fi
 
-# PHP Deployment Satus Message
-if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
-	sysLogger "INFO" "Your PHP Versions \"${PHP_VERSIONS[*]}\" are already installed (skip).";
+	# PHP Deployment Satus Message
+	if [[ $TMP_PHP_DEPLOYMENT == 0 ]]; then
+		sysLogger "INFO" "Your PHP Versions \"${PHP_VERSIONS[*]}\" are already installed (skip).";
+	fi
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
