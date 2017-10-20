@@ -110,6 +110,8 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	fi
 
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
+else
+	sysLogger "INFO" "The Nginx Deployment is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk Nginx Conf's       #\n###################################\n";
