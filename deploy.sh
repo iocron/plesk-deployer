@@ -84,7 +84,7 @@ sysLogger "TEXT" "\n###################################\n#       Plesk Nginx Pac
 if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
 	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
-	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf; fi
+	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf | tee -a $LOG_DEPLOYMENT; fi
 	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
 
 	if hash systemctl 2>/dev/null; then
