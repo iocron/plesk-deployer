@@ -318,32 +318,6 @@ else
 	sysLogger "TEXT" "(please keep in mind that the Deployment isn't able to remove extensions)\n";
 fi
 
-sysLogger "TEXT" "\n###################################\n#       Plesk Spam Assassin       #\n###################################\n";
-sysLogger "TEXT" "Deploy Spam Assassin..\n";
-
-if [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 1 ]]; then
-	plesk bin mailserver --set-maps-status true
-
-	if [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE -ge 1 ]]; then
-		plesk bin spamassassin --update-server -hits $SPAM_ASSASSIN_SCORE
-	elif [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE != -1 ]]; then
-		sysLogger "WARNING" "SPAM_ASSASSIN_SCORE (skip): Please use a number higher than 0."
-	fi
-
-	if [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC -ge 1 && $SPAM_ASSASSIN_MAX_PROC -le 5 ]]; then
-		plesk bin spamassassin --update-server -max-proc $SPAM_ASSASSIN_MAX_PROC
-	elif [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC != -1 ]]; then
-		sysLogger "WARNING" "SPAM_ASSASSIN_MAX_PROC (skip): Please use a number between 1 and 5."
-	fi
-
-	sysLogger "DONE" "Finished Deployment of Spam Assassin (activated). \nSpamassassin Score: ${SPAM_ASSASSIN_SCORE}\nSpamassassin Max Proc: ${SPAM_ASSASSIN_MAX_PROC}"
-elif [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 0 ]]; then
-	plesk bin mailserver --set-maps-status false
-	sysLogger "DONE" "Finished Deployment of Spam Assassin (deactivated)."
-else
-	sysLogger "INFO" "The Deployment of Spam Assassin is disabled (skip)."
-fi
-
 sysLogger "TEXT" "\n###################################\n#    Mail Serverwide Settings     #\n###################################\n";
 sysLogger "TEXT" "Deploying Mail Serverwide Settings..\n"
 
@@ -418,6 +392,36 @@ if [[ $MAIL_OUTGOING_ANTISPAM_SUBSCRIPTION_LIMIT -gt 0 ]]; then
 fi
 
 sysLogger "DONE" "The Mail Outgoing Antispam Deployment seems finished (please check if any errors above occured)."
+
+sysLogger "TEXT" "\n###################################\n#       Plesk Spam Assassin       #\n###################################\n";
+sysLogger "TEXT" "Deploy Spam Assassin..\n";
+
+if [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 1 ]]; then
+	if [[ $MAIL_MAPS_STATUS == 1 ]]; then
+		plesk bin mailserver --set-maps-status true
+	fi
+
+	if [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE -ge 1 ]]; then
+		plesk bin spamassassin --update-server -hits $SPAM_ASSASSIN_SCORE
+	elif [[ -n $SPAM_ASSASSIN_SCORE && $SPAM_ASSASSIN_SCORE != -1 ]]; then
+		sysLogger "WARNING" "SPAM_ASSASSIN_SCORE (skip): Please use a number higher than 0."
+	fi
+
+	if [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC -ge 1 && $SPAM_ASSASSIN_MAX_PROC -le 5 ]]; then
+		plesk bin spamassassin --update-server -max-proc $SPAM_ASSASSIN_MAX_PROC
+	elif [[ -n $SPAM_ASSASSIN_MAX_PROC && $SPAM_ASSASSIN_MAX_PROC != -1 ]]; then
+		sysLogger "WARNING" "SPAM_ASSASSIN_MAX_PROC (skip): Please use a number between 1 and 5."
+	fi
+
+	sysLogger "DONE" "Finished Deployment of Spam Assassin (activated). \nSpamassassin Score: ${SPAM_ASSASSIN_SCORE}\nSpamassassin Max Proc: ${SPAM_ASSASSIN_MAX_PROC}"
+elif [[ -n $SPAM_ASSASSIN && $SPAM_ASSASSIN == 0 ]]; then
+	if [[ $MAIL_MAPS_STATUS == 0 ]]; then
+		plesk bin mailserver --set-maps-status false
+	fi
+	sysLogger "DONE" "Finished Deployment of Spam Assassin (deactivated)."
+else
+	sysLogger "INFO" "The Deployment of Spam Assassin is disabled (skip)."
+fi
 
 sysLogger "TEXT" "\n###################################\n#      ProFTPD Passive Ports      #\n###################################\n";
 sysLogger "TEXT" "Deploying ProFTPD Passive Ports for ProFTPD..\n";
