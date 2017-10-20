@@ -185,9 +185,9 @@ if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 		# Linux System Type not found
 		sysLogger "ERROR" "The Installation of the PHP 7.0 Ioncube Loader failed. The Plesk Deployer wasn't able to determine your Linux Machine Type (x86 or x86_64).";
 	fi
-elif [[ ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
+elif [[ $PHP70_IONCUBE == 1 && ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
 	# PHP 7.0 not installed on this system
-	sysLogger "WARNING" "PHP7 is not installed on this system, therefore a Ioncube Deployment for PHP7 is not possible.";
+	sysLogger "WARNING" "PHP7.0 is not installed on this system, therefore a Ioncube Deployment for PHP7 is not possible.";
 elif [[ $PHP70_IONCUBE == 0 && -f $TMP_IONCUBE_LOADER_INI_PATH ]]; then
 	# Uninstall the PHP 7.0 Ioncube Loader
 	rm -f $TMP_IONCUBE_LOADER_INI_PATH
@@ -349,18 +349,18 @@ sysLogger "TEXT" "Deploying Mail Serverwide Settings..\n"
 
 if [[ $MAIL_DEPLOYMENT == 1 ]]; then
 
-	if [[ $MAIL_MAPS_STATUS == 1 ]]; then
-		plesk bin mailserver --set-maps-status true
-	elif [[ $MAIL_MAPS_STATUS == 0 ]]; then
-		plesk bin mailserver --set-maps-status false
-	fi
-
 	if [[ "${#MAIL_MAPS_ZONES}" -gt 0 && $MAIL_MAPS_ZONES != 0 ]]; then
 		if [[ $MAIL_MAPS_ZONES = *"--"* ]]; then
 			TMP_MAIL_MAPS_ZONES=$(echo $MAIL_MAPS_ZONES | tr --delete "--")
 			plesk bin mailserver --add-maps-zone $TMP_MAIL_MAPS_ZONES
 		else
 			plesk bin mailserver --add-maps-zone $MAIL_MAPS_ZONES
+		fi
+
+		if [[ $MAIL_MAPS_STATUS == 1 ]]; then
+			plesk bin mailserver --set-maps-status true
+		elif [[ $MAIL_MAPS_STATUS == 0 ]]; then
+			plesk bin mailserver --set-maps-status false
 		fi
 	fi
 
