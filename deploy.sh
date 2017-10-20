@@ -90,7 +90,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	if hash systemctl 2>/dev/null; then
 		systemctl enable nginx.service
 		if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
-			sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't start (please make sure that the service in plesk is in active use (e.g. activate nginx in plesk on a domain))";
+			sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't start until you activate it, please make sure that the service in plesk is in active use (e.g. activate nginx in plesk on a domain).";
 		else
 			systemctl restart nginx.service
 		fi
@@ -100,7 +100,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 		chkconfig nginx on # Does not work if on IPv6 (count's for systemctl as well of course), see the fix: https://kb.plesk.com/en/128261
 		sysLogger "DONE" "Enabled nginx Autostart (chkconfig).";
 	else
-		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected)";
+		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected).";
 	fi
 
 	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
