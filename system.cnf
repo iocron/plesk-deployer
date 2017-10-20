@@ -17,7 +17,7 @@ TIME_FORMAT_FILE="%Y-%m-%d-%H%M%S"
 # SYSTEM - LOGS
 LOG_PATH=$SCRIPTPATH/logs
 LOG_ERROR=$LOG_PATH/error.log
-LOG_DEPLOYMENT=$LOG_PATH/deployments/deployment_$TIME_FORMAT_FILE.log
+LOG_DEPLOYMENT=$LOG_PATH/deployments/deployment_$(date +"$TIME_FORMAT_FILE").log
 
 # SYSTEM - COLOR CODES
 RED=$(tput setaf 1)
