@@ -141,7 +141,7 @@ fi
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
 if [[ $PHP_DEPLOYMENT == 1 ]]; then
 	# PHP Deployment Variables
-	PHP_VERSIONS_ALL=( "7.0" "5.6" )
+	PHP_VERSIONS_ALL=( "7.2" "7.1" "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
 	PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
 	TMP_PHP_DEPLOYMENT=0
 
