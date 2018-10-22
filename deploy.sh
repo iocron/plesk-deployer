@@ -90,6 +90,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 
 	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
 	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
+	# (See also: https://www.hosteurope.de/faq/server/server-allgemeines/aenderung-hostname/)
 	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
 		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
 
@@ -104,13 +105,17 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	fi
 
 	if hash systemctl 2>/dev/null; then
-		systemctl enable nginx.service
-		if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
-			sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't start until you activate it, please make sure that the service in plesk is in active use (e.g. activate nginx in plesk on a domain).";
-		else
-			systemctl restart nginx.service
-		fi
+		if [[ "$(systemctl is-enabled nginx.service)" == "enabled" ]]; then
+			systemctl enable nginx.service
 
+			if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
+				sysLogger "WARNING" "Due to the current nginx service systemctl configurations nginx won't start until you activate it, please make sure that the service in plesk is in active use (e.g. activate nginx in plesk on a domain).";
+			else
+				systemctl restart nginx.service
+			fi
+		else
+			sysLogger "INFO" "No systemctl service nginx found (see also: https://www.nginx.com/resources/wiki/start/topics/examples/systemd/)";
+		fi
 		sysLogger "DONE" "Enabled nginx Autostart (systemctl).";
 	elif hash chkconfig 2>/dev/null; then
 		chkconfig nginx on # Does not work if on IPv6 (count's for systemctl as well of course), see the fix: https://kb.plesk.com/en/128261
