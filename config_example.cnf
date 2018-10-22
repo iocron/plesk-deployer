@@ -22,7 +22,7 @@ NGINX_REQ_ADDR_99_FIX=1                       # See also: https://goo.gl/Crm8yl
 
 # PHP
 PHP_DEPLOYMENT=0                              # PHP Deployment - Activate (1) / Deactivate (0)
-PHP_VERSIONS=( "7.2" "5.6" )                  # All existing PHP Versions not included in the array will be uninstalled / un-deployed
+PHP_VERSIONS=( "7.2" "7.1" "5.6" )            # All existing PHP Versions not included in the array will be uninstalled / un-deployed
 PHP70_IONCUBE=1                               # Plesk's PHP 7 Package is missing ionCube, you can install it with this option
 
 # PLESK - GENERAL SETTINGS
