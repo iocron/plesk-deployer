@@ -282,10 +282,11 @@ if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 		sysLogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}) (skip).";
 	else
 		sysLogger "TEXT" "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
-		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET | tee -a $LOG_DEPLOYMENT;
+		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET -waf-rule-set-update-period daily -waf-config-preset tradeoff | tee -a $LOG_DEPLOYMENT;
 
 		if [[ $PLESK_MODSECURITY_FIREWALL_RULESET == "tortix" && "$(type aum 2>/dev/null)" ]]; then
-			aum -u; # Atomic ModSecurity Updater
+			aum configure
+			aum upgrade
 		else
 			sysLogger "WARNING" "Command aum not found (skip).";
 		fi
