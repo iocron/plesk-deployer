@@ -87,6 +87,11 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf | tee -a $LOG_DEPLOYMENT; fi
 	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
 
+	if [[ ! -f /usr/local/psa/admin/sbin/nginxmng ]]; then
+		/usr/local/psa/admin/sbin/nginxmng --enable # or plesk sbin nginxmng --enable
+		sysLogger "DONE" "Enabled nginx through the nginx plesk manager (/usr/local/psa/admin/sbin/nginxmng).";
+	fi
+
 	if hash systemctl 2>/dev/null; then
 		systemctl enable nginx.service
 		if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
@@ -129,7 +134,7 @@ fi
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
 if [[ $PHP_DEPLOYMENT == 1 ]]; then
 	# PHP Deployment Variables
-	PHP_VERSIONS_ALL=( "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
+	PHP_VERSIONS_ALL=( "7.0" "5.6" )
 	PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
 	TMP_PHP_DEPLOYMENT=0
 
