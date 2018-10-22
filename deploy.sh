@@ -105,7 +105,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	fi
 
 	if hash systemctl 2>/dev/null; then
-		if [[ "$(systemctl is-enabled nginx.service)" == "enabled" ]]; then
+		if [[ ! "$(systemctl enable nginx.service 2>/dev/null)" =~ "Failed" ]]; then
 			systemctl enable nginx.service
 
 			if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
@@ -114,7 +114,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 				systemctl restart nginx.service
 			fi
 		else
-			sysLogger "INFO" "No systemctl service nginx found (see also: https://www.nginx.com/resources/wiki/start/topics/examples/systemd/)";
+			sysLogger "INFO" "No systemctl service nginx found or failed to execute (see also: https://www.nginx.com/resources/wiki/start/topics/examples/systemd/)";
 		fi
 		sysLogger "DONE" "Enabled nginx Autostart (systemctl).";
 	elif hash chkconfig 2>/dev/null; then
