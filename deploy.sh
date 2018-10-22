@@ -289,7 +289,7 @@ if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 				aum configure
 				aum upgrade
 			else
-				sysLogger "ERROR" "Command aum not found.";
+				sysLogger "ERROR" "Command aum not found (probably the Atomicorp ruleset wasn't correctly installed).";
 			fi
 		fi
 
