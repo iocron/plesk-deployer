@@ -115,7 +115,14 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	fi
 
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
-else
+elif [[ $NGINX_DEPLOYMENT == -1 ]]; then # Disable Nginx
+	if [[ -f /usr/local/psa/admin/sbin/nginxmng ]]; then
+		/usr/local/psa/admin/sbin/nginxmng --disable # or plesk sbin nginxmng --disable
+		sysLogger "DONE" "Disabled nginx through the nginx plesk manager (/usr/local/psa/admin/sbin/nginxmng).";
+	else
+		sysLogger "INFO" "Nginx Deactivation skipped (skip). The plesk nginx manager hasn't been found (/usr/local/psa/admin/sbin/nginxmng).";
+	fi
+else # Skip Nginx Deployment
 	sysLogger "INFO" "The Nginx Deployment is deactivated (skip).";
 fi
 
