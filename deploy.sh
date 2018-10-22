@@ -105,7 +105,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	fi
 
 	if hash systemctl 2>/dev/null; then
-		if [[ ! "$(systemctl enable nginx.service 2>/dev/null)" =~ "Failed" ]]; then
+		if [[ "$(systemctl enable nginx.service 2>/dev/null)" ]]; then
 			systemctl enable nginx.service
 
 			if [[ "$(systemctl status nginx)" =~ "Active: failed" || "$(systemctl status nginx)" =~ "Loaded: failed" ]]; then
