@@ -87,7 +87,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf | tee -a $LOG_DEPLOYMENT; fi
 	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
 
-	if [[ ! -f /usr/local/psa/admin/sbin/nginxmng ]]; then
+	if [[ -f /usr/local/psa/admin/sbin/nginxmng ]]; then
 		/usr/local/psa/admin/sbin/nginxmng --enable # or plesk sbin nginxmng --enable
 		sysLogger "DONE" "Enabled nginx through the nginx plesk manager (/usr/local/psa/admin/sbin/nginxmng).";
 	fi
