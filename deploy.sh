@@ -82,6 +82,12 @@ fi
 
 sysLogger "TEXT" "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
 if [[ $NGINX_DEPLOYMENT == 1 ]]; then
+	# Install Nginx
+	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
+	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
+	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf | tee -a $LOG_DEPLOYMENT; fi
+	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
+
 	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
 	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
 	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
@@ -91,11 +97,6 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 			/etc/init.d/named restart # Restart DNS / Named / BIND
 		fi
 	fi
-
-	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
-	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
-	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf | tee -a $LOG_DEPLOYMENT; fi
-	sysLogger "DONE" "Plesk Nginx Package was installed successfully.";
 
 	if [[ -f /usr/local/psa/admin/sbin/nginxmng ]]; then
 		/usr/local/psa/admin/sbin/nginxmng --enable # or plesk sbin nginxmng --enable
