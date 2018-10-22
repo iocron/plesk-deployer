@@ -82,6 +82,16 @@ fi
 
 sysLogger "TEXT" "\n###################################\n#       Plesk Nginx Package       #\n###################################\n";
 if [[ $NGINX_DEPLOYMENT == 1 ]]; then
+	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
+	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
+	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
+		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
+
+		if [[ -f /etc/init.d/named ]]; then
+			/etc/init.d/named restart # Restart DNS / Named / BIND
+		fi
+	fi
+
 	# plesk installer --select-product-id plesk --select-release-current --reinstall-patch --install-component nginx
 	plesk installer --select-product-id plesk --select-release-current --install-component nginx | tee -a $LOG_DEPLOYMENT;
 	if [[ -f /etc/nginx/nginx.conf ]]; then nginx -t -c /etc/nginx/nginx.conf | tee -a $LOG_DEPLOYMENT; fi
@@ -89,7 +99,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 
 	if [[ -f /usr/local/psa/admin/sbin/nginxmng ]]; then
 		/usr/local/psa/admin/sbin/nginxmng --enable # or plesk sbin nginxmng --enable
-		sysLogger "DONE" "Enabled nginx through the nginx plesk manager (/usr/local/psa/admin/sbin/nginxmng).";
+		sysLogger "DONE" "Enabled nginx through the nginx plesk manager (/usr/local/psa/admin/sbin/nginxmng --enable).";
 	fi
 
 	if hash systemctl 2>/dev/null; then
@@ -106,12 +116,6 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 		sysLogger "DONE" "Enabled nginx Autostart (chkconfig).";
 	else
 		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected).";
-	fi
-
-	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
-	# (See also: https://support.plesk.com/hc/en-us/articles/213908925-Nginx-does-not-start-automatically-after-reboot-99-Cannot-assign-requested-address)
-	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
-		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
 	fi
 
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
