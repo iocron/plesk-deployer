@@ -283,7 +283,7 @@ if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 		sysLogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}) (skip).";
 	else
 		sysLogger "TEXT" "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
-		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET -waf-rule-set-update-period daily -waf-config-preset tradeoff | tee -a $LOG_DEPLOYMENT;
+		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET -waf-rule-set-update-period daily -waf-config-preset fast | tee -a $LOG_DEPLOYMENT;
 
 		if [[ $PLESK_MODSECURITY_FIREWALL_RULESET == "tortix" ]]; then
 			if ! hash aum 2>/dev/null; then
@@ -296,6 +296,7 @@ if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
 
 		plesk sbin modsecurity_ctl --disable | tee -a $LOG_DEPLOYMENT;
 		plesk sbin modsecurity_ctl --enable | tee -a $LOG_DEPLOYMENT;
+		service apache2 restart | tee -a $LOG_DEPLOYMENT;
 		service httpd restart | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "Finished Deployment of the Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\".";
 	fi
