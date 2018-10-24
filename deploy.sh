@@ -102,15 +102,16 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 			else
 				systemctl restart nginx.service
 			fi
+
+			sysLogger "DONE" "Enabled nginx Autostart (systemctl).";
 		else
-			sysLogger "INFO" "No systemctl service nginx found or failed to execute (see also: https://www.nginx.com/resources/wiki/start/topics/examples/systemd/)";
+			sysLogger "WARNING" "No systemctl service nginx found or failed to execute (skip, see also: https://www.nginx.com/resources/wiki/start/topics/examples/systemd/)";
 		fi
-		sysLogger "DONE" "Enabled nginx Autostart (systemctl).";
 	elif hash chkconfig 2>/dev/null; then
 		chkconfig nginx on # Does not work if on IPv6 (count's for systemctl as well of course), see the fix: https://kb.plesk.com/en/128261
 		sysLogger "DONE" "Enabled nginx Autostart (chkconfig).";
 	else
-		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig for your system detected).";
+		sysLogger "WARNING" "Wasn't able to enable Nginx Autostart (no systemctl or chkconfig on your system detected).";
 	fi
 
 	# Bugfix - Nginx does not start automatically after reboot: 99: Cannot assign requested address
