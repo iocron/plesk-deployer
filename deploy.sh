@@ -279,38 +279,36 @@ sysLogger "DONE" "Finished Deployment of Plesk Interface & System Preferences.";
 
 sysLogger "TEXT" "\n###################################\n#    Plesk ModSecurity Firewall   #\n###################################\n";
 if [[ $PLESK_MODSECURITY_FIREWALL == 1 ]]; then
-	if plesk bin server_pref --show-web-app-firewall | grep -q "${PLESK_MODSECURITY_FIREWALL_RULESET}"; then
-		sysLogger "INFO" "The Web Application Firewall (ModSecurity) is already activated (Ruleset: ${PLESK_MODSECURITY_FIREWALL_RULESET}) (skip).";
+	sysLogger "TEXT" "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
+
+	if [[ $PLESK_MODSECURITY_FIREWALL_RULESET && $PLESK_MODSECURITY_FIREWALL_CONFIG_PRESET ]]; then
+		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET -waf-rule-set-update-period $PLESK_MODSECURITY_FIREWALL_UPDATE_PERIOD -waf-config-preset $PLESK_MODSECURITY_FIREWALL_CONFIG_PRESET | tee -a $LOG_DEPLOYMENT;
 	else
-		sysLogger "TEXT" "Activating Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\"..\n";
-
-		if [[ $PLESK_MODSECURITY_FIREWALL_RULESET && $PLESK_MODSECURITY_FIREWALL_CONFIG_PRESET ]]; then
-			plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET -waf-rule-set-update-period $PLESK_MODSECURITY_FIREWALL_UPDATE_PERIOD -waf-config-preset $PLESK_MODSECURITY_FIREWALL_CONFIG_PRESET | tee -a $LOG_DEPLOYMENT;
-		else
-			plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET | tee -a $LOG_DEPLOYMENT;
-		fi
-
-		if [[ $PLESK_MODSECURITY_FIREWALL_RULESET == "tortix" ]]; then
-			if ! hash aum 2>/dev/null; then
-				aum configure
-				aum upgrade
-			else
-				sysLogger "ERROR" "Command aum not found (probably the Atomicorp ruleset wasn't correctly installed).";
-			fi
-		fi
-
-		plesk sbin modsecurity_ctl --disable | tee -a $LOG_DEPLOYMENT;
-		plesk sbin modsecurity_ctl --enable | tee -a $LOG_DEPLOYMENT;
-		service apache2 restart | tee -a $LOG_DEPLOYMENT;
-		service httpd restart | tee -a $LOG_DEPLOYMENT;
-		sysLogger "DONE" "Finished Deployment of the Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\".";
+		plesk bin server_pref --update-web-app-firewall -waf-rule-engine on -waf-rule-set $PLESK_MODSECURITY_FIREWALL_RULESET | tee -a $LOG_DEPLOYMENT;
 	fi
-else
+
+	if [[ $PLESK_MODSECURITY_FIREWALL_RULESET == "tortix" ]]; then
+		if ! hash aum 2>/dev/null; then
+			aum configure
+			aum upgrade
+		else
+			sysLogger "ERROR" "Command aum not found (probably the Atomicorp ruleset wasn't correctly installed).";
+		fi
+	fi
+
+	plesk sbin modsecurity_ctl --disable | tee -a $LOG_DEPLOYMENT;
+	plesk sbin modsecurity_ctl --enable | tee -a $LOG_DEPLOYMENT;
+	service apache2 restart | tee -a $LOG_DEPLOYMENT;
+	service httpd restart | tee -a $LOG_DEPLOYMENT;
+	sysLogger "DONE" "Finished Deployment of the Web Application Firewall (ModSecurity) with Ruleset \"${PLESK_MODSECURITY_FIREWALL_RULESET}\".";
+elif [[ $PLESK_MODSECURITY_FIREWALL == -1 ]]; then
 	sysLogger "TEXT" "Deactivating Web Application Firewall (ModSecurity)..\n";
 	plesk bin server_pref --update-web-app-firewall -waf-rule-engine off | tee -a $LOG_DEPLOYMENT;
 	plesk sbin modsecurity_ctl --disable | tee -a $LOG_DEPLOYMENT;
 	service httpd restart | tee -a $LOG_DEPLOYMENT;
 	sysLogger "DONE" "Finished deactivating ModSecurity.";
+else
+	sysLogger "INFO" "The Web Application Firewall Deployment is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#         Plesk Firewall          #\n###################################\n";

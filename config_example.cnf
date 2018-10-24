@@ -42,7 +42,7 @@ PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509
 # PLESK - SECURITY
 PLESK_MIN_PW_STRENGTH="medium"                        # very_weak|weak|medium|strong|very_strong
 PLESK_FIREWALL=1                                      # NOT IMPLEMENTED YET
-PLESK_MODSECURITY_FIREWALL=1
+PLESK_MODSECURITY_FIREWALL=1                          # 1 = Deploy | 0 = Skip | -1 = Deactivate
 PLESK_MODSECURITY_FIREWALL_RULESET="crs"              # crs|tortix (crs=OWASP, tortix=Atomicorp's ASL)
 PLESK_MODSECURITY_FIREWALL_CONFIG_PRESET="fast"       # fast|tradeoff|thorough
 PLESK_MODSECURITY_FIREWALL_UPDATE_PERIOD="daily"      # daily|weekly
