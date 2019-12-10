@@ -152,7 +152,7 @@ fi
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
 if [[ $PHP_DEPLOYMENT == 1 ]]; then
 	# PHP Deployment Variables
-	PHP_VERSIONS_ALL=( "7.2" "7.1" "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
+	PHP_VERSIONS_ALL=( "7.3" "7.2" "7.1" "7.0" "5.6" "5.5" "5.4" "5.3" "5.2" )
 	PHP_VERSIONS_DIFF=($(arrayDiff PHP_VERSIONS_ALL[@] PHP_VERSIONS[@]))
 	TMP_PHP_DEPLOYMENT=0
 
@@ -188,43 +188,36 @@ if [[ $PHP_DEPLOYMENT == 1 ]]; then
 	fi
 fi
 
-sysLogger "TEXT" "\n###################################\n#        Plesk PHP Ioncube        #\n###################################\n";
-TMP_IONCUBE_LOADER_INI_PATH=/opt/plesk/php/7.0/etc/php.d/00-ioncube-loader.ini
-if [[ $PHP_DEPLOYMENT == 1 ]]; then
-	# PHP 7.0 Ioncube Deployment
-	if [[ $PHP70_IONCUBE == 1 && -f /opt/plesk/php/7.0/etc/php.ini ]]; then
-		if [[ $LINUX_MACHINE_TYPE == "i686" || $LINUX_MACHINE_TYPE == "x86" ]]; then
-			# Linux x86 Systems
-			if [[ ! -d /opt/plesk/php/7.0/lib ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib/ does not exist."; fi
-			cp $FILES_PATH/ioncube_loaders_lin_x86-32/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
-			printf "zend_extension=/opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so" > $TMP_IONCUBE_LOADER_INI_PATH
-			chmod 755 /opt/plesk/php/7.0/lib/php/modules/ioncube_loader.so
-			plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
-			sysLogger "DONE" "The Ioncube PHP 7.0 Loader is successfully deployed.";
-		elif [[ $LINUX_MACHINE_TYPE == "x86_64" ]]; then
-			# Linux x86_64 Systems
-			if [[ ! -d /opt/plesk/php/7.0/lib64 ]]; then sysLogger "ERROR" "The Ioncube Installation failed. The folder /opt/plesk/php/7.0/lib64/ does not exist."; fi
-			cp $FILES_PATH/ioncube_loaders_lin_x86-64/ioncube_loader_lin_7.0.so /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so | tee -a $LOG_DEPLOYMENT;
-			printf "zend_extension=/opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so" > $TMP_IONCUBE_LOADER_INI_PATH
-			chmod 755 /opt/plesk/php/7.0/lib64/php/modules/ioncube_loader.so
-			plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
-			sysLogger "DONE" "The Installation of the PHP 7.0 Ioncube Loader was successful (please check if there are any possible errors above).";
-		else
-			# Linux System Type not found
-			sysLogger "ERROR" "The Installation of the PHP 7.0 Ioncube Loader failed. The Plesk Deployer wasn't able to determine your Linux Machine Type (x86 or x86_64).";
+sysLogger "TEXT" "\n##################################\n#        Database Deployment       #\n###################################\n";
+if [[ $DB_DEPLOYMENT == 1 ]]; then
+	TMP_DB_CONF_FILE=/etc/my.cnf
+
+	if [[ -f "$TMP_DB_CONF_FILE" ]]; then
+		if [[ -n "$DB_INNODB_BUFFER_POOL_SIZE" && $DB_INNODB_BUFFER_POOL_SIZE != 0 ]]; then
+			setConfVarInFile "innodb_buffer_pool_size" "$DB_INNODB_BUFFER_POOL_SIZE" "$TMP_DB_CONF_FILE";
+			sysLogger "INFO" "innodb_buffer_pool_size set to ${DB_INNODB_BUFFER_POOL_SIZE}";
 		fi
-	elif [[ $PHP70_IONCUBE == 1 && ! -f /opt/plesk/php/7.0/etc/php.ini ]]; then
-		# PHP 7.0 not installed on this system
-		sysLogger "WARNING" "PHP7.0 is not installed on this system, therefore a Ioncube Deployment for PHP7 is not possible.";
-	elif [[ $PHP70_IONCUBE == 0 && -f $TMP_IONCUBE_LOADER_INI_PATH ]]; then
-		# Uninstall the PHP 7.0 Ioncube Loader
-		rm -f $TMP_IONCUBE_LOADER_INI_PATH
-		plesk bin php_handler --reread | tee -a $LOG_DEPLOYMENT;
-		sysLogger "DONE" "The Uninstallation of the PHP 7.0 Ioncube Loader was successful.";
+		if [[ -n "$DB_INNODB_ADDITIONAL_MEM_POOL_SIZE" && $DB_INNODB_ADDITIONAL_MEM_POOL_SIZE != 0 ]]; then
+			setConfVarInFile "innodb_additional_mem_pool_size" "$DB_INNODB_ADDITIONAL_MEM_POOL_SIZE" "$TMP_DB_CONF_FILE";
+			sysLogger "INFO" "innodb_additional_mem_pool_size set to ${DB_INNODB_ADDITIONAL_MEM_POOL_SIZE}";
+		fi
+		if [[ -n "$DB_INNODB_LOG_BUFFER_SIZE" && $DB_INNODB_LOG_BUFFER_SIZE != 0 ]]; then
+			setConfVarInFile "innodb_log_buffer_size" "$DB_INNODB_LOG_BUFFER_SIZE" "$TMP_DB_CONF_FILE";
+			sysLogger "INFO" "innodb_log_buffer_size set to ${DB_INNODB_LOG_BUFFER_SIZE}";
+		fi
+		if [[ -n "$DB_INNODB_THREAD_CONCURRENCY" && $DB_INNODB_THREAD_CONCURRENCY != 0 ]]; then
+			setConfVarInFile "innodb_thread_concurrency" "$DB_INNODB_THREAD_CONCURRENCY" "$TMP_DB_CONF_FILE";
+			sysLogger "INFO" "innodb_thread_concurrency set to ${DB_INNODB_THREAD_CONCURRENCY}";
+		fi
+		if [[ -n "$DB_QUERY_CACHE_SIZE" && $DB_QUERY_CACHE_SIZE != 0 ]]; then
+			setConfVarInFile "query_cache_size" "$DB_QUERY_CACHE_SIZE" "$TMP_DB_CONF_FILE";
+			sysLogger "INFO" "query_cache_size set to ${DB_QUERY_CACHE_SIZE}";
+		fi
 	else
-		# No PHP 7.0 Deploymet specified
-		sysLogger "INFO" "No Deployment for the PHP 7.0 Ioncube Loader specified (skip).";
+		sysLogger "WARNING" "No DB Config found in $TMP_DB_CONF_FILE";
 	fi
+else
+	sysLogger "INFO" "The DB Deployment is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n# Export Default / Custom Scripts #\n###################################\n";

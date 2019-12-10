@@ -69,6 +69,44 @@ function mailAdmin(){
 	fi
 }
 
+### setConfVarInFile() ###
+# Usage: setConfVarInFile <variableName> <variableValue> <file>
+function setConfVarInFile(){
+	if [[ $# -eq 3 ]]; then
+		TMP_CONF_KEY=$1
+		TMP_CONF_VALUE=$2
+		TMP_FILE=$3
+
+		TMP_REGEX="^(?!#)${TMP_CONF_KEY}[=\s]\K.+"
+		TMP_REGEX_COMMENT_WITH_EQUAL_SIGN="^(#|#\s)${TMP_CONF_KEY}=.*"
+		TMP_REGEX_COMMENT_WITH_SPACE="^(#|#\s)Port\s.*"
+
+		if [[ -f "$TMP_FILE" ]]; then
+			if [[ "$(grep -P ${TMP_REGEX} ${TMP_FILE} | head -1)" != "$1 ${TMP_CONF_VALUE}" ]]; then
+				if [[ "$(grep -P ${TMP_REGEX} ${TMP_FILE})" ]]; then
+					perl -pi -e "s/${TMP_REGEX}/${TMP_CONF_VALUE}/;" $TMP_FILE | tee -a $LOG_DEPLOYMENT;
+				elif [[ "$(grep -P ${TMP_REGEX_COMMENT_WITH_EQUAL_SIGN} ${TMP_FILE})" ]]; then
+					perl -pi -e "s/${TMP_REGEX_COMMENT_WITH_EQUAL_SIGN}/${TMP_CONF_KEY}=${TMP_CONF_VALUE}/;" $TMP_FILE | tee -a $LOG_DEPLOYMENT;
+				elif [[ "$(grep -P ${TMP_REGEX_COMMENT_WITH_SPACE} ${TMP_FILE})" ]]; then
+					perl -pi -e "s/${TMP_REGEX_COMMENT_WITH_SPACE}/${TMP_CONF_KEY} ${TMP_CONF_VALUE}/;" $TMP_FILE | tee -a $LOG_DEPLOYMENT;
+				elif [[ $(grep -P '^(?!#).*=' $TMP_FILE) ]]; then
+					printf "$1=${TMP_CONF_VALUE}" | tee -a $TMP_FILE $LOG_DEPLOYMENT;
+				elif [[ $(grep -P '^(?!#).*[ ]' $TMP_FILE) ]]; then
+					printf "$1 ${TMP_CONF_VALUE}" | tee -a $TMP_FILE $LOG_DEPLOYMENT;
+				else
+					sysLogger "WARNING" "No allocation of the config file format found (no variables found).";
+				fi
+			else
+				sysLogger "INFO" "The replacement operation has been skipped, because this entry already exists.";
+			fi
+		else
+			sysLogger "WARNING" "String replacement failed, the file ${TMP_FILE} does not exist.";
+		fi
+	else
+		sysLogger "WARNING" "setConfVarInFile() needs 3 Parameters. This operation has been skipped..";
+	fi
+}
+
 ### arrayDiff() ###
 # Usage: arrayDiff <array1> <array2>
 # Example: array3=$($(arrayDiff array1[@] array2[@]))	# Saves the Difference / Result as a Array
