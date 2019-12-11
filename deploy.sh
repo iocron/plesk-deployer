@@ -125,6 +125,7 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 		# fi
 
 		service named-chroot restart |& tee -a $LOG_DEPLOYMENT;
+		# plesk repair dns -y
 	fi
 
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
