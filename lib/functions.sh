@@ -79,7 +79,7 @@ function setConfVarInFile(){
 
 		TMP_REGEX="^(?!#)${TMP_CONF_KEY}[=\s]\K.+"
 		TMP_REGEX_COMMENT_WITH_EQUAL_SIGN="^(#|#\s)${TMP_CONF_KEY}=.*"
-		TMP_REGEX_COMMENT_WITH_SPACE="^(#|#\s)Port\s.*"
+		TMP_REGEX_COMMENT_WITH_SPACE="^(#|#\s)${TMP_CONF_KEY}\s.*"
 
 		if [[ -f "$TMP_FILE" ]]; then
 			if [[ "$(grep -P ${TMP_REGEX} ${TMP_FILE} | head -1)" != "$1 ${TMP_CONF_VALUE}" ]]; then

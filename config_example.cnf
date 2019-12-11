@@ -25,12 +25,12 @@ PHP_DEPLOYMENT=0                              # PHP Deployment - Activate (1) / 
 PHP_VERSIONS=( "7.3" "7.2" "5.6" "5.4" )      # All existing PHP Versions not included in the array will be uninstalled / un-deployed
 
 # DATABASE (MySQL/MariaDB)
-DB_DEPLOYMENT=1                               # Deploy custom optimized DB Settings if needed - Activate (1) / Deactivate (0)
-DB_INNODB_BUFFER_POOL_SIZE=1024M              # Depending on your server resources use a lower value (1024M for Servers with enough Resources)
-DB_INNODB_ADDITIONAL_MEM_POOL_SIZE=5000K
-DB_INNODB_LOG_BUFFER_SIZE=5000K
-DB_INNODB_THREAD_CONCURRENCY=2
-DB_QUERY_CACHE_SIZE=64M
+DB_DEPLOYMENT="1"                             # Deploy custom optimized DB Settings if needed - Activate (1) / Deactivate (0)
+DB_INNODB_BUFFER_POOL_SIZE="1024M"            # Depending on your server resources use a lower value (1024M for Servers with enough Resources)
+DB_INNODB_ADDITIONAL_MEM_POOL_SIZE="5000K"
+DB_INNODB_LOG_BUFFER_SIZE="5000K"
+DB_INNODB_THREAD_CONCURRENCY="2"
+DB_QUERY_CACHE_SIZE="64M"
 
 # PLESK - GENERAL SETTINGS
 PLESK_PORT=8443                               # Plesk Port (default: 8443) - (NOT IMPLEMENTED YET!)
