@@ -120,9 +120,11 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	if [[ $NGINX_REQ_ADDR_99_FIX == 1 ]]; then
 		sed -ie 's/network.target/network-online.target/g' /etc/systemd/system/multi-user.target.wants/nginx.service
 
-		if [[ -f /etc/init.d/named ]]; then
-			/etc/init.d/named restart # Restart DNS / Named / BIND
-		fi
+		# if [[ -f /etc/init.d/named ]]; then
+		# 	/etc/init.d/named restart # Restart DNS / Named / BIND
+		# fi
+
+		service named-chroot restart |& tee -a $LOG_DEPLOYMENT;
 	fi
 
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
