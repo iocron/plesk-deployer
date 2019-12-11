@@ -44,50 +44,6 @@ else
 	sysLogger "INFO" "No Pre-Deployment set (skip).";
 fi
 
-sysLogger "TEXT" "\n################################\n#       Plesk Default/Custom Theme       #\n################################\n";
-# PLESK CUSTOM THEME DEPLOYMENT
-if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
-	if [[ -d "$PLESK_THEME_CUSTOM" ]]; then
-		if [[ -f "$PLESK_THEME_CUSTOM/meta.xml" ]]; then
-			rm -f "$TMP_PATH/plesk-theme.zip";
-			zip "$TMP_PATH/plesk-theme.zip" "$PLESK_THEME_CUSTOM/*"
-			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
-			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
-		else
-			sysLogger "INFO" "No custom theme deployment / meta.xml in $PLESK_THEME_CUSTOM found (skip).";
-		fi
-	elif [[ -f "$PLESK_THEME_CUSTOM" && "$PLESK_THEME_CUSTOM" = *".zip"* ]]; then
-		plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_CUSTOM
-		sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
-	else
-		sysLogger "WARNING" "Your plesk theme is neither a valid zip file nor a folder (skip).";
-	fi
-else
-	sysLogger "INFO" "The Deployment of the Plesk Custom Theme is deactivated (skip).";
-fi
-
-# PLESK DEFAULT THEME DEPLOYMENT
-# (Runs only if no CUSTOM PLESK THEME is set / available)
-if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
-	if [[ -d "$PLESK_THEME_DEFAULT" ]]; then
-		if [[ -f "$PLESK_THEME_DEFAULT/meta.xml" ]]; then
-			rm -f "$TMP_PATH/plesk-theme.zip";
-			zip "$TMP_PATH/plesk-theme.zip" "$PLESK_THEME_DEFAULT/*" |& tee -a $LOG_DEPLOYMENT;
-			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
-			sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
-		else
-			sysLogger "INFO" "No meta.xml in $PLESK_THEME_DEFAULT found (skip).";
-		fi
-	elif [[ -f "$PLESK_THEME_DEFAULT" && "$PLESK_THEME_DEFAULT" = *".zip"* ]]; then
-		plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_DEFAULT
-		sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
-	else
-		sysLogger "WARNING" "Your Plesk DEFAULT Theme is neither a valid zip file nor a folder (skip).";
-	fi
-else
-	sysLogger "INFO" "The Deployment of the Plesk DEFAULT Theme is deactivated (skip).";
-fi
-
 sysLogger "TEXT" "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" -gt 0 ]]; then
 	if [[ $LINUX_DISTRO = *"Ubuntu"* || $LINUX_DISTRO = *"Debian"* ]]; then
@@ -282,6 +238,50 @@ if [[ $SCRIPTS_DEFAULT == 1 || $SCRIPTS_CUSTOM == 1 ]]; then
 	sysLogger "DONE" "All configured scripts have been copied to $SCRIPTS_EXPORT_PATH, you can call a script with yourscript.sh from anywhere.";
 else
 	sysLogger "INFO" "Skipped Import of Scripts (scripts/)..";
+fi
+
+sysLogger "TEXT" "\n################################\n#       Plesk Default/Custom Theme       #\n################################\n";
+# PLESK CUSTOM THEME DEPLOYMENT
+if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
+	if [[ -d "$PLESK_THEME_CUSTOM" ]]; then
+		if [[ -f "$PLESK_THEME_CUSTOM/meta.xml" ]]; then
+			rm -f "$TMP_PATH/plesk-theme.zip";
+			zip "$TMP_PATH/plesk-theme.zip" $PLESK_THEME_CUSTOM/*
+			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
+			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
+		else
+			sysLogger "INFO" "No custom theme deployment / meta.xml in $PLESK_THEME_CUSTOM found (skip).";
+		fi
+	elif [[ -f "$PLESK_THEME_CUSTOM" && "$PLESK_THEME_CUSTOM" = *".zip"* ]]; then
+		plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_CUSTOM
+		sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
+	else
+		sysLogger "WARNING" "Your plesk theme is neither a valid zip file nor a folder (skip).";
+	fi
+else
+	sysLogger "INFO" "The Deployment of the Plesk Custom Theme is deactivated (skip).";
+fi
+
+# PLESK DEFAULT THEME DEPLOYMENT
+# (Runs only if no CUSTOM PLESK THEME is set / available)
+if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
+	if [[ -d "$PLESK_THEME_DEFAULT" ]]; then
+		if [[ -f "$PLESK_THEME_DEFAULT/meta.xml" ]]; then
+			rm -f "$TMP_PATH/plesk-theme.zip";
+			zip "$TMP_PATH/plesk-theme.zip" $PLESK_THEME_DEFAULT/* |& tee -a $LOG_DEPLOYMENT;
+			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
+			sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
+		else
+			sysLogger "INFO" "No meta.xml in $PLESK_THEME_DEFAULT found (skip).";
+		fi
+	elif [[ -f "$PLESK_THEME_DEFAULT" && "$PLESK_THEME_DEFAULT" = *".zip"* ]]; then
+		plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_DEFAULT
+		sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
+	else
+		sysLogger "WARNING" "Your Plesk DEFAULT Theme is neither a valid zip file nor a folder (skip).";
+	fi
+else
+	sysLogger "INFO" "The Deployment of the Plesk DEFAULT Theme is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n# Plesk Interface & System Prefs  #\n###################################\n";
