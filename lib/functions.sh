@@ -90,9 +90,9 @@ function setConfVarInFile(){
 				elif [[ "$(grep -P ${TMP_REGEX_COMMENT_WITH_SPACE} ${TMP_FILE})" ]]; then
 					perl -pi -e "s/${TMP_REGEX_COMMENT_WITH_SPACE}/${TMP_CONF_KEY} ${TMP_CONF_VALUE}/;" $TMP_FILE | tee -a $LOG_DEPLOYMENT;
 				elif [[ $(grep -P '^(?!#).*=' $TMP_FILE) ]]; then
-					printf "$1=${TMP_CONF_VALUE}" | tee -a $TMP_FILE $LOG_DEPLOYMENT;
+					printf "$1=${TMP_CONF_VALUE}\n" | tee -a $TMP_FILE $LOG_DEPLOYMENT;
 				elif [[ $(grep -P '^(?!#).*[ ]' $TMP_FILE) ]]; then
-					printf "$1 ${TMP_CONF_VALUE}" | tee -a $TMP_FILE $LOG_DEPLOYMENT;
+					printf "$1 ${TMP_CONF_VALUE}\n" | tee -a $TMP_FILE $LOG_DEPLOYMENT;
 				else
 					sysLogger "WARNING" "No allocation of the config file format found (no variables found).";
 				fi

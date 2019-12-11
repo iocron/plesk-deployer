@@ -560,7 +560,7 @@ sysLogger "INFO" "(for more informations please look up https://support.plesk.co
 # (due to the SSH Port Change Deployment)
 if [[ $PLESK_FIREWALL != 0 ]]; then
 	if [[ $SSH_PORT != 0 ]]; then
-		if [[ $(iptables -S | grep "port $SSH_PORT") ]]; then
+		if [[ ! $(iptables -S | grep "port $SSH_PORT") ]]; then
 			# Add Firewall Ruleset to Plesk Firewall
 			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (id, configuration_id, direction, priority, object)VALUES(69, 1, 0, 21, 'a:8:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:2:{i:0;s:9:\"$SSH_PORT/tcp\";i:1;s:9:\"$SSH_PORT/udp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";s:10:\"originalId\";s:2:\"47\";}');" |& tee -a $LOG_DEPLOYMENT;
 			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; SELECT * FROM module_firewall_rules WHERE id=69;" |& tee -a $LOG_DEPLOYMENT;
@@ -572,10 +572,11 @@ if [[ $PLESK_FIREWALL != 0 ]]; then
 			service iptables save
 
 			sysLogger "INFO" "The following iptable rules have been added: "
-			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 		else
-			sysLogger "INFO" "The firewall deployment adds currently only firewall settings for the SSH Port Change Deployment, there is currently no SSH Port set (skip).";
+			sysLogger "INFO" "This port seems to be already implemented into your iptables (skip).";
 		fi
+
+		iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 	fi
 else
 	sysLogger "INFO" "No Firewall Deployment set (skip).";
