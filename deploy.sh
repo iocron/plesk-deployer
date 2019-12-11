@@ -304,9 +304,6 @@ else
 	sysLogger "INFO" "The Web Application Firewall Deployment is deactivated (skip).";
 fi
 
-sysLogger "TEXT" "\n###################################\n#         Plesk Firewall          #\n###################################\n";
-
-
 sysLogger "TEXT" "\n###################################\n#         Plesk Fail2Ban          #\n###################################\n";
 if [[ $PLESK_FAIL2BAN == 1 ]]; then
 	sysLogger "TEXT" "Activating Fail2Ban:\n";
@@ -477,6 +474,55 @@ else
 	sysLogger "INFO" "ProFTPD Passive Port Deployment is deactivated (skip).";
 fi
 
+sysLogger "TEXT" "\n################################\n#       Plesk Default/Custom Theme       #\n################################\n";
+# PLESK CUSTOM THEME DEPLOYMENT
+if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
+	if [[ -d "$PLESK_THEME_CUSTOM" ]]; then
+		if [[ ! -f "$PLESK_THEME_CUSTOM/meta.xml" ]]; then
+			zip $FILES_PATH/plesk-theme.zip $PLESK_THEME_CUSTOM/*
+			plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_CUSTOM/plesk-theme.zip
+			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
+		else
+			sysLogger "INFO" "No meta.xml in $PLESK_THEME_CUSTOM found (skip).";
+		fi
+	elif [[ -f "$PLESK_THEME_CUSTOM" ]]; then
+		if [[ "$PLESK_THEME_CUSTOM" = *".zip"* ]]; then
+			plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_CUSTOM
+			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
+		else
+			sysLogger "WARNING" "Your Plesk Theme file is not a .zip file (skip).";
+		fi
+	else
+		sysLogger "WARNING" "Your plesk theme is neither a file nor a folder (skip).";
+	fi
+else
+	sysLogger "INFO" "The Deployment of the Plesk Custom Theme is deactivated (skip).";
+fi
+
+# PLESK DEFAULT THEME DEPLOYMENT
+if [[ $PLESK_THEME_DEFAULT != 0 && ! -f $PLESK_THEME_CUSTOM && $PLESK_THEME_CUSTOM = *".zip"* && -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
+	if [[ -d "$PLESK_THEME_DEFAULT" ]]; then
+		if [[ ! -f "$PLESK_THEME_DEFAULT/meta.xml" ]]; then
+			zip $FILES_PATH/plesk-theme.zip $PLESK_THEME_DEFAULT/*
+			plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_DEFAULT/plesk-theme.zip
+			sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
+		else
+			sysLogger "INFO" "No meta.xml in $PLESK_THEME_DEFAULT found (skip).";
+		fi
+	elif [[ -f "$PLESK_THEME_DEFAULT" ]]; then
+		if [[ "$PLESK_THEME_DEFAULT" = *".zip"* ]]; then
+			plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_DEFAULT
+			sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
+		else
+			sysLogger "WARNING" "Your Plesk DEFAULT Theme file is not a .zip file (skip).";
+		fi
+	else
+		sysLogger "WARNING" "Your Plesk DEFAULT Theme is neither a file nor a folder (skip).";
+	fi
+else
+	sysLogger "INFO" "The Deployment of the Plesk DEFAULT Theme is deactivated (skip).";
+fi
+
 sysLogger "TEXT" "\n###################################\n#         Change SSH Port         #\n###################################\n";
 TMP_SSH_PORT_REGEX='^(?!#)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSH_PORT_REGEX_COMMENT='^(#|#\s)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
@@ -502,20 +548,38 @@ else
 	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated (skip).";
 fi
 
-sysLogger "TEXT" "\n###################################\n#       Plesk Custom Styling      #\n###################################\n";
-if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
-	if [[ -f $FILES_PATH/plesk-theme-custom/css/custom.css ]]; then
-		TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme-custom/;
-		find $TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR -type d -exec /bin/cp -Rf {} $PLESK_THEME_CUSTOM \;
-	elif [[ -f $FILES_PATH/plesk-theme/css/custom.css ]]; then
-		TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=$FILES_PATH/plesk-theme/;
-		find $TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR -type d -exec /bin/cp -Rf {} $PLESK_THEME_CUSTOM \;
-	else
-		TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR=0;
+sysLogger "TEXT" "\n###################################\n#         Plesk Firewall          #\n###################################\n";
+# https://support.plesk.com/hc/en-us/articles/115002552134-How-to-manage-Plesk-Firewall-via-CLI-
+# Problematic Implementation because of the firewall confirmation parameter/action (/usr/local/psa/bin/modules/firewall/settings -c)
+# Therefore it has to be done manually
+
+sysLogger "INFO" "The Plesk Firewall can't be enabled automatically, because of a special ssh confirmation security check.";
+sysLogger "INFO" "If you wan't the Plesk Firewall to be enabled (recommended), then please do it manually in your plesk panel (or use custom iptables).";
+sysLogger "INFO" "(for more informations please look up https://support.plesk.com/hc/en-us/articles/115000629013-How-to-install-Plesk-Firewall)";
+
+# Add Firewall SSH Port Ruleset
+# (due to the SSH Port Change Deployment)
+if [[ $PLESK_FIREWALL != 0 ]]; then
+	if [[ $SSH_PORT != 0 ]]; then
+		if [[ $(iptables-save | grep "port $SSH_PORT") ]]; then
+			# Add Firewall Ruleset to Plesk Firewall
+			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (id, configuration_id, direction, priority, object)VALUES(69, 1, 0, 21, 'a:8:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:2:{i:0;s:9:\"$SSH_PORT/tcp\";i:1;s:9:\"$SSH_PORT/udp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";s:10:\"originalId\";s:2:\"47\";}');" |& tee -a $LOG_DEPLOYMENT;
+			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; SELECT * FROM module_firewall_rules WHERE id=69;" |& tee -a $LOG_DEPLOYMENT;
+
+			# Add Firewall Ruleset to iptables (will be overwritten by the Plesk Firewall if active)
+			# (see also: https://support.plesk.com/hc/en-us/articles/115001078014-How-to-manage-local-firewall-rules-on-a-Plesk-for-Linux-server)
+			iptables -I INPUT -p tcp --dport $SSH_PORT -m state --state NEW -j ACCEPT
+			iptables -I INPUT -p udp --dport $SSH_PORT -m state --state NEW -j ACCEPT
+			service iptables save
+
+			sysLogger "INFO" "The following iptable rules have been added: "
+			iptables -L | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
+		else
+			sysLogger "INFO" "The firewall deployment adds currently only firewall settings for the SSH Port Change Deployment, there is currently no SSH Port set (skip).";
+		fi
 	fi
-	sysLogger "DONE" "Finished Deployment of the Plesk Custom Styling (from ${TMP_PLESK_THEME_CUSTOM_DEPLOY_DIR} to ${PLESK_THEME_CUSTOM}).";
 else
-	sysLogger "INFO" "The Deployment of the Plesk Custom Styling is deactivated (skip).";
+	sysLogger "INFO" "No Firewall Deployment set (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#       Clean Up Tmp Folder       #\n###################################\n";

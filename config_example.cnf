@@ -22,7 +22,7 @@ NGINX_REQ_ADDR_99_FIX=1                       # See also: https://goo.gl/Crm8yl
 
 # PHP
 PHP_DEPLOYMENT=0                              # PHP Deployment - Activate (1) / Deactivate (0)
-PHP_VERSIONS=( "7.3" "7.2" "5.6" )            # All existing PHP Versions not included in the array will be uninstalled / un-deployed
+PHP_VERSIONS=( "7.3" "7.2" "5.6" "5.4" )      # All existing PHP Versions not included in the array will be uninstalled / un-deployed
 
 # DATABASE (MySQL/MariaDB)
 DB_DEPLOYMENT=1                               # Deploy custom optimized DB Settings if needed - Activate (1) / Deactivate (0)
@@ -34,10 +34,15 @@ DB_QUERY_CACHE_SIZE=64M
 
 # PLESK - GENERAL SETTINGS
 PLESK_PORT=8443                               # Plesk Port (default: 8443) - (NOT IMPLEMENTED YET!)
-PLESK_LOCALE="en-US"                          # Or en-US, en-GB, de-DE, etc.
+PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, de-DE, etc.
 PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
-PLESK_THEME_CUSTOM=/usr/local/psa/admin/htdocs/theme # Your custom theme files will be deployed to the specified path (use 0 to deactivate)
+PLESK_THEME_DEFAULT=$FILES_PATH/plesk-theme         # Default Theme (GroundStack Theme)
+PLESK_THEME_CUSTOM=$FILES_PATH/plesk-theme-custom   # A directory or zip can be used as a custom plesk theme
+                                                    # (copy the contents of the plesk-theme to plesk-theme-custom and
+                                                    # adjust the files accordingly if you want your custom stylings / theme)
+                                                    # For more informations about custom plesk themes:
+                                                    # https://docs.plesk.com/en-US/onyx/administrator-guide/customizing-the-plesk-interface/using-custom-themes/modifying-the-files.70909/
 
 # PLESK - EXTENSIONS
 PLESK_EXTENSIONS_DEPLOYMENT=1
