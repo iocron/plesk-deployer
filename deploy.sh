@@ -190,31 +190,29 @@ fi
 
 sysLogger "TEXT" "\n##################################\n#        Database Deployment       #\n###################################\n";
 if [[ $DB_DEPLOYMENT == 1 ]]; then
-	TMP_DB_CONF_FILE=/etc/my.cnf
-
-	if [[ -f "$TMP_DB_CONF_FILE" ]]; then
+	if [[ -f "$DB_CONF_FILE" ]]; then
 		if [[ -n "$DB_INNODB_BUFFER_POOL_SIZE" && $DB_INNODB_BUFFER_POOL_SIZE != 0 ]]; then
-			setConfVarInFile "innodb_buffer_pool_size" "$DB_INNODB_BUFFER_POOL_SIZE" "$TMP_DB_CONF_FILE";
+			setConfVarInFile "innodb_buffer_pool_size" "$DB_INNODB_BUFFER_POOL_SIZE" "$DB_CONF_FILE";
 			sysLogger "INFO" "innodb_buffer_pool_size set to ${DB_INNODB_BUFFER_POOL_SIZE}";
 		fi
 		if [[ -n "$DB_INNODB_ADDITIONAL_MEM_POOL_SIZE" && $DB_INNODB_ADDITIONAL_MEM_POOL_SIZE != 0 ]]; then
-			setConfVarInFile "innodb_additional_mem_pool_size" "$DB_INNODB_ADDITIONAL_MEM_POOL_SIZE" "$TMP_DB_CONF_FILE";
+			setConfVarInFile "innodb_additional_mem_pool_size" "$DB_INNODB_ADDITIONAL_MEM_POOL_SIZE" "$DB_CONF_FILE";
 			sysLogger "INFO" "innodb_additional_mem_pool_size set to ${DB_INNODB_ADDITIONAL_MEM_POOL_SIZE}";
 		fi
 		if [[ -n "$DB_INNODB_LOG_BUFFER_SIZE" && $DB_INNODB_LOG_BUFFER_SIZE != 0 ]]; then
-			setConfVarInFile "innodb_log_buffer_size" "$DB_INNODB_LOG_BUFFER_SIZE" "$TMP_DB_CONF_FILE";
+			setConfVarInFile "innodb_log_buffer_size" "$DB_INNODB_LOG_BUFFER_SIZE" "$DB_CONF_FILE";
 			sysLogger "INFO" "innodb_log_buffer_size set to ${DB_INNODB_LOG_BUFFER_SIZE}";
 		fi
 		if [[ -n "$DB_INNODB_THREAD_CONCURRENCY" && $DB_INNODB_THREAD_CONCURRENCY != 0 ]]; then
-			setConfVarInFile "innodb_thread_concurrency" "$DB_INNODB_THREAD_CONCURRENCY" "$TMP_DB_CONF_FILE";
+			setConfVarInFile "innodb_thread_concurrency" "$DB_INNODB_THREAD_CONCURRENCY" "$DB_CONF_FILE";
 			sysLogger "INFO" "innodb_thread_concurrency set to ${DB_INNODB_THREAD_CONCURRENCY}";
 		fi
 		if [[ -n "$DB_QUERY_CACHE_SIZE" && $DB_QUERY_CACHE_SIZE != 0 ]]; then
-			setConfVarInFile "query_cache_size" "$DB_QUERY_CACHE_SIZE" "$TMP_DB_CONF_FILE";
+			setConfVarInFile "query_cache_size" "$DB_QUERY_CACHE_SIZE" "$DB_CONF_FILE";
 			sysLogger "INFO" "query_cache_size set to ${DB_QUERY_CACHE_SIZE}";
 		fi
 	else
-		sysLogger "WARNING" "No DB Config found in $TMP_DB_CONF_FILE";
+		sysLogger "WARNING" "No DB Config file found $DB_CONF_FILE";
 	fi
 else
 	sysLogger "INFO" "The DB Deployment is deactivated (skip).";

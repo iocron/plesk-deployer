@@ -26,6 +26,7 @@ PHP_VERSIONS=( "7.3" "7.2" "5.6" "5.4" )      # All existing PHP Versions not in
 
 # DATABASE (MySQL/MariaDB)
 DB_DEPLOYMENT="1"                             # Deploy custom optimized DB Settings if needed - Activate (1) / Deactivate (0)
+DB_CONF_FILE=/etc/my.cnf                      # Location to your DB Config File
 DB_INNODB_BUFFER_POOL_SIZE="1024M"            # Depending on your server resources use a lower value (1024M for Servers with enough Resources)
 DB_INNODB_ADDITIONAL_MEM_POOL_SIZE="5000K"
 DB_INNODB_LOG_BUFFER_SIZE="5000K"
