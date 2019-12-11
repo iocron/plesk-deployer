@@ -54,7 +54,7 @@ if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
 			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
 		else
-			sysLogger "INFO" "No meta.xml in $PLESK_THEME_CUSTOM found (skip).";
+			sysLogger "INFO" "No custom theme deployment / meta.xml in $PLESK_THEME_CUSTOM found (skip).";
 		fi
 	elif [[ -f "$PLESK_THEME_CUSTOM" && "$PLESK_THEME_CUSTOM" = *".zip"* ]]; then
 		plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_CUSTOM
@@ -67,7 +67,8 @@ else
 fi
 
 # PLESK DEFAULT THEME DEPLOYMENT
-if [[ $PLESK_THEME_DEFAULT != 0 && ! -f $PLESK_THEME_CUSTOM && $PLESK_THEME_CUSTOM = *".zip"* && -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
+# (Runs only if no CUSTOM PLESK THEME is set / available)
+if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
 	if [[ -d "$PLESK_THEME_DEFAULT" ]]; then
 		if [[ -f "$PLESK_THEME_DEFAULT/meta.xml" ]]; then
 			rm -f "$TMP_PATH/plesk-theme.zip";
