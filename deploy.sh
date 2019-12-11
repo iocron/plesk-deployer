@@ -245,9 +245,11 @@ sysLogger "TEXT" "\n################################\n#       Plesk Default/Cust
 if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
 	if [[ -d "$PLESK_THEME_CUSTOM" ]]; then
 		if [[ -f "$PLESK_THEME_CUSTOM/meta.xml" ]]; then
-			rm -f "$TMP_PATH/plesk-theme.zip";
-			zip "$TMP_PATH/plesk-theme.zip" $PLESK_THEME_CUSTOM/*
+			cd $PLESK_THEME_CUSTOM;
+			rm -f $TMP_PATH/plesk-theme.zip;
+			zip -r $TMP_PATH/plesk-theme.zip ./*
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
+			cd -; # Jump back to the last directory
 			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
 		else
 			sysLogger "INFO" "No custom theme deployment / meta.xml in $PLESK_THEME_CUSTOM found (skip).";
@@ -267,9 +269,11 @@ fi
 if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
 	if [[ -d "$PLESK_THEME_DEFAULT" ]]; then
 		if [[ -f "$PLESK_THEME_DEFAULT/meta.xml" ]]; then
-			rm -f "$TMP_PATH/plesk-theme.zip";
-			zip "$TMP_PATH/plesk-theme.zip" $PLESK_THEME_DEFAULT/* |& tee -a $LOG_DEPLOYMENT;
+			cd $PLESK_THEME_DEFAULT;
+			rm -f $TMP_PATH/plesk-theme.zip;
+			zip -r $TMP_PATH/plesk-theme.zip ./*
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
+			cd -; # Jump back to the last directory
 			sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
 		else
 			sysLogger "INFO" "No meta.xml in $PLESK_THEME_DEFAULT found (skip).";
@@ -594,4 +598,6 @@ fi
 
 sysLogger "TEXT" "\n###################################\n#       Deployment Finished       #\n###################################\n";
 sysLogger "DONE" "The Plesk Deployer has finished your Deployment. Please check the output from above to be sure that everything went fine. Enjoy your newly and freshly configured Server :)";
+sysLogger "DONE" "Check more informations about this deployment in the deployment log $LOG_DEPLOYMENT and your error log $LOG_ERROR";
+
 mailAdmin;
