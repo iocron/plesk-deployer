@@ -16,6 +16,9 @@ FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the 
 
 SSH_PORT=46666
 SSH_PUBKEYAUTHENTICATION=1                    # Enable PubkeyAuthentication - Activate (1) / Deactivate (0)
+SSH_PASSWORDAUTHENTICATION=1                  # Enable PasswordAuthentication - Activate (1) / Deactivate (0)
+                                              # (deactivate PasswordAuthentication for better security, but only if you know how to configure public/private keys)
+                                              # (at least one of SSH_PUBKEYAUTHENTICATION, SSH_PASSWORDAUTHENTICATION has to be active)
 
 # NGINX
 NGINX_DEPLOYMENT=1                            # 1 = Deploy and enable Nginx, 0 = Skip Nginx Deployment, -1 = Disable Nginx
@@ -23,7 +26,7 @@ NGINX_GZIP=1
 NGINX_REQ_ADDR_99_FIX=1                       # See also: https://goo.gl/Crm8yl
 
 # PHP
-PHP_DEPLOYMENT=0                              # PHP Deployment - Activate (1) / Deactivate (0)
+PHP_DEPLOYMENT=1                              # PHP Deployment - Activate (1) / Deactivate (0)
 PHP_VERSIONS=( "7.3" "7.2" "5.6" "5.4" )      # All existing PHP Versions not included in the array will be uninstalled / un-deployed
 
 # DATABASE (MySQL/MariaDB)

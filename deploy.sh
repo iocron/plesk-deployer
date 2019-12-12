@@ -561,10 +561,14 @@ else
 	setConfVarInFile "PubkeyAuthentication" "no" "$TMP_SSHD_CONFIG_PATH";
 fi
 
-# Reload SSHD Config after Changes
-if [[ $SSH_PORT != 0 || $SSH_PUBKEYAUTHENTICATION == 1 ]]; then
-	service sshd reload | tee -a $LOG_DEPLOYMENT;
+if [[ $SSH_PASSWORDAUTHENTICATION == 1 ]]; then
+	setConfVarInFile "PasswordAuthentication" "yes" "$TMP_SSHD_CONFIG_PATH";
+else
+	setConfVarInFile "PasswordAuthentication" "no" "$TMP_SSHD_CONFIG_PATH";
 fi
+
+# Reload SSHD Config after Changes
+service sshd reload | tee -a $LOG_DEPLOYMENT;
 
 sysLogger "TEXT" "\n###################################\n#         Plesk Firewall          #\n###################################\n";
 # https://support.plesk.com/hc/en-us/articles/115002552134-How-to-manage-Plesk-Firewall-via-CLI-
