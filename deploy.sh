@@ -554,9 +554,7 @@ sysLogger "TEXT" "\n###################################\n#         Plesk Firewal
 # Problematic Implementation because of the firewall confirmation parameter/action (/usr/local/psa/bin/modules/firewall/settings -c)
 # Therefore it has to be done manually
 
-sysLogger "INFO" "The Plesk Firewall can't be enabled automatically, because of a special ssh confirmation security check.";
-sysLogger "INFO" "If you wan't the Plesk Firewall to be enabled (recommended), then please do it manually in your plesk panel (or use custom iptables).";
-sysLogger "INFO" "(for more informations please look up https://support.plesk.com/hc/en-us/articles/115000629013-How-to-install-Plesk-Firewall)";
+sysLogger "INFO" "The Plesk Firewall can't be enabled automatically, because of a special ssh confirmation security check. If you wan't the Plesk Firewall to be enabled, then please do it manually in your plesk panel (or use custom iptables). For more informations please look up https://support.plesk.com/hc/en-us/articles/115000629013-How-to-install-Plesk-Firewall";
 
 # Add Firewall SSH Port Ruleset
 # (due to the SSH Port Change Deployment)
@@ -589,8 +587,8 @@ if [[ $PLESK_FIREWALL != 0 ]]; then
 			sysLogger "INFO" "The following iptable rules have been added: "
 			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 		else
+			sysLogger "INFO" "The port $SSH_PORT seems to be already implemented into your iptables (skip): ";
 			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
-			sysLogger "INFO" "This port seems to be already implemented into your iptables (skip).";
 		fi
 	fi
 else
