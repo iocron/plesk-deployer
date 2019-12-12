@@ -125,7 +125,8 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 		# fi
 
 		service named-chroot restart |& tee -a $LOG_DEPLOYMENT;
-		# plesk repair dns -y
+
+		# plesk repair dns -y # https://support.plesk.com/hc/en-us/articles/115004863353-Status-of-DNS-Server-BIND-is-shown-as-stopped-in-Plesk-though-it-is-running
 	fi
 
 	sysLogger "DONE" "Finished Deployment of Plesk Nginx (please check if there are any possible errors above).";
@@ -563,21 +564,34 @@ if [[ $PLESK_FIREWALL != 0 ]]; then
 	if [[ $SSH_PORT != 0 ]]; then
 		if [[ ! $(iptables -S | grep "port $SSH_PORT") ]]; then
 			# Add Firewall Ruleset to Plesk Firewall
-			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (id, configuration_id, direction, priority, object)VALUES(69, 1, 0, 21, 'a:8:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:2:{i:0;s:9:\"$SSH_PORT/tcp\";i:1;s:9:\"$SSH_PORT/udp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";s:10:\"originalId\";s:2:\"47\";}');" |& tee -a $LOG_DEPLOYMENT;
-			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; SELECT * FROM module_firewall_rules WHERE id=69;" |& tee -a $LOG_DEPLOYMENT;
+			# (just needed for the Plesk Panel Firewall GUI, if someone changes/applies it there)
+			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (configuration_id, direction, priority, object) VALUES (2, 0, 21, 'a:7:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:1:{i:0;s:9:\"46666/tcp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";}');" |& tee -a $LOG_DEPLOYMENT;
+			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (configuration_id, direction, priority, object) VALUES (1, 0, 21, 'a:8:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:1:{i:0;s:9:\"46666/tcp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";s:10:\"originalId\";s:3:\"462\";}');" |& tee -a $LOG_DEPLOYMENT;
+			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; SELECT * FROM module_firewall_rules WHERE object LIKE '%SSH Connections%';" |& tee -a $LOG_DEPLOYMENT;
+
+			# if [[ -f /etc/init.d/psa-firewall ]]; then /etc/init.d/psa-firewall restart; fi
+			# (Not needed for now, because the ssh port in iptables will be set manually further below)
+
+			# Some plesk firewall commands:
+			# /etc/init.d/psa-firewall restart
+			# /usr/local/psa/bin/modules/firewall/settings --help
+
+			# See also:
+			# https://serverfault.com/questions/486115/plesk-11-set-firewall-rules-manually
+			# https://support.plesk.com/hc/en-us/articles/115002552134-How-to-manage-Plesk-Firewall-via-CLI-
+			# https://serverfault.com/questions/201298/why-should-i-firewall-servers?rq=1 (more about sec in generall)
 
 			# Add Firewall Ruleset to iptables (will be overwritten by the Plesk Firewall if active)
 			# (see also: https://support.plesk.com/hc/en-us/articles/115001078014-How-to-manage-local-firewall-rules-on-a-Plesk-for-Linux-server)
 			iptables -I INPUT -p tcp --dport $SSH_PORT -m state --state NEW -j ACCEPT
-			iptables -I INPUT -p udp --dport $SSH_PORT -m state --state NEW -j ACCEPT
 			service iptables save
 
 			sysLogger "INFO" "The following iptable rules have been added: "
+			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 		else
+			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 			sysLogger "INFO" "This port seems to be already implemented into your iptables (skip).";
 		fi
-
-		iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 	fi
 else
 	sysLogger "INFO" "No Firewall Deployment set (skip).";
