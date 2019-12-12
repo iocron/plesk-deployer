@@ -12,8 +12,10 @@ HOST_NAME=0                                   # Changes the HostName of this mac
                                               # See also: https://blog.hosteurope.de/blog/hostnamen-aendern/
 HOST_NAME_RESOLVE=0                           # Resolve to the newly set HostName (NOT IMPLEMENTED YET!)
 LINUX_PACKAGES="htop nano"
-SSH_PORT=46666
 FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the FTP Passive Ports (e.g. 49152 50152 means 49152-50152)
+
+SSH_PORT=46666
+SSH_PUBKEYAUTHENTICATION=1                    # Enable PubkeyAuthentication - Activate (1) / Deactivate (0)
 
 # NGINX
 NGINX_DEPLOYMENT=1                            # 1 = Deploy and enable Nginx, 0 = Skip Nginx Deployment, -1 = Disable Nginx

@@ -529,11 +529,12 @@ else
 	sysLogger "INFO" "ProFTPD Passive Port Deployment is deactivated (skip).";
 fi
 
-sysLogger "TEXT" "\n###################################\n#         Change SSH Port         #\n###################################\n";
+sysLogger "TEXT" "\n###################################\n#           SSHD Config           #\n###################################\n";
 TMP_SSH_PORT_REGEX='^(?!#)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSH_PORT_REGEX_COMMENT='^(#|#\s)Port\s(?<!-)\b([1-3]?\d{1,5}|65535)\b'
 TMP_SSHD_CONFIG_PATH=/etc/ssh/sshd_config
 
+# SSH Port Change
 if [[ $SSH_PORT != 0 ]]; then
 	if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH} | head -1)" != "Port ${SSH_PORT}" ]]; then
 		if [[ "$(grep -P ${TMP_SSH_PORT_REGEX} ${TMP_SSHD_CONFIG_PATH})" ]]; then
@@ -544,9 +545,6 @@ if [[ $SSH_PORT != 0 ]]; then
 			printf "Port ${SSH_PORT}\n" | tee -a $TMP_SSHD_CONFIG_PATH $LOG_DEPLOYMENT;
 		fi
 
-		setConfVarInFile "PubkeyAuthentication" "yes" "$TMP_SSHD_CONFIG_PATH";
-
-		service sshd reload | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
 		sysLogger "INFO" "Please try to connect to the Server with another User Session separately now, just in case if something went really wrong, then in this case you can change the configuration in /etc/ssh/sshd_config back from your current User Session and restart the sshd service (service sshd reload).";
 	else
@@ -554,6 +552,18 @@ if [[ $SSH_PORT != 0 ]]; then
 	fi
 else
 	sysLogger "INFO" "The Deployment of the SSH Port Change is deactivated (skip).";
+fi
+
+# SSH PubkeyAuthentication Activation
+if [[ $SSH_PUBKEYAUTHENTICATION == 1 ]]; then
+	setConfVarInFile "PubkeyAuthentication" "yes" "$TMP_SSHD_CONFIG_PATH";
+else
+	setConfVarInFile "PubkeyAuthentication" "no" "$TMP_SSHD_CONFIG_PATH";
+fi
+
+# Reload SSHD Config after Changes
+if [[ $SSH_PORT != 0 || $SSH_PUBKEYAUTHENTICATION == 1 ]]; then
+	service sshd reload | tee -a $LOG_DEPLOYMENT;
 fi
 
 sysLogger "TEXT" "\n###################################\n#         Plesk Firewall          #\n###################################\n";
