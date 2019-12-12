@@ -244,14 +244,16 @@ fi
 
 sysLogger "TEXT" "\n####################################\n#    Plesk Default/Custom Theme    #\n####################################\n";
 # PLESK CUSTOM THEME DEPLOYMENT
-if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
+if [[ $PLESK_THEME_CUSTOM != 0 && $PLESK_THEME_DEPLOYMENT == 1 ]]; then
 	if [[ -d "$PLESK_THEME_CUSTOM" ]]; then
 		if [[ -f "$PLESK_THEME_CUSTOM/meta.xml" ]]; then
 			cd $PLESK_THEME_CUSTOM;
 			rm -f $TMP_PATH/plesk-theme.zip;
 			zip -r $TMP_PATH/plesk-theme.zip ./*
+			# https://docs.plesk.com/en-US/onyx/administrator-guide/customizing-the-plesk-interface/using-custom-themes/installing-themes-to-plesk.70908/
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
 			cd -; # Jump back to the last directory
+			sysLogger "WARNING" "Your Plesk Custom Theme will be only correctly used by Plesk if you deactivate the Skins & Colors Extension in Plesk ($PLESK_THEME_CUSTOM). This behavior might change in the future.";
 			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
 		else
 			sysLogger "INFO" "No custom theme deployment / meta.xml in $PLESK_THEME_CUSTOM found (skip).";
@@ -266,9 +268,9 @@ else
 	sysLogger "INFO" "The Deployment of the Plesk Custom Theme is deactivated (skip).";
 fi
 
-# PLESK DEFAULT THEME DEPLOYMENT
+# PLESK BRANDING THEME (by GroundStack) DEPLOYMENT
 # (Runs only if no CUSTOM PLESK THEME is set / available)
-if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLESK_THEME_CUSTOM/meta.xml ]]; then
+if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLESK_THEME_CUSTOM/meta.xml && $PLESK_THEME_DEPLOYMENT == 1 ]]; then
 	if [[ -d "$PLESK_THEME_DEFAULT" ]]; then
 		if [[ -f "$PLESK_THEME_DEFAULT/meta.xml" ]]; then
 			cd $PLESK_THEME_DEFAULT;
@@ -276,18 +278,19 @@ if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLE
 			zip -r $TMP_PATH/plesk-theme.zip ./*
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
 			cd -; # Jump back to the last directory
-			sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
+			sysLogger "WARNING" "The Plesk BRANDING Theme (by GroundStack) will be only correctly used by Plesk if you deactivate the Skins & Colors Extension in Plesk ($PLESK_THEME_CUSTOM). This behavior might change in the future.";
+			sysLogger "DONE" "Finished Deployment of the Plesk BRANDING Theme (by GroundStack) ($PLESK_THEME_DEFAULT).";
 		else
 			sysLogger "INFO" "No meta.xml in $PLESK_THEME_DEFAULT found (skip).";
 		fi
 	elif [[ -f "$PLESK_THEME_DEFAULT" && "$PLESK_THEME_DEFAULT" = *".zip"* ]]; then
 		plesk bin branding_theme -i -vendor admin -source $PLESK_THEME_DEFAULT
-		sysLogger "DONE" "Finished Deployment of the Plesk DEFAULT Theme ($PLESK_THEME_DEFAULT).";
+		sysLogger "DONE" "Finished Deployment of the Plesk BRANDING Theme (by GroundStack) ($PLESK_THEME_DEFAULT).";
 	else
-		sysLogger "WARNING" "Your Plesk DEFAULT Theme is neither a valid zip file nor a folder (skip).";
+		sysLogger "WARNING" "Your Plesk BRANDING Theme (by GroundStack) is neither a valid zip file nor a folder (skip).";
 	fi
 else
-	sysLogger "INFO" "The Deployment of the Plesk DEFAULT Theme is deactivated (skip).";
+	sysLogger "INFO" "The Deployment of the Plesk BRANDING Theme (by GroundStack) is deactivated (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n# Plesk Interface & System Prefs  #\n###################################\n";

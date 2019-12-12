@@ -38,7 +38,9 @@ PLESK_PORT=8443                               # Plesk Port (default: 8443) - (NO
 PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, de-DE, etc.
 PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
-PLESK_THEME_DEFAULT=$FILES_PATH/plesk-theme         # Default Theme (GroundStack Theme)
+
+PLESK_THEME_DEPLOYMENT=1                            # Plesk Theme Deployment (for custom themes) - Activate (1) / Deactivate (0)
+PLESK_THEME_DEFAULT=$FILES_PATH/plesk-theme         # Default Branding Theme (GroundStack Theme)
 PLESK_THEME_CUSTOM=$FILES_PATH/plesk-theme-custom   # A directory or zip can be used as a custom plesk theme
                                                     # (copy the contents of the plesk-theme to plesk-theme-custom and
                                                     # adjust the files accordingly if you want your custom stylings / theme)
