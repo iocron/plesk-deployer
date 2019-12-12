@@ -605,6 +605,7 @@ if [[ $PLESK_FIREWALL != 0 ]]; then
 			iptables -I INPUT -p tcp --dport $SSH_PORT -m state --state NEW -j ACCEPT
 			service iptables save
 
+			sysLogger "WARNING" "If you are using / activating the Plesk Firewall, then please make sure the firewall rule for the new SSH Port $SSH_PORT exists in the list (Incoming Connections, Tcp)"
 			sysLogger "INFO" "The following iptable rules have been added: "
 			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 		else
