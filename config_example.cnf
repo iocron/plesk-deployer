@@ -62,7 +62,7 @@ PLESK_EXTENSIONS_DEPLOYMENT=0
 # For more packages see: https://ext.plesk.com/packages
 
 # PLESK - SECURITY
-PLESK_MIN_PW_STRENGTH="medium"                        # very_weak|weak|medium|strong|very_strong
+PLESK_MIN_PW_STRENGTH="strong"                        # very_weak|weak|medium|strong|very_strong
 PLESK_FIREWALL=1                                      # NOT IMPLEMENTED YET
 PLESK_MODSECURITY_FIREWALL=1                          # 1 = Deploy | 0 = Skip | -1 = Deactivate
 PLESK_MODSECURITY_FIREWALL_RULESET="crs"              # crs|tortix (crs=OWASP, tortix=Atomicorp's ASL)
