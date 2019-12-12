@@ -48,8 +48,8 @@ PLESK_THEME_CUSTOM=$FILES_PATH/plesk-theme-custom   # A directory or zip can be 
                                                     # https://docs.plesk.com/en-US/onyx/administrator-guide/customizing-the-plesk-interface/using-custom-themes/modifying-the-files.70909/
 
 # PLESK - EXTENSIONS
-PLESK_EXTENSIONS_DEPLOYMENT=1
-PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
+PLESK_EXTENSIONS_DEPLOYMENT=0
+# PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"
 # PLESK_EXTENSIONS[1]="https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download"
 # A Plesk Extension parameter can be composed of a URL or a local ZIP File (absolute path)
 # For more packages see: https://ext.plesk.com/packages
