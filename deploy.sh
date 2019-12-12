@@ -255,6 +255,7 @@ if [[ $PLESK_THEME_CUSTOM != 0 && $PLESK_THEME_DEPLOYMENT == 1 ]]; then
 			plesk bin extension --disable heavy-metal-skin # (disable skins and color schemes extension, otherwise custom themes won't be functioning correctly / will be overwritten by the ext. This behavior might change in the future of plesk)
 			cd -; # Jump back to the last directory
 			# sysLogger "WARNING" "Your Plesk Custom Theme will be only correctly used by Plesk if you deactivate the Skins & Colors Extension in Plesk ($PLESK_THEME_CUSTOM). This behavior might change in the future.";
+			sysLogger "INFO" "The skins and color schemes extension was deactivated, otherwise it will override the custom theme.";
 			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
 		else
 			sysLogger "INFO" "No custom theme deployment / meta.xml in $PLESK_THEME_CUSTOM found (skip).";
@@ -281,6 +282,7 @@ if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLE
 			plesk bin extension --disable heavy-metal-skin # (disable skins and color schemes extension, otherwise custom themes won't be functioning correctly / will be overwritten by the ext. This behavior might change in the future of plesk)
 			cd -; # Jump back to the last directory
 			# sysLogger "WARNING" "The Plesk BRANDING Theme (by GroundStack) will be only correctly used by Plesk if you deactivate the Skins & Colors Extension in Plesk ($PLESK_THEME_CUSTOM). This behavior might change in the future.";
+			sysLogger "INFO" "The skins and color schemes extension was deactivated, otherwise it will override the custom theme.";
 			sysLogger "DONE" "Finished Deployment of the Plesk BRANDING Theme (by GroundStack) ($PLESK_THEME_DEFAULT).";
 		else
 			sysLogger "INFO" "No meta.xml in $PLESK_THEME_DEFAULT found (skip).";
