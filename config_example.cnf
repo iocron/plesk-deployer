@@ -27,6 +27,9 @@ NGINX_DEPLOYMENT=1                            # 1 = Deploy and enable Nginx, 0 =
 NGINX_GZIP=1
 NGINX_REQ_ADDR_99_FIX=1                       # See also: https://goo.gl/Crm8yl
 
+HTTP2_PREF=1                                  # 1 = Enable, 0 = Skip, -1 = Disable
+                                              # (Enabling / Disabling works only if nginx deployment is enabled or if nginx is already running)
+
 # PHP
 PHP_DEPLOYMENT=1                              # PHP Deployment - Activate (1) / Deactivate (0)
 PHP_VERSIONS=( "7.3" "7.2" "5.6" )            # All existing PHP Versions not included in the array will be uninstalled / un-deployed

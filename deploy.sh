@@ -99,6 +99,8 @@ if [[ $NGINX_DEPLOYMENT == 1 ]]; then
 	if [[ -f /usr/local/psa/admin/sbin/nginxmng ]]; then
 		/usr/local/psa/admin/sbin/nginxmng --enable # or plesk sbin nginxmng --enable
 		sysLogger "DONE" "Enabled nginx through the nginx plesk manager (/usr/local/psa/admin/sbin/nginxmng --enable).";
+	else
+		sysLogger "WARNING" "The Nginx Manager (/usr/local/psa/admin/sbin/nginxmng) doesn't exist.";
 	fi
 
 	if hash systemctl 2>/dev/null; then
@@ -159,6 +161,28 @@ if [[ $NGINX_GZIP == 1 ]]; then
 	sysLogger "DONE" "Copied $(getConfigFile nginx_gzip.cnf) to /etc/nginx/conf.d/gzip.conf";
 else
 	sysLogger "INFO" "Nginx gzip configuration is deactivated (skip).";
+fi
+
+sysLogger "TEXT" "\n###################################\n#       Plesk Http2 (Nginx)       #\n###################################\n";
+
+if [[ $HTTP2_PREF != 0 ]]; then
+	if [[ -f /usr/local/psa/admin/sbin/nginxmng ]]; then
+		if [[ "$(/usr/local/psa/admin/sbin/nginxmng --status)" =~ "nabled" ]]; then
+			if [[ $HTTP2_PREF == 1 ]]; then
+				plesk bin http2_pref --enable
+				sysLogger "DONE" "http2 (for nginx) has been enabled.";
+			elif [[ $HTTP2_PREF == -1 ]]; then
+				plesk bin http2_pref --disable
+				sysLogger "DONE" "http2 (for nginx) has been disabled.";
+			fi
+		else
+			sysLogger "WARNING" "The Http2 Deployment is not possible, because the nginx manager is not running (skip).";
+		fi
+	else
+		sysLogger "WARNING" "The Nginx Manager doesn't exist (/usr/local/psa/admin/sbin/nginxmng).";
+	fi
+else
+	sysLogger "INFO" "The Deployment of http2 (for nginx) is not active (skip).";
 fi
 
 sysLogger "TEXT" "\n###################################\n#        Plesk PHP Packages       #\n###################################\n";
