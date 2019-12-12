@@ -252,6 +252,7 @@ if [[ $PLESK_THEME_CUSTOM != 0 && $PLESK_THEME_DEPLOYMENT == 1 ]]; then
 			zip -r $TMP_PATH/plesk-theme.zip ./*
 			# https://docs.plesk.com/en-US/onyx/administrator-guide/customizing-the-plesk-interface/using-custom-themes/installing-themes-to-plesk.70908/
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
+			plesk bin extension --disable heavy-metal-skin # (disable skins and color schemes extension, otherwise custom themes won't be functioning correctly / will be overwritten by the ext. This behavior might change in the future of plesk)
 			cd -; # Jump back to the last directory
 			sysLogger "WARNING" "Your Plesk Custom Theme will be only correctly used by Plesk if you deactivate the Skins & Colors Extension in Plesk ($PLESK_THEME_CUSTOM). This behavior might change in the future.";
 			sysLogger "DONE" "Finished Deployment of the Plesk Custom Theme ($PLESK_THEME_CUSTOM).";
@@ -277,6 +278,7 @@ if [[ $PLESK_THEME_DEFAULT != 0 && ! $PLESK_THEME_CUSTOM = *".zip"* && ! -f $PLE
 			rm -f $TMP_PATH/plesk-theme.zip;
 			zip -r $TMP_PATH/plesk-theme.zip ./*
 			plesk bin branding_theme -i -vendor admin -source $TMP_PATH/plesk-theme.zip
+			plesk bin extension --disable heavy-metal-skin # (disable skins and color schemes extension, otherwise custom themes won't be functioning correctly / will be overwritten by the ext. This behavior might change in the future of plesk)
 			cd -; # Jump back to the last directory
 			sysLogger "WARNING" "The Plesk BRANDING Theme (by GroundStack) will be only correctly used by Plesk if you deactivate the Skins & Colors Extension in Plesk ($PLESK_THEME_CUSTOM). This behavior might change in the future.";
 			sysLogger "DONE" "Finished Deployment of the Plesk BRANDING Theme (by GroundStack) ($PLESK_THEME_DEFAULT).";
