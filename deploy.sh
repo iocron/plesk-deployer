@@ -634,6 +634,6 @@ fi
 
 sysLogger "TEXT" "\n###################################\n#       Deployment Finished       #\n###################################\n";
 sysLogger "DONE" "The Plesk Deployer has finished your Deployment. Please check the output from above to be sure that everything went fine. Enjoy your newly and freshly configured Server :)";
-sysLogger "DONE" "Check more informations about this deployment in the deployment log $LOG_DEPLOYMENT and your error log $LOG_ERROR";
+sysLogger "DONE" "Check more informations about this deployment in your error log $LOG_ERROR and the deployment log $LOG_DEPLOYMENT";
 
 mailAdmin;
