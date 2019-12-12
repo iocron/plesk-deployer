@@ -541,8 +541,10 @@ if [[ $SSH_PORT != 0 ]]; then
 		elif [[ "$(grep -P ${TMP_SSH_PORT_REGEX_COMMENT} ${TMP_SSHD_CONFIG_PATH})" ]]; then
 			perl -pi -e "s/${TMP_SSH_PORT_REGEX_COMMENT}/Port ${SSH_PORT}/;" $TMP_SSHD_CONFIG_PATH | tee -a $LOG_DEPLOYMENT;
 		else
-			printf "Port ${SSH_PORT}" | tee -a $TMP_SSHD_CONFIG_PATH $LOG_DEPLOYMENT;
+			printf "Port ${SSH_PORT}\n" | tee -a $TMP_SSHD_CONFIG_PATH $LOG_DEPLOYMENT;
 		fi
+
+		setConfVarInFile "PubkeyAuthentication" "yes" "$TMP_SSHD_CONFIG_PATH";
 
 		service sshd reload | tee -a $LOG_DEPLOYMENT;
 		sysLogger "DONE" "Finished Deployment of Changing the SSH Port to ${SSH_PORT}.";
