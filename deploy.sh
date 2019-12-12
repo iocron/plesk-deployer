@@ -242,7 +242,7 @@ else
 	sysLogger "INFO" "Skipped Import of Scripts (scripts/)..";
 fi
 
-sysLogger "TEXT" "\n################################\n#       Plesk Default/Custom Theme       #\n################################\n";
+sysLogger "TEXT" "\n####################################\n#    Plesk Default/Custom Theme    #\n####################################\n";
 # PLESK CUSTOM THEME DEPLOYMENT
 if [[ $PLESK_THEME_CUSTOM != 0 ]]; then
 	if [[ -d "$PLESK_THEME_CUSTOM" ]]; then
