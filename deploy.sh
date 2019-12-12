@@ -586,9 +586,15 @@ if [[ $PLESK_FIREWALL != 0 ]]; then
 		if [[ ! $(iptables -S | grep "port $SSH_PORT") ]]; then
 			# Add Firewall Ruleset to Plesk Firewall
 			# (just needed for the Plesk Panel Firewall GUI, if someone changes/applies it there)
-			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (configuration_id, direction, priority, object) VALUES (2, 0, 99, 'a:7:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:1:{i:0;s:9:\"46666/tcp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";}');" |& tee -a $LOG_DEPLOYMENT;
-			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (configuration_id, direction, priority, object) VALUES (1, 0, 99, 'a:8:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:1:{i:0;s:9:\"46666/tcp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";s:10:\"originalId\";s:3:\"462\";}');" |& tee -a $LOG_DEPLOYMENT;
-			mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; SELECT * FROM module_firewall_rules WHERE object LIKE '%SSH Connections%';" |& tee -a $LOG_DEPLOYMENT;
+
+			# In case the plesk firewall gets activated after this deployment script,
+			# then the sql entries aren't working, because once the plesk firewall gets activated,
+			# it generates new sql entries with higher priorities (module_firewall_rules.priority).
+			# Therefore it works only if the plesk firewall has been already activated once or if another deployment step
+			# activates the plesk firewall first (see: https://support.plesk.com/hc/en-us/articles/115002552134-How-to-manage-Plesk-Firewall-via-CLI-)
+			# mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (configuration_id, direction, priority, object) VALUES (2, 0, 99, 'a:7:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:1:{i:0;s:9:\"46666/tcp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";}');" |& tee -a $LOG_DEPLOYMENT;
+			# mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; INSERT INTO module_firewall_rules (configuration_id, direction, priority, object) VALUES (1, 0, 99, 'a:8:{s:4:\"type\";s:6:\"custom\";s:5:\"class\";s:6:\"custom\";s:4:\"name\";s:15:\"SSH Connections\";s:9:\"direction\";s:5:\"input\";s:5:\"ports\";a:1:{i:0;s:9:\"46666/tcp\";}s:4:\"from\";a:0:{}s:6:\"action\";s:5:\"allow\";s:10:\"originalId\";s:3:\"462\";}');" |& tee -a $LOG_DEPLOYMENT;
+			# mysql -uadmin -p"$(cat /etc/psa/.psa.shadow)" -e "USE psa; SELECT * FROM module_firewall_rules WHERE object LIKE '%SSH Connections%';" |& tee -a $LOG_DEPLOYMENT;
 
 			# if [[ -f /etc/init.d/psa-firewall ]]; then /etc/init.d/psa-firewall restart; fi
 			# (Not needed for now, because the ssh port in iptables will be set manually further below)
@@ -607,7 +613,7 @@ if [[ $PLESK_FIREWALL != 0 ]]; then
 			iptables -I INPUT -p tcp --dport $SSH_PORT -m state --state NEW -j ACCEPT
 			service iptables save
 
-			sysLogger "WARNING" "If you are using / activating the Plesk Firewall, then please make sure the firewall rule for the new SSH Port $SSH_PORT exists in the list (Incoming Connections, Tcp)"
+			sysLogger "WARNING" "If you are activating the Plesk Firewall after this deployment, then please make sure the firewall rule for the new SSH Port $SSH_PORT exists in the list (Incoming Connections, Tcp)"
 			sysLogger "INFO" "The following iptable rules have been added: "
 			iptables -S | grep $SSH_PORT |& tee -a $LOG_DEPLOYMENT;
 		else
