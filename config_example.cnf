@@ -20,6 +20,8 @@ SSH_PASSWORDAUTHENTICATION=1                  # Enable PasswordAuthentication - 
                                               # (deactivate PasswordAuthentication for better security, but only if you know how to configure public/private keys)
                                               # (at least one of SSH_PUBKEYAUTHENTICATION, SSH_PASSWORDAUTHENTICATION has to be active)
 
+SYS_TIME_ZONE="Europe/Berlin"                 # 0 = Deactivate Deployment of the Timezone
+
 # NGINX
 NGINX_DEPLOYMENT=1                            # 1 = Deploy and enable Nginx, 0 = Skip Nginx Deployment, -1 = Disable Nginx
 NGINX_GZIP=1

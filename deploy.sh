@@ -44,6 +44,14 @@ else
 	sysLogger "INFO" "No Pre-Deployment set (skip).";
 fi
 
+sysLogger "TEXT" "\n###################################\n#           System Time           #\n###################################\n";
+if [[ $SYS_TIME_ZONE != 0 ]]; then
+	plesk sbin timemng --set-timezone --timezone="$SYS_TIME_ZONE"
+	sysLogger "DONE" "The Deployment of the System Timezone ($SYS_TIME_ZONE) is finished.";
+else
+	sysLogger "INFO" "Deployment of the System Timezone is deactivated (skip).";
+fi
+
 sysLogger "TEXT" "\n###################################\n#    Additional Linux Packages    #\n###################################\n";
 if [[ "${#LINUX_DISTRO}" -gt 0 ]]; then
 	if [[ $LINUX_DISTRO = *"Ubuntu"* || $LINUX_DISTRO = *"Debian"* ]]; then
