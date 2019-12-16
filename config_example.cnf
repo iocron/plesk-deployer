@@ -32,7 +32,7 @@ HTTP2_PREF=1                                  # 1 = Enable, 0 = Skip, -1 = Disab
 
 # PHP
 PHP_DEPLOYMENT=1                              # PHP Deployment - Activate (1) / Deactivate (0)
-PHP_VERSIONS=( "7.3" "7.2" "5.6" )            # All existing PHP Versions not included in the array will be uninstalled / un-deployed
+PHP_VERSIONS=( "7.4" "7.3" "7.2" )            # All existing PHP Versions not included in the array will be uninstalled / un-deployed
 
 # DATABASE (MySQL/MariaDB)
 DB_DEPLOYMENT="1"                             # Deploy custom optimized DB Settings if needed - Activate (1) / Deactivate (0)
