@@ -171,7 +171,7 @@ h1, h2, h3, h4, h5, h6,
 .list .row-over > td,
 .list > table > tbody > tr:hover > td,
 .sid-legacy .list > tbody > tr:hover > td {
-    background-color: #95c122;
+    background-color: rgba(149, 193, 34, 0.5);
 }
 
 .list tr:hover a,
@@ -272,8 +272,8 @@ table.list th > a,
 }
 
 .main-header-navbar .main-header-navbar-nav__item--advisor-1 .icon img { opacity:1; }
-.advisor-wrapper .status-item .pul-action .pul-status { color:inherit; }
-.page-footer { display:none; }
+.advisor-wrapper .status-item .pul-action .pul-status { color:inherit !important; }
+.page-footer { visibility:hidden; }
 
 @media (min-width: 768px) {
     .tabs.sticky-nav .tabs-area {
