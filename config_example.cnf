@@ -57,6 +57,9 @@ PLESK_THEME_CUSTOM=$FILES_PATH/plesk-theme-custom   # A directory or zip can be 
                                                     # For more informations about custom plesk themes:
                                                     # https://docs.plesk.com/en-US/onyx/administrator-guide/customizing-the-plesk-interface/using-custom-themes/modifying-the-files.70909/
 
+# PLESK - COMPONENTS                                # Command list of all plesk components: "plesk installer list PLESK_18_0_21"
+
+
 # PLESK - EXTENSIONS
 PLESK_EXTENSIONS_DEPLOYMENT=0
 # PLESK_EXTENSIONS[0]="https://ext.plesk.com/packages/b49f9b1b-e8cf-41e1-bd59-4509d92891f7-magicspam/download"

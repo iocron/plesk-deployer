@@ -106,6 +106,10 @@ body {
     background-color: transparent;
 }
 
+.active-list .quick-start-header {
+    color:inherit;
+}
+
 .pul-heading,
 .ui-link,
 a,
@@ -172,8 +176,10 @@ h1, h2, h3, h4, h5, h6,
 
 .list tr:hover a,
 .list table > tbody > tr:hover > td {
-    color: #161616;
+    /* color: #161616; */
 }
+
+.list .state-default { color:inherit; }
 
 .list > table th > a,
 .scrollable-list-wrapper > table th > a,
@@ -264,6 +270,10 @@ table.list th > a,
 .panel .panel-heading .panel-control {
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -1.24 8 8'%3E%3Cpath fill='%2395c122' d='M7.854 4.854a.5.5 0 01-.708 0L4 1.707.854 4.854a.5.5 0 01-.708-.708l3.5-3.5a.5.5 0 01.708 0l3.5 3.5a.5.5 0 010 .708z'/%3E%3C/svg%3E");
 }
+
+.main-header-navbar .main-header-navbar-nav__item--advisor-1 .icon img { opacity:1; }
+.advisor-wrapper .status-item .pul-action .pul-status { color:inherit; }
+.page-footer { display:none; }
 
 @media (min-width: 768px) {
     .tabs.sticky-nav .tabs-area {
