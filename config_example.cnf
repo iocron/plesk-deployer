@@ -12,7 +12,7 @@ HOST_NAME=0                                   # Changes the HostName of this mac
                                               # See also: https://blog.hosteurope.de/blog/hostnamen-aendern/
 HOST_NAME_RESOLVE=0                           # Resolve to the newly set HostName (NOT IMPLEMENTED YET!)
 LINUX_PACKAGES="htop nano"
-FTP_PASSIVE_PORTS="49152 50152"               # You can define the Range of the FTP Passive Ports (e.g. 49152 50152 means 49152-50152)
+FTP_PASSIVE_PORTS="57000 59000"               # You can define the Range of the FTP Passive Ports (e.g. 49152 50152 means 49152-50152)
 
 SSH_PORT=46666
 SSH_PUBKEYAUTHENTICATION=1                    # Enable PubkeyAuthentication - Activate (1) / Deactivate (0)
@@ -49,7 +49,8 @@ PLESK_LOCALE="de-DE"                          # Or en-US, en-GB, de-DE, etc.
 PLESK_AUTOUPDATES=1
 PLESK_AUTOUPDATES_THIRD_PARTY=1
 
-PLESK_THEME_DEPLOYMENT=1                            # Plesk Theme Deployment (for custom themes) - Activate (1) / Deactivate (0)
+PLESK_THEME_DEPLOYMENT=0                            # Plesk Theme Deployment (for custom themes) - Activate (1) / Deactivate (0)
+                                                    # (be careful about custom themes, they can break Plesk Upgrades (major versions))
 PLESK_THEME_DEFAULT=$FILES_PATH/plesk-theme         # Default Branding Theme (GroundStack Theme)
 PLESK_THEME_CUSTOM=$FILES_PATH/plesk-theme-custom   # A directory or zip can be used as a custom plesk theme
                                                     # (copy the contents of the plesk-theme to plesk-theme-custom and
